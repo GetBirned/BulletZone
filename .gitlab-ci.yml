@@ -1,0 +1,10 @@
+image: "androidsdk/android-31:latest"
+
+before_script:
+  - chmod u+x gradlew
+
+test:
+  script:
+    - ./gradlew test
+  tags:
+    - 619android

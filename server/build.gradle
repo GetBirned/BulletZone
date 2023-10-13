@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.5.5'
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.5.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+jar {
+    jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Implementation-Title': 'Bullet Zone Server',
+                'Implementation-Version': '2.0',
+                'Main-Class': 'edu.unh.cs.cs619.bulletzone.BulletZoneServer'
+    }
+    from {
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    // configuration that holds jars to include in the jar
+    extraLibs
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.guava:guava:24.1-jre'
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation 'com.h2database:h2:1.4.194'
+    extraLibs group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    extraLibs group: 'com.google.guava', name: 'guava', version: '24.1-jre'
+    extraLibs group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.1.2'
+
+    testImplementation 'junit:junit:4.+'
+    testImplementation 'org.hamcrest:hamcrest-library:1.3'
+    //testImplementation 'org.mockito:mockito-all:1.9.5'
+
+    testImplementation 'com.h2database:h2:1.4.194'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    testImplementation 'com.jayway.jsonpath:json-path:0.9.1'
+
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
+}

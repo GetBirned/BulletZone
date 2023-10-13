@@ -1,0 +1,24 @@
+-- BEGIN NOT ATOMIC
+    SET FOREIGN_KEY_CHECKS = 0;
+    DROP TABLE IF EXISTS AccountTransferHistory;
+    DROP TABLE IF EXISTS BankAccount;
+    DROP TABLE IF EXISTS Common;
+    DROP TABLE IF EXISTS Entity;
+    DROP TABLE IF EXISTS EntityType;
+    DROP TABLE IF EXISTS Entity_User_Permissions;
+    DROP TABLE IF EXISTS ImprovementType;
+    DROP TABLE IF EXISTS Item;
+    DROP TABLE IF EXISTS ItemCategory;
+    DROP TABLE IF EXISTS ItemContainer;
+    DROP TABLE IF EXISTS ItemContainer_Item;
+    DROP TABLE IF EXISTS ItemProperty;
+    DROP TABLE IF EXISTS ItemPropertyType;
+    DROP TABLE IF EXISTS ItemType;
+    DROP TABLE IF EXISTS Permission;
+    DROP TABLE IF EXISTS ResourceType;
+    DROP TABLE IF EXISTS Status;
+    DROP TABLE IF EXISTS TerrainType;
+    DROP TABLE IF EXISTS User;
+    DROP TABLE IF EXISTS UserAssociation;
+    SET FOREIGN_KEY_CHECKS = 1;
+-- END
