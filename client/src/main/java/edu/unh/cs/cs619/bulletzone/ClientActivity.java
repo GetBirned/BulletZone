@@ -1,7 +1,11 @@
 package edu.unh.cs.cs619.bulletzone;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -32,7 +36,7 @@ import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 
 @EActivity(R.layout.activity_client)
-public class ClientActivity extends Activity {
+public class ClientActivity extends Activity implements SensorEventListener {
 
     private static final String TAG = "ClientActivity";
 
@@ -63,12 +67,22 @@ public class ClientActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Establish shake/sensorManager. Will handle shakes.
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        if (accelerometer != null) {
+            sensorManager.registerListener((android.hardware.SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         busProvider.getEventBus().unregister(gridEventHandler);
+        // Unregister sensor for shake functionality.
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorManager.unregisterListener((android.hardware.SensorEventListener) this);
     }
 
     /**
@@ -155,6 +169,48 @@ public class ClientActivity extends Activity {
     @Background
     protected void onButtonFire() {
         restClient.fire(tankId);
+    }
+
+    // Define a threshold for shake detection
+    private static final float SHAKE_THRESHOLD = 800.0f;
+
+    // Variables for shake detection
+    private long lastShakeTime = 0;
+
+    // Method to handle shake detection
+    private void detectShake(float acceleration) {
+        long now = System.currentTimeMillis();
+        if (lastShakeTime == 0) {
+            lastShakeTime = now;
+            return;
+        }
+
+        if (now - lastShakeTime < 1000) {
+            return; // Ignore rapid shakes
+        }
+
+        if (acceleration > SHAKE_THRESHOLD) {
+            onButtonFire(); // Fire a bullet
+            lastShakeTime = now; // Update last shake time
+        }
+    }
+
+    // Override method to handle accelerometer changes
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float acceleration = calculateAcceleration(event.values);
+            detectShake(acceleration);
+        }
+    }
+
+    // Calculate the magnitude of the acceleration vector
+    private float calculateAcceleration(float[] values) {
+        float sum = 0;
+        for (float value : values) {
+            sum += value * value;
+        }
+        return (float) Math.sqrt(sum);
     }
 
     @Click(R.id.buttonLeave)
