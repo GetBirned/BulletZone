@@ -36,7 +36,7 @@ import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 
 @EActivity(R.layout.activity_client)
-public class ClientActivity extends Activity implements SensorEventListener {
+public class ClientActivity extends Activity {
 
     private static final String TAG = "ClientActivity";
 
@@ -68,12 +68,14 @@ public class ClientActivity extends Activity implements SensorEventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Establish shake/sensorManager. Will handle shakes.
+        /**
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         if (accelerometer != null) {
             sensorManager.registerListener((android.hardware.SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
+         */
     }
 
     @Override
@@ -81,8 +83,10 @@ public class ClientActivity extends Activity implements SensorEventListener {
         super.onDestroy();
         busProvider.getEventBus().unregister(gridEventHandler);
         // Unregister sensor for shake functionality.
+        /**
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorManager.unregisterListener((android.hardware.SensorEventListener) this);
+         */
     }
 
     /**
@@ -195,6 +199,7 @@ public class ClientActivity extends Activity implements SensorEventListener {
         }
     }
 
+    /**
     // Override method to handle accelerometer changes
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -212,6 +217,7 @@ public class ClientActivity extends Activity implements SensorEventListener {
         }
         return (float) Math.sqrt(sum);
     }
+     */
 
     @Click(R.id.buttonLeave)
     @Background
