@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.unh.cs.cs619.bulletzone.datalayer.user.GameUser;
 import edu.unh.cs.cs619.bulletzone.repository.DataRepository;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
@@ -44,14 +45,16 @@ public class AccountController {
         // Log the request
         log.debug("Register '" + name + "' with password '" + password + "'");
         // Return the response (true if account created)
-        /*
+        boolean res = false;
+        if((data.validateUser(name, password, true)) == null) {
+            res = true;
+        }
         return new ResponseEntity<BooleanWrapper>(new BooleanWrapper(
-                TODO: something that invokes users.createUser(name, password) and does
-                      other setup in the DataRepository (actually calls data.validateUser(...))
+                //TODO: something that invokes users.createUser(name, password) and does
+                     // other setup in the DataRepository (actually calls data.validateUser(...))
+                 res
                 ),
                 HttpStatus.CREATED);
-         */
-        return null;
     }
 
     /**
@@ -68,15 +71,18 @@ public class AccountController {
     {
         // Log the request
         log.debug("Login '" + name + "' with password '" + password + "'");
-        // Return the response (return user ID if valid login)
-        /*
-        return new ResponseEntity<LongWrapper>(new LongWrapper(
-                TODO: something that invokes users.validateLogin(name, password) in
-                      the DataRepository (actually calls data.validateUser(...))
-                ),
-                HttpStatus.OK);
-         */
-        return null;
+
+        GameUser user = data.validateUser(name, password, true);
+
+
+        if (user != null) {
+            // Return the response with the user's ID if login is valid
+            return new ResponseEntity<>(new LongWrapper(user.getId()), HttpStatus.OK);
+        } else {
+            // Return a response indicating that the login is not valid (e.g., -1 or another error code)
+            return null;
+        }
+
     }
 
 }

@@ -1,6 +1,7 @@
 package edu.unh.cs.cs619.bulletzone;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -39,6 +40,7 @@ public class AuthenticationController {
      */
     public long login(String username, String password) {
         LongWrapper result = restClient.login(username, password);
+
         if (result == null) {
             return -1;
         }

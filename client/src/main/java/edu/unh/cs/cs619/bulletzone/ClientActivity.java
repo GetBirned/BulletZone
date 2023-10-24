@@ -68,12 +68,12 @@ public class ClientActivity extends Activity implements SensorEventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Establish shake/sensorManager. Will handle shakes.
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-        if (accelerometer != null) {
-            sensorManager.registerListener((android.hardware.SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        }
+//        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+//        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+//
+//        if (accelerometer != null) {
+//            sensorManager.registerListener((android.hardware.SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+//        }
     }
 
     @Override
@@ -81,8 +81,8 @@ public class ClientActivity extends Activity implements SensorEventListener {
         super.onDestroy();
         busProvider.getEventBus().unregister(gridEventHandler);
         // Unregister sensor for shake functionality.
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorManager.unregisterListener((android.hardware.SensorEventListener) this);
+       // SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+       // sensorManager.unregisterListener((android.hardware.SensorEventListener) this);
     }
 
     /**

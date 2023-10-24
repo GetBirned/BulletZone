@@ -40,9 +40,9 @@ public class DataRepository {
 
     DataRepository() {
         //TODO: Replace database name, username, and password with what's appropriate for your group
-//        String url = "jdbc:mysql://stman1.cs.unh.edu:3306/cs6190";
-//        String username = "mdp";
-//        String password = "Drag56kes";
+        String url = "jdbc:mysql://stman1.cs.unh.edu:3306/cs61907";
+        String username = "rhea";
+        String password = "Dgebr3Vern6f";
 //
 //        bzdata = new BulletZoneData(url, username, password);
         bzdata = new BulletZoneData(); //just use in-memory database
@@ -59,6 +59,13 @@ public class DataRepository {
     public GameUser validateUser(String username, String password, boolean create) {
         //TODO: something that invokes users.createUser(name, password) or
         //      users.validateLogin(name, password) as appropriate, maybe does other bookkeeping
-        return null;
+
+        GameUser x = bzdata.users.createUser(username, username, password);
+
+        if(x == null) {
+            x = bzdata.users.validateLogin(username,password);
+        }
+
+        return x;
     }
 }
