@@ -12,8 +12,8 @@
 
     <GridView
         android:id="@+id/gridView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="927dp"
         android:layout_weight="1"
         android:background="#FFFFFF"
         android:numColumns="16"
@@ -25,63 +25,87 @@
         android:layout_height="match_parent"
         android:layout_weight="1">
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonDown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="71dp"
+            android:layout_height="66dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="@string/down" />
+            android:contentDescription="Button for Down"
+            android:src="@drawable/downarrow" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="67dp"
+            android:layout_height="68dp"
             android:layout_above="@+id/buttonDown"
             android:layout_alignLeft="@+id/buttonDown"
             android:layout_alignRight="@+id/buttonDown"
-            android:text="@string/up" />
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:contentDescription="Button for Up"
+            android:src="@drawable/uparrow" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="66dp"
+            android:layout_height="66dp"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/buttonDown"
-            android:text="@string/left" />
+            android:contentDescription="Button for Down"
+            android:src="@drawable/leftarrow" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="68dp"
+            android:layout_height="67dp"
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@+id/buttonDown"
-            android:text="@string/right" />
+            android:contentDescription="Button for Right"
+            android:src="@drawable/rightarrow" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonFire"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="199dp"
+            android:layout_height="59dp"
             android:layout_alignLeft="@+id/buttonUp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="-65dp"
+            android:layout_marginRight="-65dp"
             android:layout_toLeftOf="@+id/buttonRight"
-            android:text="@string/fire" />
+            android:src="@drawable/fire" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonLeave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:text="Leave" />
+            android:src="@drawable/close" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="Login" />
+            android:src="@drawable/login"
+             />
+
+        <ImageView
+            android:id="@+id/myImageView"
+            android:contentDescription="BulletZone Logo"
+            android:layout_width="282dp"
+            android:layout_height="252dp"
+            android:layout_above="@+id/buttonFire"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="88dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="100dp"
+            android:src="@drawable/bulletzonelarge" />
 
     </RelativeLayout>
 
