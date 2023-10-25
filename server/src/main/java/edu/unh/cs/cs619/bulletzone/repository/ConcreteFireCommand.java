@@ -41,6 +41,10 @@ public class ConcreteFireCommand implements Command {
     }
 
     public boolean fireConstraintCheck() {
+        /*
+        • Tank can fire once in every Y seconds. (Y = 0.5);
+        • Only Z fired bullets from a given tank can be in the game at the same time. (Z = 2);
+         */
         return true;
     }
 

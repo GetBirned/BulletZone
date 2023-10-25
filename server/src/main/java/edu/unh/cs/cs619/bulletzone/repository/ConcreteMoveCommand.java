@@ -42,6 +42,10 @@ public class ConcreteMoveCommand implements Command{
     }
 
     public boolean moveConstraintCheck() {
+        /*
+        Tank can only move forward or back relative to its current direction. No sideways movements are allowed.
+        Tank can move once in every X seconds. (X = 0.5);
+         */
         return true;
     }
 
