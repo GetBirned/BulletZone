@@ -178,9 +178,7 @@ public class ClientActivity extends Activity {
 
     @Background
     void moveAsync(long tankId, byte direction) {
-        System.out.println("in moveAsync");
         restClient.move(tankId, direction);
-        System.out.println("moveAsync after rest");
     }
 
     @Background

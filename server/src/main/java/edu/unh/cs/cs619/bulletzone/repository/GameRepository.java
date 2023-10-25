@@ -19,7 +19,7 @@ public interface GameRepository {
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException;
 
     boolean fire(long tankId, int strength)
-            throws TankDoesNotExistException, LimitExceededException;
+            throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException;
 
     public void leave(long tankId)
             throws TankDoesNotExistException;

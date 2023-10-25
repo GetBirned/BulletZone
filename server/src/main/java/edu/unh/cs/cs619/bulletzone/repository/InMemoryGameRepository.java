@@ -3,11 +3,8 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
-import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
@@ -15,7 +12,6 @@ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
-import edu.unh.cs.cs619.bulletzone.model.Wall;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,6 +37,7 @@ public class InMemoryGameRepository implements GameRepository {
     private final Object monitor = new Object();
     private Game game = null;
     private Action action;
+    private ActionCommandInvoker aci;
 
     @Override
     public Tank join(String ip) {
@@ -83,7 +80,11 @@ public class InMemoryGameRepository implements GameRepository {
 
             Join will be called first
              */
+
+            // SETH
+            // creating a new action and invoker class
             action = new Action(monitor, game); // Watch placement
+            aci = new ActionCommandInvoker();
 
             return tank;
         }
@@ -103,21 +104,27 @@ public class InMemoryGameRepository implements GameRepository {
     public boolean turn(long tankId, Direction direction)
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
         // calling our new Action class
-        boolean res = action.turn(tankId, direction);
+        //boolean res = action.turn(tankId, direction);
+        Command turn_me = new ConcreteTurnCommand(action, tankId, direction);
+        Boolean res = aci.executeCommand(turn_me);
         return res;
     }
 
     @Override
     public boolean move(long tankId, Direction direction)
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
-        boolean res = action.move(tankId, direction);
+        //boolean res = action.move(tankId, direction);
+        Command move_me = new ConcreteMoveCommand(action, tankId, direction);
+        Boolean res = aci.executeCommand(move_me);
         return res;
     }
 
     @Override
     public boolean fire(long tankId, int bulletType)
-            throws TankDoesNotExistException, LimitExceededException {
-        boolean res = action.fire(tankId, bulletType);
+            throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException {
+        //boolean res = action.fire(tankId, bulletType);
+        Command fire_me = new ConcreteFireCommand(action, tankId, bulletType);
+        Boolean res = aci.executeCommand(fire_me);
         return res;
     }
 
