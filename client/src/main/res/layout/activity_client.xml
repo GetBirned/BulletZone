@@ -13,7 +13,7 @@
     <GridView
         android:id="@+id/gridView"
         android:layout_width="wrap_content"
-        android:layout_height="927dp"
+        android:layout_height="730dp"
         android:layout_weight="1"
         android:background="#FFFFFF"
         android:numColumns="16"
@@ -75,26 +75,45 @@
             android:layout_toLeftOf="@+id/buttonRight"
             android:src="@drawable/fire" />
 
+        <ImageView
+            android:id="@+id/userImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/buttonFire"
+            android:layout_marginBottom="-159dp"
+            android:contentDescription="@string/userimage"
+            android:src="@drawable/user" />
+
+
+        <ImageView
+            android:id="@+id/balanceImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/buttonFire"
+            android:layout_marginBottom="-80dp"
+            android:contentDescription="@string/balanceimage"
+            android:src="@drawable/balance" />
+
         <ImageButton
             android:id="@+id/buttonLeave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:src="@drawable/close" />
 
         <ImageButton
             android:id="@+id/buttonLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/buttonFire"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:src="@drawable/login"
-             />
+            android:layout_marginBottom="748dp"
+            android:src="@drawable/login" />
 
         <ImageView
-            android:id="@+id/myImageView"
-            android:contentDescription="BulletZone Logo"
+            android:id="@+id/bulletZoneLarge"
             android:layout_width="282dp"
             android:layout_height="252dp"
             android:layout_above="@+id/buttonFire"
@@ -105,8 +124,12 @@
             android:layout_marginTop="88dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="100dp"
+            android:contentDescription="BulletZone Logo"
             android:src="@drawable/bulletzonelarge" />
 
+
     </RelativeLayout>
+
+
 
 </LinearLayout>

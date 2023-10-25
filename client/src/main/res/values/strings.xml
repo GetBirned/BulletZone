@@ -11,5 +11,7 @@
     <string name="join">JOIN</string>
     <string name="leave">LEAVE</string>
     <string name="title_activity_my">MyActivity</string>
+    <string name="balanceimage">BalanceImage</string>
+    <string name="userimage">UserImage</string>
 
 </resources>

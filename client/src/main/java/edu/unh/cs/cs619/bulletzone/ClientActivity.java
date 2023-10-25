@@ -1,12 +1,15 @@
 package edu.unh.cs.cs619.bulletzone;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.squareup.otto.Subscribe;
 
@@ -17,6 +20,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.NonConfigurationInstance;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
@@ -178,11 +182,15 @@ public class ClientActivity extends Activity {
     @Background
     void moveAsync(long tankId, byte direction) {
         restClient.move(tankId, direction);
+        //GridWrapper updatedGrid = restClient.grid();
+        //updateGrid(updatedGrid);
     }
 
     @Background
     void turnAsync(long tankId, byte direction) {
         restClient.turn(tankId, direction);
+        //GridWrapper updatedGrid = restClient.grid();
+        //updateGrid(updatedGrid);
     }
 
     @Click(R.id.buttonFire)
@@ -194,9 +202,29 @@ public class ClientActivity extends Activity {
     @Click(R.id.buttonLeave)
     @Background
     void leaveGame() {
+        showConfirmationDialog();
+    }
+
+    public void performLeave() {
         System.out.println("leaveGame() called, tank ID: "+tankId);
         BackgroundExecutor.cancelAll("grid_poller_task", true);
         restClient.leave(tankId);
+    }
+
+    @UiThread
+    public void showConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmation")
+                .setMessage("Are you sure you want to quit BulletZone?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User clicked Yes, proceed with leave action
+                        performLeave();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Click(R.id.buttonLogin)
