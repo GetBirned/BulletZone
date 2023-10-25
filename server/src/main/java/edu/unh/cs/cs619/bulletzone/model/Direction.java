@@ -1,5 +1,7 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
+import java.awt.dnd.DragGestureEvent;
+
 public enum Direction {
     Up, Down, Left, Right;
 
@@ -42,6 +44,21 @@ public enum Direction {
                 return 2;
             case Up:
                 return 0;
+            default:
+                return -1;
+        }
+    }
+
+    public static byte opposite(Direction direction) {
+        switch (direction) {
+            case Down:
+                return 0;
+            case Left:
+                return 2;
+            case Right:
+                return 6;
+            case Up:
+                return 4;
             default:
                 return -1;
         }

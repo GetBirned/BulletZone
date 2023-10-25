@@ -24,13 +24,13 @@ public class ConcreteTurnCommand implements Command {
     }
 
     @Override
-    public void execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+    public boolean execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         // TODO: implement fire, turn (only move rn)
         this.oldDir = null; // NEED TO USE A GET METHOD
         this.oldTankID = -1; // NEED TO USE A GET METHOD
 
         // NEED TO REVIEW WHAT OLD/NEW ID MEANS
-        boolean res = action.turn(newTankID, newDir);
+        return action.turn(newTankID, newDir);
     }
 
     public void undo() {

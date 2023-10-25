@@ -106,8 +106,7 @@ public class InMemoryGameRepository implements GameRepository {
         // calling our new Action class
         //boolean res = action.turn(tankId, direction);
         Command turn_me = new ConcreteTurnCommand(action, tankId, direction);
-        Boolean res = aci.executeCommand(turn_me);
-        return res;
+        return aci.executeCommand(turn_me);
     }
 
     @Override
@@ -115,8 +114,7 @@ public class InMemoryGameRepository implements GameRepository {
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
         //boolean res = action.move(tankId, direction);
         Command move_me = new ConcreteMoveCommand(action, tankId, direction);
-        Boolean res = aci.executeCommand(move_me);
-        return res;
+        return aci.executeCommand(move_me);
     }
 
     @Override
@@ -124,8 +122,7 @@ public class InMemoryGameRepository implements GameRepository {
             throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException {
         //boolean res = action.fire(tankId, bulletType);
         Command fire_me = new ConcreteFireCommand(action, tankId, bulletType);
-        Boolean res = aci.executeCommand(fire_me);
-        return res;
+        return aci.executeCommand(fire_me);
     }
 
     @Override
