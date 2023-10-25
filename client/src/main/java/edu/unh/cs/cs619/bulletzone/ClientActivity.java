@@ -116,6 +116,7 @@ public class ClientActivity extends Activity {
             tankId = restClient.join().getResult();
             gridPollTask.doPoll();
         } catch (Exception e) {
+            System.out.println("ERROR: joining game");
         }
     }
 
