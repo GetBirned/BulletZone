@@ -24,13 +24,13 @@ public class ConcreteFireCommand implements Command {
     }
 
     @Override
-    public boolean execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+    public void execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         // TODO: implement fire, turn (only move rn)
         this.bt = -1; // NEED TO USE A GET METHOD
         this.oldTankID = -1; // NEED TO USE A GET METHOD
 
         // NEED TO REVIEW WHAT OLD/NEW ID MEANS
-        return action.fire(newTankID, bt);
+        boolean res = action.fire(newTankID, bt);
     }
 
     @Override

@@ -30,8 +30,23 @@ public class ConcreteMoveCommand implements Command{
         this.oldDir = null; // NEED TO USE A GET METHOD
         this.oldTankID = -1; // NEED TO USE A GET METHOD
 
-        // NEED TO REVIEW WHAT OLD/NEW ID MEANS
-        return action.move(newTankID, newDir);
+        boolean res_t = moveConstraintCheck();
+        if (res_t) {
+            // NEED TO REVIEW WHAT OLD/NEW ID MEANS
+            boolean res = action.move(newTankID, newDir);
+            return true;
+        } else {
+            System.out.println("Violation of move constraint check");
+            return false;
+        }
+    }
+
+    public boolean moveConstraintCheck() {
+        /*
+        Tank can only move forward or back relative to its current direction. No sideways movements are allowed.
+        Tank can move once in every X seconds. (X = 0.5);
+         */
+        return true;
     }
 
     public void undo() {

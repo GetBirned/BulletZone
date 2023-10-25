@@ -30,7 +30,21 @@ public class ConcreteTurnCommand implements Command {
         this.oldTankID = -1; // NEED TO USE A GET METHOD
 
         // NEED TO REVIEW WHAT OLD/NEW ID MEANS
-        return action.turn(newTankID, newDir);
+        boolean res_t = turnConstraintCheck();
+        if (res_t) {
+            action.turn(newTankID, newDir);
+            return true;
+        } else {
+            System.out.println("Not a valid turn");
+            return false;
+        }
+    }
+
+    public Boolean turnConstraintCheck() {
+        /*
+        Tank can make only one turn per step. (E.g., Correct turn: NORTH -> WEST Incorrect turn: NORTH -> SOUTH);
+         */
+        return true;
     }
 
     public void undo() {
