@@ -92,20 +92,28 @@ class GamesController {
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<BooleanWrapper> fire(@PathVariable long tankId)
             throws TankDoesNotExistException, LimitExceededException {
-        return new ResponseEntity<BooleanWrapper>(
+        try {
+            return new ResponseEntity<BooleanWrapper>(
                 new BooleanWrapper(gameRepository.fire(tankId, 1)),
                 HttpStatus.OK
-        );
+            );
+        } catch (IllegalTransitionException e) {
+            return new ResponseEntity<BooleanWrapper>(new BooleanWrapper(false), HttpStatus.OK);
+        }
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "{tankId}/fire/{bulletType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<BooleanWrapper> fire(@PathVariable long tankId, @PathVariable int bulletType)
             throws TankDoesNotExistException, LimitExceededException {
-        return new ResponseEntity<BooleanWrapper>(
-                new BooleanWrapper(gameRepository.fire(tankId, bulletType)),
-                HttpStatus.OK
-        );
+        try {
+            return new ResponseEntity<BooleanWrapper>(
+                    new BooleanWrapper(gameRepository.fire(tankId, bulletType)),
+                    HttpStatus.OK
+            );
+        } catch (IllegalTransitionException e) {
+            return new ResponseEntity<BooleanWrapper>(new BooleanWrapper(false), HttpStatus.OK);
+        }
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "{tankId}/leave", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -85,6 +85,13 @@ public class Action {
                 throw new TankDoesNotExistException(tankId);
             }
 
+            //if tank direction is not equal to forwards or backwards
+            //move constraint
+            if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
+                return false;
+            }
+
+
             long millis = System.currentTimeMillis();
             if(millis < tank.getLastMoveTime())
                 return false;

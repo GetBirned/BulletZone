@@ -10,10 +10,10 @@ public class ActionCommandInvoker {
     private Stack<Command> history = new Stack<>();
 
     public boolean executeCommand(Command command) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
-        command.execute();
+        Boolean res = command.execute();
         history.push(command);
         System.out.println("Added " + command.getCommandType() + " command!");
-        return true;
+        return res;
     }
 
     // Add methods to undo and redo commands if needed

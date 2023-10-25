@@ -24,13 +24,27 @@ public class ConcreteTurnCommand implements Command {
     }
 
     @Override
-    public void execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+    public boolean execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         // TODO: implement fire, turn (only move rn)
         this.oldDir = null; // NEED TO USE A GET METHOD
         this.oldTankID = -1; // NEED TO USE A GET METHOD
 
         // NEED TO REVIEW WHAT OLD/NEW ID MEANS
-        boolean res = action.turn(newTankID, newDir);
+        boolean res_t = turnConstraintCheck();
+        if (res_t) {
+            action.turn(newTankID, newDir);
+            return true;
+        } else {
+            System.out.println("Not a valid turn");
+            return false;
+        }
+    }
+
+    public Boolean turnConstraintCheck() {
+        /*
+        Tank can make only one turn per step. (E.g., Correct turn: NORTH -> WEST Incorrect turn: NORTH -> SOUTH);
+         */
+        return true;
     }
 
     public void undo() {
