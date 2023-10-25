@@ -24,21 +24,35 @@ public class ConcreteFireCommand implements Command {
     }
 
     @Override
-    public void execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
-        // TODO: implement fire, turn (only move rn)
+    public boolean execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         this.bt = -1; // NEED TO USE A GET METHOD
         this.oldTankID = -1; // NEED TO USE A GET METHOD
 
-        // NEED TO REVIEW WHAT OLD/NEW ID MEANS
-        boolean res = action.fire(newTankID, bt);
+        boolean res_t = fireConstraintCheck();
+        if (res_t) {
+            // NEED TO REVIEW WHAT OLD/NEW ID MEANS
+            boolean res = action.fire(newTankID, bt);
+            return true;
+        } else {
+            System.out.println("Violation of fire check");
+            return false;
+        }
+    }
+
+    public boolean fireConstraintCheck() {
+        /*
+        • Tank can fire once in every Y seconds. (Y = 0.5);
+        • Only Z fired bullets from a given tank can be in the game at the same time. (Z = 2);
+         */
+        return true;
+    }
+
+    public void undo() {
+        // NEED TO IMPLEMENT
     }
 
     @Override
     public String getCommandType() {
         return "Fire!";
-    }
-
-    public void undo() {
-        // NEED TO IMPLEMENT
     }
 }
