@@ -47,6 +47,9 @@ public class GridAdapter extends BaseAdapter {
         return Integer.parseInt(tankID);
     }
 
+    int lastFriendlyDirection; // keeps record of last friendly direction
+    int lastEnemyDirection; // keeps record of last enemy direction
+
     public void setFriendlyTank(ImageView imageView, int direction) {
         lastFriendlyDirection = direction;
         if (direction == 0) {
@@ -71,7 +74,6 @@ public class GridAdapter extends BaseAdapter {
         } else if (direction == 6) {
             imageView.setImageResource(R.drawable.enemytankleft);
         }
-
     }
 
     public void setBullet(ImageView imageView, int direction) {
@@ -85,8 +87,6 @@ public class GridAdapter extends BaseAdapter {
             imageView.setImageResource(R.drawable.bulletleft);
         }
     }
-    int lastFriendlyDirection; // keeps record of last friendly direction
-    int lastEnemyDirection; // keeps record of last enemy direction
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -107,13 +107,13 @@ public class GridAdapter extends BaseAdapter {
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
-                    if (friendlyTank(val) == 1) {
-                        setBullet(imageView, lastFriendlyDirection); // Set proper bullet image
+                    if (friendlyTank(val) == 0 || friendlyTank(val) == 1) {
+                        setBullet(imageView, lastFriendlyDirection); // Set proper friendly tank image
                     } else {
-                        setBullet(imageView, lastEnemyDirection);
+                        setBullet(imageView, lastEnemyDirection); // Set proper enemy tank image
                     }
                 } else if (val >= 10000000 && val <= 20000000) {
-                    if (friendlyTank(val) == 1) {
+                    if (friendlyTank(val) == 0 || friendlyTank(val) == 1) {
                         setFriendlyTank(imageView, direction); // Set proper friendly tank image
                     } else {
                         setEnemyTank(imageView, direction); // Set proper enemy tank image
