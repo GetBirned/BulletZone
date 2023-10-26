@@ -3,6 +3,7 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
@@ -12,6 +13,7 @@ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import jdk.internal.net.http.common.Pair;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -144,7 +146,12 @@ public class InMemoryGameRepository implements GameRepository {
 
     public void create() {
         Board brd = new Board(this.game, this.monitor);
+        brd.create();
         this.game = brd.getGame();
+    }
+
+    public Stack<Command> getCommandHistory() {
+        return aci.getHistory();
     }
 
 }

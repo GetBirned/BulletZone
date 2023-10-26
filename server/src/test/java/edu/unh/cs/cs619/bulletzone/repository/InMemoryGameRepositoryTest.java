@@ -11,11 +11,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Stack;
 import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import jdk.internal.net.http.common.Pair;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class InMemoryGameRepositoryTest {
@@ -27,7 +29,6 @@ public class InMemoryGameRepositoryTest {
     Tank tank;
     @Before
     public void setUp() throws Exception {
-        repo = new InMemoryGameRepository();
         tank = repo.join("");
     }
 
@@ -117,6 +118,14 @@ public class InMemoryGameRepositoryTest {
     }
 
     @Test
+    public void historyTest() throws Exception {
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Up));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
+        Stack<Command> s = repo.getCommandHistory();
+        Assert.assertTrue(s.pop() instanceof ConcreteMoveCommand);
+    }
+    @Test
     public void testDisconnect() throws Exception {
         long id = tank.getId();
         Assert.assertTrue(repo.turn(id, Direction.Left));
@@ -128,4 +137,6 @@ public class InMemoryGameRepositoryTest {
         thrown.expect(TankDoesNotExistException.class);
         repo.fire(id, 1);
     }
+
+
 }
