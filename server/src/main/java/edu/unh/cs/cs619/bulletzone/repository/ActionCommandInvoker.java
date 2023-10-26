@@ -12,7 +12,7 @@ public class ActionCommandInvoker {
     public boolean executeCommand(Command command) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         Boolean res = command.execute();
         history.push(command);
-        System.out.println("Added " + command.getCommandType() + " command!");
+       // System.out.println("Added " + command.getCommandType() + " command!");
         return res;
     }
 
