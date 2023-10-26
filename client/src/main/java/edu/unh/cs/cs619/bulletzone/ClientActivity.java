@@ -65,10 +65,12 @@ public class ClientActivity extends Activity {
      */
     private long tankId = -1;
 
+    String username = "Get-Birned";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Establish shake/sensorManager. Will handle shakes.
+        joinAsync();
     }
 
     @Override
@@ -99,6 +101,7 @@ public class ClientActivity extends Activity {
 
     @AfterViews
     protected void afterViewInjection() {
+
         joinAsync();
         SystemClock.sleep(500);
         gridView.setAdapter(mGridAdapter);
@@ -183,15 +186,15 @@ public class ClientActivity extends Activity {
     @Background
     void moveAsync(long tankId, byte direction) {
         restClient.move(tankId, direction);
-        //GridWrapper updatedGrid = restClient.grid();
-        //updateGrid(updatedGrid);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Background
     void turnAsync(long tankId, byte direction) {
         restClient.turn(tankId, direction);
-        //GridWrapper updatedGrid = restClient.grid();
-        //updateGrid(updatedGrid);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Click(R.id.buttonFire)
