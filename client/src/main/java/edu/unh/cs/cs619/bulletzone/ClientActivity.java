@@ -183,15 +183,15 @@ public class ClientActivity extends Activity {
     @Background
     void moveAsync(long tankId, byte direction) {
         restClient.move(tankId, direction);
-        //GridWrapper updatedGrid = restClient.grid();
-        //updateGrid(updatedGrid);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Background
     void turnAsync(long tankId, byte direction) {
         restClient.turn(tankId, direction);
-        //GridWrapper updatedGrid = restClient.grid();
-        //updateGrid(updatedGrid);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Click(R.id.buttonFire)
