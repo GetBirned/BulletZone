@@ -29,7 +29,7 @@ dependencies {
 }
 
 dependencies {
-    testImplementation project(path: ':server')
+    testImplementation project(path: ':client')
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.6.1'
