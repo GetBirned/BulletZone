@@ -143,7 +143,8 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     public void create() {
-        Board brd = new Board(this.game, this.monitor);
+        Board brd = new Board(this.game, this.monitor)
+                .setFieldDim(FIELD_DIM);
         this.game = brd.getGame();
     }
 
