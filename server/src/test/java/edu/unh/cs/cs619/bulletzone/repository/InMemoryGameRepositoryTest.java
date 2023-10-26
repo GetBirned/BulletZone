@@ -1,5 +1,7 @@
 package edu.unh.cs.cs619.bulletzone.repository;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -8,6 +10,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
@@ -20,50 +24,119 @@ public class InMemoryGameRepositoryTest {
     public ExpectedException thrown = ExpectedException.none();
     @InjectMocks
     InMemoryGameRepository repo;
-
+    Tank tank;
     @Before
     public void setUp() throws Exception {
+        repo.join("hl");
+        tank = repo.join("");
     }
 
     @Test
     public void testJoin() throws Exception {
-        Tank tank = repo.join("");
         Assert.assertNotNull(tank);
         Assert.assertTrue(tank.getId() >= 0);
         Assert.assertNotNull(tank.getDirection());
-        Assert.assertTrue(tank.getDirection() == Direction.Up);
+        Assert.assertSame(tank.getDirection(), Direction.Up);
         Assert.assertNotNull(tank.getParent());
     }
-    /*
+
     @Test
     public void testTurn() throws Exception {
         Tank tank = repo.join("");
         Assert.assertNotNull(tank);
         Assert.assertTrue(tank.getId() >= 0);
         Assert.assertNotNull(tank.getDirection());
-        Assert.assertTrue(tank.getDirection() == Direction.Up);
+        Assert.assertSame(tank.getDirection(), Direction.Up);
         Assert.assertNotNull(tank.getParent());
 
         Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
-        Assert.assertTrue(tank.getDirection() == Direction.Right);
+        Assert.assertSame(tank.getDirection(), Direction.Right);
 
         thrown.expect(TankDoesNotExistException.class);
         thrown.expectMessage("Tank '1000' does not exist");
         repo.turn(1000, Direction.Right);
-    } */
-
-    @Test
-    public void testMove() throws Exception {
-
     }
 
     @Test
-    public void testFire() throws Exception {
+    public void testMoveRL() throws Exception {
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
+        Assert.assertFalse(repo.move(tank.getId(), Direction.Up));
+        Assert.assertFalse(repo.move(tank.getId(), Direction.Down));
+        if (!tank.getParent().getNeighbor(Direction.Right).isPresent()) {
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
+        } else {
+            Assert.assertFalse(repo.move(tank.getId(), Direction.Right));
+        }
 
+        if (!tank.getParent().getNeighbor(Direction.Left).isPresent()) {
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
+        } else {
+            Assert.assertFalse(repo.move(tank.getId(), Direction.Left));
+        }
+    }
+
+    @Test
+    public void testMoveUD() throws Exception {
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Down));
+        Assert.assertFalse(repo.move(tank.getId(), Direction.Right));
+        Assert.assertFalse(repo.move(tank.getId(), Direction.Left));
+        if (!tank.getParent().getNeighbor(Direction.Up).isPresent()) {
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
+        } else {
+            Assert.assertFalse(repo.move(tank.getId(), Direction.Up));
+        }
+
+        if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
+        } else {
+            Assert.assertFalse(repo.move(tank.getId(), Direction.Down));
+        }
+    }
+
+    @Test
+    public void testTimedMove() throws Exception {
+        if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
+        }
+        while(System.currentTimeMillis() < tank.getLastMoveTime()) {
+            Assert.assertFalse(repo.move(tank.getId(), Direction.Down));
+        }
+        if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
+        }
+
+    }
+    @Test
+    public void testTimedTurn() throws Exception {
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Left));
+        byte i = 0;
+        while(System.currentTimeMillis() < tank.getLastMoveTime()) {
+            Assert.assertFalse(repo.turn(tank.getId(), Direction.fromByte(i)));
+            i+=2;
+            if (i > 6) {
+                i = 0;
+            }
+        }
+        if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
+            Assert.assertTrue(repo.turn(tank.getId(), Direction.Down));
+        }
+    }
+    @Test
+    public void testTimedFire() throws Exception {
+        Assert.assertTrue(repo.fire(tank.getId(), 1));
+
+        while(System.currentTimeMillis() < tank.getLastFireTime()) {
+            Assert.assertFalse(repo.fire(tank.getId(), 1));
+        }
+        Assert.assertTrue(repo.fire(tank.getId(), 1));
     }
 
     @Test
     public void testLeave() throws Exception {
-
+        repo.leave(tank.getId());
     }
 }

@@ -1,12 +1,21 @@
 package edu.unh.cs.cs619.bulletzone;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+
+import com.squareup.otto.Subscribe;
+
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.squareup.otto.Subscribe;
 
@@ -17,6 +26,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.NonConfigurationInstance;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
@@ -28,6 +38,8 @@ import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
+import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
+
 
 @EActivity(R.layout.activity_client)
 public class ClientActivity extends Activity {
@@ -60,19 +72,37 @@ public class ClientActivity extends Activity {
      * Remote tank identifier
      */
     private long tankId = -1;
+    private SensorManager sensorManager;
+    private Sensor mAccelerometer;
+
+     ShakeDetector mShakeDetector;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Establish shake/sensorManager. Will handle shakes.
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake() {
+                Log.d(TAG, "Shake initiated, firing bullet");
+                onButtonFire();
+            }
+        });
+        sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         busProvider.getEventBus().unregister(gridEventHandler);
-        // Unregister sensor for shake functionality.
-    }
+        sensorManager.unregisterListener(mShakeDetector);    }
 
     /**
      * Otto has a limitation (as per design) that it will only find
@@ -112,6 +142,7 @@ public class ClientActivity extends Activity {
             tankId = restClient.join().getResult();
             gridPollTask.doPoll();
         } catch (Exception e) {
+            System.out.println("ERROR: joining game");
         }
     }
 
@@ -178,11 +209,15 @@ public class ClientActivity extends Activity {
     @Background
     void moveAsync(long tankId, byte direction) {
         restClient.move(tankId, direction);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Background
     void turnAsync(long tankId, byte direction) {
         restClient.turn(tankId, direction);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Click(R.id.buttonFire)
@@ -194,9 +229,29 @@ public class ClientActivity extends Activity {
     @Click(R.id.buttonLeave)
     @Background
     void leaveGame() {
+        showConfirmationDialog();
+    }
+
+    public void performLeave() {
         System.out.println("leaveGame() called, tank ID: "+tankId);
         BackgroundExecutor.cancelAll("grid_poller_task", true);
         restClient.leave(tankId);
+    }
+
+    @UiThread
+    public void showConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmation")
+                .setMessage("Are you sure you want to quit BulletZone?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User clicked Yes, proceed with leave action
+                        performLeave();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Click(R.id.buttonLogin)
