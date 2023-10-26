@@ -8,6 +8,12 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+
+import com.squareup.otto.Subscribe;
+
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -32,6 +38,8 @@ import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
+import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
+
 
 @EActivity(R.layout.activity_client)
 public class ClientActivity extends Activity {
@@ -64,19 +72,37 @@ public class ClientActivity extends Activity {
      * Remote tank identifier
      */
     private long tankId = -1;
+    private SensorManager sensorManager;
+    private Sensor mAccelerometer;
+
+     ShakeDetector mShakeDetector;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Establish shake/sensorManager. Will handle shakes.
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake() {
+                Log.d(TAG, "Shake initiated, firing bullet");
+                onButtonFire();
+            }
+        });
+        sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         busProvider.getEventBus().unregister(gridEventHandler);
-        // Unregister sensor for shake functionality.
-    }
+        sensorManager.unregisterListener(mShakeDetector);    }
 
     /**
      * Otto has a limitation (as per design) that it will only find
@@ -183,15 +209,15 @@ public class ClientActivity extends Activity {
     @Background
     void moveAsync(long tankId, byte direction) {
         restClient.move(tankId, direction);
-        //GridWrapper updatedGrid = restClient.grid();
-        //updateGrid(updatedGrid);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Background
     void turnAsync(long tankId, byte direction) {
         restClient.turn(tankId, direction);
-        //GridWrapper updatedGrid = restClient.grid();
-        //updateGrid(updatedGrid);
+        GridWrapper updatedGrid = restClient.grid();
+        updateGrid(updatedGrid);
     }
 
     @Click(R.id.buttonFire)

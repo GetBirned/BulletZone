@@ -25,7 +25,8 @@ public class GridAdapter extends BaseAdapter {
             this.notifyDataSetChanged();
         }
     }
-    private static final String TAG = "GridAdapter:";
+    private static final String TAGFRIEND = "GridAdapter (Friendly):";
+    private static final String TAGENEMY = "GridAdapter (Enemy):";
     @Override
     public int getCount() {
         return 16 * 16;
@@ -100,6 +101,7 @@ public class GridAdapter extends BaseAdapter {
         int col = position % 16;
 
         int val = mEntities[row][col];
+        int friendly;
 
         synchronized (monitor) {
             if (val > 0) {
@@ -107,13 +109,13 @@ public class GridAdapter extends BaseAdapter {
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
-                    if (friendlyTank(val) == 0 || friendlyTank(val) == 1) {
+                    if (friendlyTank(val) == 0) {
                         setBullet(imageView, lastFriendlyDirection); // Set proper friendly tank image
                     } else {
                         setBullet(imageView, lastEnemyDirection); // Set proper enemy tank image
                     }
                 } else if (val >= 10000000 && val <= 20000000) {
-                    if (friendlyTank(val) == 0 || friendlyTank(val) == 1) {
+                    if (friendlyTank(val) == 0) {
                         setFriendlyTank(imageView, direction); // Set proper friendly tank image
                     } else {
                         setEnemyTank(imageView, direction); // Set proper enemy tank image
