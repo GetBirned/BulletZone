@@ -30,15 +30,12 @@ public class ConcreteMoveCommand implements Command{
         this.oldDir = null; // NEED TO USE A GET METHOD
         this.oldTankID = -1; // NEED TO USE A GET METHOD
 
-        boolean res_t = moveConstraintCheck();
-        if (res_t) {
+        boolean res_t = action.move(newTankID, newDir);
+        if (!res_t) {
             // NEED TO REVIEW WHAT OLD/NEW ID MEANS
-            boolean res = action.move(newTankID, newDir);
-            return true;
-        } else {
-            System.out.println("Violation of move constraint check");
-            return false;
+          //  System.out.println("Violation of move constraint check");
         }
+        return res_t;
     }
 
     public boolean moveConstraintCheck() {

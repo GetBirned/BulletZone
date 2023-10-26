@@ -23,6 +23,7 @@ public class Tank extends FieldEntity {
 
     private Direction direction;
 
+
     public Tank(long id, Direction direction, String ip) {
         this.id = id;
         this.direction = direction;
@@ -52,6 +53,7 @@ public class Tank extends FieldEntity {
             //eventBus.post(new Object());
         }
     }
+
 
     public long getLastMoveTime() {
         return lastMoveTime;

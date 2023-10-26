@@ -43,7 +43,7 @@ public class Action {
         synchronized (this.monitor) {
             checkNotNull(direction);
 
-            System.out.println("Turning " + tankId + " in " + direction.toString());
+            //System.out.println("Turning " + tankId + " " + direction.toString());
 
             // Find user
             Tank tank = game.getTanks().get(tankId);
@@ -53,6 +53,7 @@ public class Action {
             }
 
             long millis = System.currentTimeMillis();
+
             if(millis < tank.getLastMoveTime())
                 return false;
 
@@ -73,10 +74,10 @@ public class Action {
 
     public boolean move(long tankId, Direction direction)
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
-        System.out.println("move before sync");
+       // System.out.println("move before sync");
         synchronized (this.monitor) {
             // Find tank
-            System.out.println("Moving " + tankId + " in " + direction.toString());
+          //  System.out.println("Moving " + tankId + " " + direction.toString());
 
             Tank tank = game.getTanks().get(tankId);
             if (tank == null) {
@@ -93,7 +94,7 @@ public class Action {
 
 
             long millis = System.currentTimeMillis();
-            if(millis < tank.getLastMoveTime())
+            if(millis < tank.getLastMoveTime() + 500)
                 return false;
 
             tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());
