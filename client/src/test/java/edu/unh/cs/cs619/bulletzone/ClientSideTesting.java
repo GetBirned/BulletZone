@@ -13,6 +13,10 @@ import static org.mockito.Mockito.*;
 
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
+
 
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
@@ -24,8 +28,6 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 public class ClientSideTesting {
     @InjectMocks
     BulletZoneRestClient restClient = Mockito.mock(BulletZoneRestClient.class);
-    @Mock
-    private RestClientErrorHandling errorHandling;
 
     @Mock
     private LongWrapper longWrapper;
@@ -50,118 +52,125 @@ public class ClientSideTesting {
     @Test
     public void testJoin() {
         when(restClient.join()).thenReturn(longWrapper);
-        verify(restClient).join();
+        assertNotNull(restClient.join());
     }
 
     @Test
-    public void validTurn_0()  {
+    public void validTurn_0() throws AssertionError {
         byte dir = 2;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId,dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
     }
     @Test
     public void validTurn_1() {
         byte dir = 4;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId,dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
 
     }
     @Test
     public void validTurn_3() {
         byte dir = 6;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId,dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
     }
     @Test
     public void validTurn_4() {
         byte dir = 0;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId,dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
     }
     @Test
     public void validTurnSequence_0() {
         byte dir = 0;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId, dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
         dir = 6;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId, dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
     }
     @Test
     public void validTurnSequence_1() {
         byte dir = 4;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId, dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
         dir = 2;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId, dir));
+        assertTrue(restClient.turn(tankId,dir).isResult());
     }
     @Test
     public void invalidTurnSequence_0() {
         byte dir = 0;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId, dir));
         dir = 4;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        BooleanWrapper ret = verify(restClient).turn(tankId,dir);
-        assert (!ret.isResult());
+        assertNotNull(restClient.turn(tankId, dir));
+        assertFalse(restClient.turn(tankId,dir).isResult());
     }
     @Test
     public void invalidTurnSequence_1() {
         byte dir = 6;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        verify(restClient).turn(tankId,dir);
+        assertNotNull(restClient.turn(tankId, dir));
         dir = 2;
         when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-        BooleanWrapper ret = verify(restClient).turn(tankId,dir);
-        assert (!ret.isResult());
+        assertNotNull(restClient.turn(tankId, dir));
+        assertFalse(restClient.turn(tankId,dir).isResult());
     }
 
     @Test
     public void checkFireTime_0() throws InterruptedException {
         when(restClient.fire(tankId)).thenReturn(booleanWrapper);
-        verify(restClient).fire(tankId);
+        assertTrue(restClient.fire(tankId).isResult());
         Thread.sleep(1000);
         when(restClient.fire(tankId)).thenReturn(booleanWrapper);
-        BooleanWrapper ret = verify(restClient).fire(tankId);
-        assert (!ret.isResult());
+        assertFalse(restClient.fire(tankId).isResult());
     }
     @Test
     public void checkFireTime_1() throws InterruptedException {
         when(restClient.fire(tankId)).thenReturn(booleanWrapper);
-        verify(restClient).fire(tankId);
+        assertTrue(restClient.fire(tankId).isResult());
         Thread.sleep(1700);
         when(restClient.fire(tankId)).thenReturn(booleanWrapper);
-        verify(restClient).fire(tankId);
+        assertTrue(restClient.fire(tankId).isResult());
     }
     @Test
     public void testGrid() {
         when(restClient.grid()).thenReturn(gridWrapper);
-        verify(restClient).grid();
+        assertNotNull(verify(restClient).grid());
     }
 
     @Test
     public void testRegister() {
-        when(restClient.register(anyString(), anyString())).thenReturn(booleanWrapper);
-        verify(restClient).register(anyString(), anyString());
+        when(restClient.register("empascetta", "password")).thenReturn(booleanWrapper);
+        assertTrue(restClient.register(anyString(), anyString()).isResult());
     }
 
     @Test
     public void testLogin() {
         when(restClient.login(anyString(), anyString())).thenReturn(longWrapper);
-        verify(restClient).login(anyString(), anyString());
+        assertNotNull(restClient.login(anyString(), anyString()));
     }
 
     @Test
     public void testMove() {
         when(restClient.move(anyLong(), anyByte())).thenReturn(booleanWrapper);
-        verify(restClient).move(anyLong(), anyByte());
+        assertTrue(restClient.move(anyLong(),anyByte()).isResult());
     }
 
     @Test
     public void testLeave() {
         when(restClient.leave(anyLong())).thenReturn(booleanWrapper);
-        verify(restClient).leave(anyLong());
+        assertTrue(restClient.leave(anyLong()).isResult());
     }
 }
 
