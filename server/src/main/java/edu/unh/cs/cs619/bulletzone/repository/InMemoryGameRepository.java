@@ -147,7 +147,6 @@ public class InMemoryGameRepository implements GameRepository {
             return;
         }
         synchronized (this.monitor) {
-
             this.game = new Game();
 
             createFieldHolderGrid(game);
