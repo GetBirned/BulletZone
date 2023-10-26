@@ -5,16 +5,18 @@ import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 
 public class Board {
-    /**
-     * Field dimensions
-     */
-    private static final int FIELD_DIM = 16;
+    private int FIELD_DIM;
     Game game;
     Object monitor;
 
     public Board(Game game, Object monitor) {
         this.game = game;
         this.monitor = monitor;
+    }
+
+    public Board setFieldDim(int FIELD_DIM) {
+        this.FIELD_DIM = FIELD_DIM;
+        return this;
     }
 
     public void create() {
