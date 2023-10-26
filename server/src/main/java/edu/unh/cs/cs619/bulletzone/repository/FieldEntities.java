@@ -3,6 +3,9 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
 
+/**
+ * Method to break up InGameMemoryRepository
+ */
 public class FieldEntities {
 
     public Game set(Game game) {
