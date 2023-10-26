@@ -2,11 +2,15 @@ package edu.unh.cs.cs619.bulletzone;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.content.Context;
 import android.widget.GridView;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 
 import com.squareup.otto.Subscribe;
 
@@ -28,11 +32,16 @@ import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
+import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
 
 @EActivity(R.layout.activity_client)
 public class ClientActivity extends Activity {
 
     private static final String TAG = "ClientActivity";
+    private SensorManager sensorManager;
+    private Sensor mAccelerometer;
+
+    private ShakeDetector mShakeDetector;
 
     @Bean
     protected GridAdapter mGridAdapter;
@@ -64,15 +73,32 @@ public class ClientActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Establish shake/sensorManager. Will handle shakes.
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake() {
+                Log.d(TAG, "Shake initiated, firing bullet");
+              onButtonFire();
+            }
+        });
+        sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+
+    }
+
+    @Override
+    public void onPause() {
+        sensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         busProvider.getEventBus().unregister(gridEventHandler);
-        // Unregister sensor for shake functionality.
-    }
+        sensorManager.unregisterListener(mShakeDetector);    }
 
     /**
      * Otto has a limitation (as per design) that it will only find
