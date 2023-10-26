@@ -3,6 +3,7 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
@@ -12,6 +13,7 @@ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import jdk.internal.net.http.common.Pair;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -143,47 +145,13 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     public void create() {
-        if (game != null) {
-            return;
-        }
-        synchronized (this.monitor) {
-            this.game = new Game();
-
-            createFieldHolderGrid(game);
-            FieldEntities f = new FieldEntities();
-            game = f.set(game);
-
-        }
+        Board brd = new Board(this.game, this.monitor);
+        brd.create();
+        this.game = brd.getGame();
     }
 
-    private void createFieldHolderGrid(Game game) {
-        synchronized (this.monitor) {
-            game.getHolderGrid().clear();
-            for (int i = 0; i < FIELD_DIM * FIELD_DIM; i++) {
-                game.getHolderGrid().add(new FieldHolder());
-            }
-
-            FieldHolder targetHolder;
-            FieldHolder rightHolder;
-            FieldHolder downHolder;
-
-            // Build connections
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    targetHolder = game.getHolderGrid().get(i * FIELD_DIM + j);
-                    rightHolder = game.getHolderGrid().get(i * FIELD_DIM
-                            + ((j + 1) % FIELD_DIM));
-                    downHolder = game.getHolderGrid().get(((i + 1) % FIELD_DIM)
-                            * FIELD_DIM + j);
-
-                    targetHolder.addNeighbor(Direction.Right, rightHolder);
-                    rightHolder.addNeighbor(Direction.Left, targetHolder);
-
-                    targetHolder.addNeighbor(Direction.Down, downHolder);
-                    downHolder.addNeighbor(Direction.Up, targetHolder);
-                }
-            }
-        }
+    public Stack<Command> getCommandHistory() {
+        return aci.getHistory();
     }
 
 }

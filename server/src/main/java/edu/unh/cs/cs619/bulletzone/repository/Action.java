@@ -67,7 +67,7 @@ public class Action {
 
             tank.setDirection(direction);
 
-            return true; // TODO check
+            return true;
         }
     }
 
@@ -94,7 +94,7 @@ public class Action {
 
 
             long millis = System.currentTimeMillis();
-            if(millis < tank.getLastMoveTime() + 500)
+            if(millis < tank.getLastMoveTime())
                 return false;
 
             tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());

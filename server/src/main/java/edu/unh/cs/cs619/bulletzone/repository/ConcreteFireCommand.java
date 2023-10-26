@@ -35,7 +35,7 @@ public class ConcreteFireCommand implements Command {
 
     @Override
     public String getCommandType() {
-        return "Fire!";
+        return "Fire";
     }
 
     public void undo() {
