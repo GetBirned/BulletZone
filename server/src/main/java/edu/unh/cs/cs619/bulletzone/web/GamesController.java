@@ -17,7 +17,6 @@ import org.springframework.web.client.RestClientException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.sql.Timestamp;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
@@ -26,7 +25,6 @@ import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.repository.GameRepository;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
-import edu.unh.cs.cs619.bulletzone.util.GridEventListWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
@@ -70,13 +68,13 @@ class GamesController {
         return new ResponseEntity<GridWrapper>(new GridWrapper(gameRepository.getGrid()), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public
-    @ResponseBody
-    ResponseEntity<GridEventListWrapper> event(Timestamp timestamp) {
-        return new ResponseEntity<GridEventListWrapper>(new GridEventListWrapper(gameRepository.getHistory(timestamp)), HttpStatus.OK);
-    }
+//    @RequestMapping(method = RequestMethod.GET, value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseStatus(HttpStatus.OK)
+//    public
+//    @ResponseBody
+//    ResponseEntity<GridEventListWrapper> event(Timestamp timestamp) {
+//        return new ResponseEntity<GridEventListWrapper>(new GridEventListWrapper(gameRepository.getHistory(timestamp)), HttpStatus.OK);
+//    }
 
     @RequestMapping(method = RequestMethod.PUT, value = "{tankId}/turn/{direction}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
