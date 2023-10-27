@@ -200,11 +200,11 @@ public class InMemoryGameRepository implements GameRepository {
 //        this.game = brd.getGame();
 //    }
 
-    public LinkedList<hist_node> getHistory(Timestamp timestamp) {
+    public LinkedList<GridEvent> getHistory(Timestamp timestamp) {
         return aci.getHistory(timestamp);
     }
 
-    public Stack<hist_node> getCommandHistory() {
+    public Stack<GridEvent> getCommandHistory() {
         return aci.getCommandHistory();
     }
 
