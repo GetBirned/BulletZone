@@ -130,7 +130,7 @@ public class InMemoryGameRepositoryTest {
         Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
         while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
         Assert.assertTrue(repo.turn(tank.getId(), Direction.Left));
-        Stack<GridEvent> s = repo.getCommandHistory();
+        Stack<hist_node> s = repo.getCommandHistory();
         Assert.assertNotEquals(tank.getId() + " - Move", s.peek().getCommand());
         Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
         Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
@@ -152,7 +152,7 @@ public class InMemoryGameRepositoryTest {
         while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
         Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
 
-        LinkedList<GridEvent> s = repo.getHistory(t);
+        LinkedList<hist_node> s = repo.getHistory(t);
 
         Assert.assertEquals(s.size(), 4);
 

@@ -12,29 +12,6 @@ import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import jdk.internal.net.http.common.Pair;
 
 public class ActionCommandInvoker {
-    public class hist_node {
-        Timestamp ts;
-        long tankId;
-        Command command;
-
-        public hist_node(Timestamp ts, long tankId, Command command) {
-            this.ts = ts;
-            this.tankId = tankId;
-            this.command = command;
-        }
-
-        public Command getCommand() {
-            return command;
-        }
-
-        public long getTankId() {
-            return tankId;
-        }
-
-        public Timestamp getTs() {
-            return ts;
-        }
-    }
     private Stack<hist_node> history = new Stack<>();
     public boolean executeCommand(long tankId, Command command) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         Boolean res = command.execute();
@@ -55,8 +32,8 @@ public class ActionCommandInvoker {
         }
     }
 
-    public LinkedList<GridEvent> getHistory(Timestamp timestamp) {
-        LinkedList<GridEvent> l = new LinkedList<>();
+    public LinkedList<hist_node> getHistory(Timestamp timestamp) {
+        LinkedList<hist_node> l = new LinkedList<>();
         for (int i = 0; i < history.capacity(); i++) {
             if (history.get(i).getTimestamp().after(timestamp)) {
                 break;
@@ -68,7 +45,7 @@ public class ActionCommandInvoker {
         return l;
     }
 
-    public Stack<GridEvent> getCommandHistory() {
+    public Stack<hist_node> getCommandHistory() {
         return history;
     }
 }
