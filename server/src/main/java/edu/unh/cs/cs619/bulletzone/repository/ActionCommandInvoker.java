@@ -50,7 +50,7 @@ public class ActionCommandInvoker {
     // Add methods to undo and redo commands if needed
     public void undoLastCommand() {
         if (!history.isEmpty()) {
-            GridEvent lastCommand = history.pop();
+            hist_node lastCommand = history.pop();
             //lastCommand.undo();
         }
     }
