@@ -1,10 +1,15 @@
 package edu.unh.cs.cs619.bulletzone.repository;
 
+import java.sql.Timestamp;
+import java.util.LinkedList;
+
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import sun.awt.image.ImageWatched;
 
 public interface GameRepository {
 
@@ -23,4 +28,6 @@ public interface GameRepository {
 
     public void leave(long tankId)
             throws TankDoesNotExistException;
+
+    public LinkedList<GridEvent> getHistory(Timestamp timestamp);
 }

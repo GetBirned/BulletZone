@@ -2,6 +2,8 @@ package edu.unh.cs.cs619.bulletzone.repository;
 
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
@@ -9,11 +11,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
+import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
-import jdk.internal.net.http.common.Pair;
+
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -108,7 +111,7 @@ public class InMemoryGameRepository implements GameRepository {
         // calling our new Action class
         //boolean res = action.turn(tankId, direction);
         Command turn_me = new ConcreteTurnCommand(action, tankId, direction);
-        return aci.executeCommand(turn_me);
+        return aci.executeCommand(tankId, turn_me);
     }
 
     @Override
@@ -116,7 +119,7 @@ public class InMemoryGameRepository implements GameRepository {
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
         //boolean res = action.move(tankId, direction);
         Command move_me = new ConcreteMoveCommand(action, tankId, direction);
-        return aci.executeCommand(move_me);
+        return aci.executeCommand(tankId, move_me);
     }
 
     @Override
@@ -124,7 +127,7 @@ public class InMemoryGameRepository implements GameRepository {
             throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException {
         //boolean res = action.fire(tankId, bulletType);
         Command fire_me = new ConcreteFireCommand(action, tankId, bulletType);
-        return aci.executeCommand(fire_me);
+        return aci.executeCommand(tankId, fire_me);
     }
 
     @Override
@@ -144,14 +147,66 @@ public class InMemoryGameRepository implements GameRepository {
         }
     }
 
+
+
     public void create() {
-        Board brd = new Board(this.game, this.monitor);
-        brd.create();
-        this.game = brd.getGame();
+        if (game != null) {
+            return;
+        }
+        synchronized (this.monitor) {
+
+            this.game = new Game();
+
+            createFieldHolderGrid(game);
+            FieldEntities f = new FieldEntities();
+            game = f.set(game);
+
+        }
     }
 
-    public Stack<Command> getCommandHistory() {
-        return aci.getHistory();
+    private void createFieldHolderGrid(Game game) {
+        synchronized (this.monitor) {
+            game.getHolderGrid().clear();
+            for (int i = 0; i < FIELD_DIM * FIELD_DIM; i++) {
+                game.getHolderGrid().add(new FieldHolder());
+            }
+
+            FieldHolder targetHolder;
+            FieldHolder rightHolder;
+            FieldHolder downHolder;
+
+            // Build connections
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    targetHolder = game.getHolderGrid().get(i * FIELD_DIM + j);
+                    rightHolder = game.getHolderGrid().get(i * FIELD_DIM
+                            + ((j + 1) % FIELD_DIM));
+                    downHolder = game.getHolderGrid().get(((i + 1) % FIELD_DIM)
+                            * FIELD_DIM + j);
+
+                    targetHolder.addNeighbor(Direction.Right, rightHolder);
+                    rightHolder.addNeighbor(Direction.Left, targetHolder);
+
+                    targetHolder.addNeighbor(Direction.Down, downHolder);
+                    downHolder.addNeighbor(Direction.Up, targetHolder);
+                }
+            }
+        }
     }
+    //TODO: not initializing correctly?
+//    public void create() {
+//        Board brd = new Board(this.game, this.monitor);
+//        brd.create();
+//        this.game = brd.getGame();
+//    }
+
+    public LinkedList<GridEvent> getHistory(Timestamp timestamp) {
+        return aci.getHistory(timestamp);
+    }
+
+    public Stack<GridEvent> getCommandHistory() {
+        return aci.getCommandHistory();
+    }
+
 
 }

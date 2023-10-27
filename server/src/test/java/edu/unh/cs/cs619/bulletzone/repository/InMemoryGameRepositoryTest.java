@@ -11,10 +11,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.sql.Timestamp;
+import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import jdk.internal.net.http.common.Pair;
@@ -122,9 +126,42 @@ public class InMemoryGameRepositoryTest {
         Assert.assertTrue(repo.turn(tank.getId(), Direction.Up));
         while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
         Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
-        Stack<Command> s = repo.getCommandHistory();
-        Assert.assertTrue(s.pop() instanceof ConcreteMoveCommand);
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Left));
+        Stack<GridEvent> s = repo.getCommandHistory();
+        Assert.assertNotEquals(tank.getId() + " - Move", s.peek().getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
+        Assert.assertEquals(tank.getId() + " - Move", s.pop().getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
     }
+    @Test
+    public void timedHistoryTest() throws Exception {
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Up));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Down));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Timestamp t = new Timestamp(System.currentTimeMillis());
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Left));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
+
+        LinkedList<GridEvent> s = repo.getHistory(t);
+
+        Assert.assertEquals(s.size(), 4);
+
+        Assert.assertEquals(tank.getId() + " - Turn", s.get(0).getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.get(1).getCommand());
+        Assert.assertEquals(tank.getId() + " - Move", s.get(2).getCommand());
+        Assert.assertEquals(tank.getId() + " - Move", s.get(3).getCommand());
+    }
+
     @Test
     public void testDisconnect() throws Exception {
         long id = tank.getId();
