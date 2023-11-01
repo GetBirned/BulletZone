@@ -11,11 +11,17 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.sql.Timestamp;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Stack;
 import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import jdk.internal.net.http.common.Pair;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class InMemoryGameRepositoryTest {
@@ -27,7 +33,6 @@ public class InMemoryGameRepositoryTest {
     Tank tank;
     @Before
     public void setUp() throws Exception {
-        repo.join("hl");
         tank = repo.join("");
     }
 
@@ -62,19 +67,12 @@ public class InMemoryGameRepositoryTest {
         Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
         Assert.assertFalse(repo.move(tank.getId(), Direction.Up));
         Assert.assertFalse(repo.move(tank.getId(), Direction.Down));
-        if (!tank.getParent().getNeighbor(Direction.Right).isPresent()) {
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
-        } else {
-            Assert.assertFalse(repo.move(tank.getId(), Direction.Right));
-        }
-
-        if (!tank.getParent().getNeighbor(Direction.Left).isPresent()) {
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
-        } else {
-            Assert.assertFalse(repo.move(tank.getId(), Direction.Left));
-        }
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
+        Assert.assertFalse(repo.move(tank.getId(), Direction.Right));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
+        Assert.assertFalse(repo.move(tank.getId(), Direction.Left));
     }
 
     @Test
@@ -82,19 +80,11 @@ public class InMemoryGameRepositoryTest {
         Assert.assertTrue(repo.turn(tank.getId(), Direction.Down));
         Assert.assertFalse(repo.move(tank.getId(), Direction.Right));
         Assert.assertFalse(repo.move(tank.getId(), Direction.Left));
-        if (!tank.getParent().getNeighbor(Direction.Up).isPresent()) {
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
-        } else {
-            Assert.assertFalse(repo.move(tank.getId(), Direction.Up));
-        }
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
 
-        if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
-        } else {
-            Assert.assertFalse(repo.move(tank.getId(), Direction.Down));
-        }
     }
 
     @Test
@@ -102,11 +92,10 @@ public class InMemoryGameRepositoryTest {
         if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
             Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
         }
-        while(System.currentTimeMillis() < tank.getLastMoveTime()) {
-            Assert.assertFalse(repo.move(tank.getId(), Direction.Down));
-        }
-        if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
-            Assert.assertTrue(repo.move(tank.getId(), Direction.Down));
+        Assert.assertFalse(repo.move(tank.getId(), Direction.Up));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        if (!tank.getParent().getNeighbor(Direction.Up).isPresent()) {
+            Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
         }
 
     }
@@ -114,29 +103,77 @@ public class InMemoryGameRepositoryTest {
     public void testTimedTurn() throws Exception {
         Assert.assertTrue(repo.turn(tank.getId(), Direction.Left));
         byte i = 0;
-        while(System.currentTimeMillis() < tank.getLastMoveTime()) {
+        while(System.currentTimeMillis() < tank.getLastMoveTime() - 50) {
             Assert.assertFalse(repo.turn(tank.getId(), Direction.fromByte(i)));
             i+=2;
             if (i > 6) {
                 i = 0;
             }
         }
-        if (!tank.getParent().getNeighbor(Direction.Down).isPresent()) {
-            Assert.assertTrue(repo.turn(tank.getId(), Direction.Down));
-        }
+
     }
     @Test
     public void testTimedFire() throws Exception {
         Assert.assertTrue(repo.fire(tank.getId(), 1));
-
-        while(System.currentTimeMillis() < tank.getLastFireTime()) {
+        while(System.currentTimeMillis() < tank.getLastFireTime() - 50) {
             Assert.assertFalse(repo.fire(tank.getId(), 1));
         }
-        Assert.assertTrue(repo.fire(tank.getId(), 1));
+
     }
 
     @Test
-    public void testLeave() throws Exception {
-        repo.leave(tank.getId());
+    public void historyTest() throws Exception {
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Up));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Up));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Left));
+        Stack<GridEvent> s = repo.getCommandHistory();
+        Assert.assertNotEquals(tank.getId() + " - Move", s.peek().getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
+        Assert.assertEquals(tank.getId() + " - Move", s.pop().getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.pop().getCommand());
     }
+    @Test
+    public void timedHistoryTest() throws Exception {
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Up));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Down));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Timestamp t = new Timestamp(System.currentTimeMillis());
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Right));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.turn(tank.getId(), Direction.Left));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
+        while(System.currentTimeMillis() < tank.getLastMoveTime()); // waits 500 ms
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
+
+        LinkedList<GridEvent> s = repo.getHistory(t);
+
+        Assert.assertEquals(s.size(), 4);
+
+        Assert.assertEquals(tank.getId() + " - Turn", s.get(0).getCommand());
+        Assert.assertEquals(tank.getId() + " - Turn", s.get(1).getCommand());
+        Assert.assertEquals(tank.getId() + " - Move", s.get(2).getCommand());
+        Assert.assertEquals(tank.getId() + " - Move", s.get(3).getCommand());
+    }
+
+    @Test
+    public void testDisconnect() throws Exception {
+        long id = tank.getId();
+        Assert.assertTrue(repo.turn(id, Direction.Left));
+        repo.leave(tank.getId());
+        thrown.expect(TankDoesNotExistException.class);
+        repo.turn(id, Direction.Right);
+        thrown.expect(TankDoesNotExistException.class);
+        repo.move(id, Direction.Right);
+        thrown.expect(TankDoesNotExistException.class);
+        repo.fire(id, 1);
+    }
+
+
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
 import javax.servlet.http.HttpServletRequest;
-import com.google.common.base.Preconditions;
+
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
@@ -67,6 +67,14 @@ class GamesController {
     ResponseEntity<GridWrapper> grid() {
         return new ResponseEntity<GridWrapper>(new GridWrapper(gameRepository.getGrid()), HttpStatus.OK);
     }
+
+//    @RequestMapping(method = RequestMethod.GET, value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseStatus(HttpStatus.OK)
+//    public
+//    @ResponseBody
+//    ResponseEntity<GridEventListWrapper> event(Timestamp timestamp) {
+//        return new ResponseEntity<GridEventListWrapper>(new GridEventListWrapper(gameRepository.getHistory(timestamp)), HttpStatus.OK);
+//    }
 
     @RequestMapping(method = RequestMethod.PUT, value = "{tankId}/turn/{direction}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)

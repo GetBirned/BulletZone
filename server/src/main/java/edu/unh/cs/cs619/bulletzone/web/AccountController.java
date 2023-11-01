@@ -45,10 +45,14 @@ public class AccountController {
         // Log the request
         log.debug("Register '" + name + "' with password '" + password + "'");
         // Return the response (true if account created)
-        boolean res = false;
+        boolean res = true;
         if((data.validateUser(name, password, true)) == null) {
-            res = true;
+            log.debug("MADE IT TO IF STATEMENT");
+
+            res = false;
+
         }
+        log.debug("I AM RETURNING THIS " + res);
         return new ResponseEntity<BooleanWrapper>(new BooleanWrapper(
                 //TODO: something that invokes users.createUser(name, password) and does
                      // other setup in the DataRepository (actually calls data.validateUser(...))
