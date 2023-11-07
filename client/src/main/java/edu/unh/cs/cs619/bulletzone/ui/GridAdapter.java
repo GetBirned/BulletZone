@@ -77,18 +77,6 @@ public class GridAdapter extends BaseAdapter {
         }
     }
 
-    public void setBullet(ImageView imageView, int direction) {
-        if (direction == 0) {
-            imageView.setImageResource(R.drawable.bulletup);
-        } else if (direction == 2) {
-            imageView.setImageResource(R.drawable.bulletright);
-        } else if (direction == 4) {
-            imageView.setImageResource(R.drawable.bulletdown);
-        } else if (direction == 6) {
-            imageView.setImageResource(R.drawable.bulletleft);
-        }
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -109,11 +97,7 @@ public class GridAdapter extends BaseAdapter {
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
-                    if (friendlyTank(val) == 0) {
-                        setBullet(imageView, lastFriendlyDirection); // Set proper friendly tank image
-                    } else {
-                        setBullet(imageView, lastEnemyDirection); // Set proper enemy tank image
-                    }
+                    imageView.setImageResource(R.drawable.bulletgrass);
                 } else if (val >= 10000000 && val <= 20000000) {
                     if (friendlyTank(val) == 0) {
                         setFriendlyTank(imageView, direction); // Set proper friendly tank image
