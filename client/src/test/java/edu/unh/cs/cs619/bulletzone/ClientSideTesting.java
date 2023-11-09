@@ -144,9 +144,34 @@ public class ClientSideTesting {
         assertTrue(restClient.fire(tankId).isResult());
     }
     @Test
-    public void testGrid() {
+    public void testGrid_0() {
         when(restClient.grid()).thenReturn(gridWrapper);
         assertNotNull(verify(restClient).grid());
+    }
+    @Test
+    public void testGrid_1(){
+        byte dir = 6;
+        when(restClient.grid()).thenReturn(gridWrapper);
+        GridWrapper prev =  verify(restClient).grid();
+        assertNotNull(prev);
+        when(restClient.turn(tankId,dir)).thenReturn(booleanWrapper);
+        assert(prev != verify(restClient).grid());
+    }
+    @Test
+    public void testGrid_2(){
+        when(restClient.grid()).thenReturn(gridWrapper);
+        GridWrapper prev =  verify(restClient).grid();
+        assertNotNull(prev);
+        when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        assert(prev != verify(restClient).grid());
+    }
+    @Test
+    public void testGrid_3(){
+        when(restClient.grid()).thenReturn(gridWrapper);
+        GridWrapper prev =  verify(restClient).grid();
+        assertNotNull(prev);
+        when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        assert(prev != verify(restClient).grid());
     }
 
     @Test
@@ -172,5 +197,7 @@ public class ClientSideTesting {
         when(restClient.leave(anyLong())).thenReturn(booleanWrapper);
         assertTrue(restClient.leave(anyLong()).isResult());
     }
+
+
 }
 
