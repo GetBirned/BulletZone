@@ -1,5 +1,6 @@
 package edu.unh.cs.cs619.bulletzone.ui;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,8 @@ import android.widget.ImageView;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
+
+import java.util.Random;
 
 import edu.unh.cs.cs619.bulletzone.R;
 
@@ -19,14 +22,23 @@ public class GridAdapter extends BaseAdapter {
     protected LayoutInflater inflater;
     private int[][] mEntities = new int[16][16];
 
+    private static final int[] ITEM_RESOURCES = {
+            R.drawable.applepowerupgrass,
+            R.drawable.nukepowerupgrass,
+            R.drawable.coingrass
+    };
+
     public void updateList(int[][] entities) {
         synchronized (monitor) {
             this.mEntities = entities;
             this.notifyDataSetChanged();
         }
     }
+
+    private int currentItemIndex = 0;
     private static final String TAGFRIEND = "GridAdapter (Friendly):";
     private static final String TAGENEMY = "GridAdapter (Enemy):";
+
     @Override
     public int getCount() {
         return 16 * 16;
@@ -44,12 +56,17 @@ public class GridAdapter extends BaseAdapter {
 
     public int friendlyTank(int value) {
         String tankID = Integer.toString(value);
-        tankID = tankID.substring(2,4);
+        tankID = tankID.substring(2, 4);
         return Integer.parseInt(tankID);
     }
 
     int lastFriendlyDirection; // keeps record of last friendly direction
     int lastEnemyDirection; // keeps record of last enemy direction
+    int numItems;
+    int numPlayers;
+    double chance;
+
+    private int[][] hasPowerUp = new int[16][16];
 
     public void setFriendlyTank(ImageView imageView, int direction) {
         lastFriendlyDirection = direction;
@@ -98,20 +115,95 @@ public class GridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
                     imageView.setImageResource(R.drawable.bulletgrass);
+                    if(hasPowerUp[row][col] != 0) {
+                        //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
+                        hasPowerUp[row][col] = 0;
+                        numItems--;
+                    }
                 } else if (val >= 10000000 && val <= 20000000) {
+                    if(hasPowerUp[row][col] != 0) {
+                        //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
+                        hasPowerUp[row][col] = 0;
+                        numItems--;
+                    }
+                    numPlayers++;
                     if (friendlyTank(val) == 0) {
                         setFriendlyTank(imageView, direction); // Set proper friendly tank image
                     } else {
                         setEnemyTank(imageView, direction); // Set proper enemy tank image
                     }
+                } else if (val == 7) {
+                    hasPowerUp[row][col] = 1;
+                    numItems++;
+                    imageView.setImageResource(R.drawable.coingrass);
+                } else if (val == 2002) {
+                    hasPowerUp[row][col] = 2;
+                    numItems++;
+                    imageView.setImageResource(R.drawable.nukepowerupgrass);
+                } else if (val == 2003) {
+                    hasPowerUp[row][col] = 3;
+                    numItems++;
+                    imageView.setImageResource(R.drawable.applepowerupgrass);
+                } else if (val == 2) {
+                    imageView.setImageResource(R.drawable.hillysoldierup);
+                } else if (val == 1 ) {
+                    imageView.setImageResource(R.drawable.rockyterrain);
+                } else if (val == 3) {
+                    //forest
                 }
             } else {
-                imageView.setImageResource(R.drawable.grass); // Set a default image if no entity
+
+                if (hasPowerUp[row][col] != 0) {
+                    if (hasPowerUp[row][col] == 1) {
+                        numItems++;
+                        imageView.setImageResource(R.drawable.coingrass);
+                    } else if (hasPowerUp[row][col] == 2) {
+                        numItems++;
+                        imageView.setImageResource(R.drawable.nukepowerupgrass);
+                    } else if (hasPowerUp[row][col] == 3) {
+                        numItems++;
+                        imageView.setImageResource(R.drawable.applepowerupgrass);
+                    }
+
+                } else {
+                    if(0.25 * (numPlayers / (numItems + 1)) > 0) {
+                        // Determine whether to place a power-up
+                        if (shouldPlacePowerUp()) {
+                            int appear = new Random().nextInt(3);
+                            hasPowerUp[row][col] = appear + 1;
+                            numItems++;
+                            setImageForPowerUp(imageView, hasPowerUp[row][col]);
+                        } //else {
+                        //imageView.setImageResource(R.drawable.grass);
+                        //}
+                    } else {
+                        imageView.setImageResource(R.drawable.grass);
+                    }
+                }
             }
+
         }
 
         return imageView;
     }
+
+    private boolean shouldPlacePowerUp() {
+        int randNum = new Random().nextInt(101);
+        return randNum <= (chance * 100);
+    }
+
+    // Set the image for the power-up based on its type
+    private void setImageForPowerUp(ImageView imageView, int powerUpType) {
+        switch (powerUpType) {
+            case 1:
+                imageView.setImageResource(R.drawable.coingrass);
+                break;
+            case 2:
+                imageView.setImageResource(R.drawable.nukepowerupgrass);
+                break;
+            case 3:
+                imageView.setImageResource(R.drawable.applepowerupgrass);
+                break;
+        }
+    }
 }
-
-
