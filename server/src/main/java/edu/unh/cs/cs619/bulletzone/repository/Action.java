@@ -3,6 +3,7 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.sql.SQLOutput;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,8 +11,10 @@ import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
+import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
+import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
@@ -105,7 +108,7 @@ public class Action {
             checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
 
             boolean isCompleted;
-            if (!nextField.isPresent()) {
+            if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
                 // If the next field is empty move the user
 
                 /*try {

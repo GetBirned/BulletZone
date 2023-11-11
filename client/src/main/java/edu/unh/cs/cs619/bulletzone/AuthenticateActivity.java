@@ -15,6 +15,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import android.content.Intent;
 
 @EActivity(R.layout.activity_authenticate)
 public class AuthenticateActivity extends AppCompatActivity {
@@ -69,6 +70,8 @@ public class AuthenticateActivity extends AppCompatActivity {
             userID = controller.login(username, password);
             if (userID < 0) {
                 setStatus("Registration unsuccessful--inconsistency with server.");
+            } else {
+                navigateToMainAppScreen();
             }
             //do other login things?
         }
@@ -88,8 +91,15 @@ public class AuthenticateActivity extends AppCompatActivity {
             setStatus("Invalid username and/or password.\nPlease try again.");
         } else { //register successful
             setStatus("Login successful.");
+            navigateToMainAppScreen();
             //do other login things?
         }
+    }
+
+    private void navigateToMainAppScreen() {
+        Intent intent = new Intent(this, ClientActivity_.class);
+        startActivity(intent);
+        finish();  // Optional: Close the authentication screen so the user can't navigate back
     }
 
     @UiThread

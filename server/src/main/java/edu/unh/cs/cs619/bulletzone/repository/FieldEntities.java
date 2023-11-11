@@ -1,5 +1,6 @@
 package edu.unh.cs.cs619.bulletzone.repository;
 
+import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
@@ -54,6 +55,15 @@ public class FieldEntities {
         game.getHolderGrid().get(187).setFieldEntity(new Hill());
         game.getHolderGrid().get(188).setFieldEntity(new Hill());
 
+        game.getHolderGrid().get(162).setFieldEntity(new Forest());
+        game.getHolderGrid().get(163).setFieldEntity(new Forest());
+        game.getHolderGrid().get(164).setFieldEntity(new Forest());
+        game.getHolderGrid().get(165).setFieldEntity(new Forest());
+
+        game.getHolderGrid().get(178).setFieldEntity(new Forest());
+        game.getHolderGrid().get(179).setFieldEntity(new Forest());
+        game.getHolderGrid().get(180).setFieldEntity(new Forest());
+        game.getHolderGrid().get(181).setFieldEntity(new Forest());
 
         return game;
     }

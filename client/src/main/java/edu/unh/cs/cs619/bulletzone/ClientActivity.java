@@ -252,11 +252,13 @@ public class ClientActivity extends Activity {
                 .show();
     }
 
+    /**
     @Click(R.id.buttonLogin)
     void login() {
         Intent intent = new Intent(this, AuthenticateActivity_.class);
         startActivity(intent);
     }
+**/
 
     @Background
     void leaveAsync(long tankId) {

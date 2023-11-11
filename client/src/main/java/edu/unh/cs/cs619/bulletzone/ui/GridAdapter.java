@@ -67,31 +67,20 @@ public class GridAdapter extends BaseAdapter {
     double chance;
 
     private int[][] hasPowerUp = new int[16][16];
+    // 0 grass, // 1 thingamajig //2 nuke //3 apple
+    //4 hill // 5 rocky // 6 forest
 
-    public void setFriendlyTank(ImageView imageView, int direction) {
+    public void setFriendlyTank(ImageView imageView, int direction, int val) {
+
         lastFriendlyDirection = direction;
-        if (direction == 0) {
-            imageView.setImageResource(R.drawable.friendlytankup);
-        } else if (direction == 2) {
-            imageView.setImageResource(R.drawable.friendlytankright);
-        } else if (direction == 4) {
-            imageView.setImageResource(R.drawable.friendlytankdown);
-        } else if (direction == 6) {
-            imageView.setImageResource(R.drawable.friendlytankleft);
-        }
+        TerrainUI t = new TerrainUI();
+        t.friendlyTankImage(imageView, direction, val);
     }
 
-    public void setEnemyTank(ImageView imageView, int direction) {
+    public void setEnemyTank(ImageView imageView, int direction, int val) {
         lastEnemyDirection = direction;
-        if (direction == 0) {
-            imageView.setImageResource(R.drawable.enemytankup);
-        } else if (direction == 2) {
-            imageView.setImageResource(R.drawable.enemytankright);
-        } else if (direction == 4) {
-            imageView.setImageResource(R.drawable.enemytankdown);
-        } else if (direction == 6) {
-            imageView.setImageResource(R.drawable.enemytankleft);
-        }
+        TerrainUI t = new TerrainUI();
+        t.enemyTankImage(imageView, direction, val);
     }
 
     @Override
@@ -109,28 +98,36 @@ public class GridAdapter extends BaseAdapter {
         int friendly;
 
         synchronized (monitor) {
+            if(hasPowerUp[row][col] == 4) {
+                imageView.setImageResource(R.drawable.hillyterrain);
+            } else if(hasPowerUp[row][col] == 5) {
+                imageView.setImageResource(R.drawable.rockyterrain);
+            }
             if (val > 0) {
+
                 int direction = (val % 10);
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
                     imageView.setImageResource(R.drawable.bulletgrass);
-                    if(hasPowerUp[row][col] != 0) {
+                    if(hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
                 } else if (val >= 10000000 && val <= 20000000) {
-                    if(hasPowerUp[row][col] != 0) {
+
+                    if(hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
                     numPlayers++;
                     if (friendlyTank(val) == 0) {
-                        setFriendlyTank(imageView, direction); // Set proper friendly tank image
+                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
+
                     } else {
-                        setEnemyTank(imageView, direction); // Set proper enemy tank image
+                        setEnemyTank(imageView, direction, hasPowerUp[row][col]); // Set proper enemy tank image
                     }
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
@@ -145,11 +142,14 @@ public class GridAdapter extends BaseAdapter {
                     numItems++;
                     imageView.setImageResource(R.drawable.applepowerupgrass);
                 } else if (val == 2) {
+                    hasPowerUp[row][col] = 4;
                     imageView.setImageResource(R.drawable.hillysoldierup);
                 } else if (val == 1 ) {
+                    hasPowerUp[row][col] = 5;
                     imageView.setImageResource(R.drawable.rockyterrain);
                 } else if (val == 3) {
-                    //forest
+                    hasPowerUp[row][col] = 6;
+                    imageView.setImageResource(R.drawable.forestterrain);
                 }
             } else {
 
@@ -177,6 +177,7 @@ public class GridAdapter extends BaseAdapter {
                         //imageView.setImageResource(R.drawable.grass);
                         //}
                     } else {
+
                         imageView.setImageResource(R.drawable.grass);
                     }
                 }
