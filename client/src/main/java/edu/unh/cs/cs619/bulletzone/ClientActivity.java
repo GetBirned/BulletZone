@@ -11,6 +11,7 @@ import android.widget.GridView;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
@@ -76,6 +77,8 @@ public class ClientActivity extends Activity {
     private Sensor mAccelerometer;
 
      ShakeDetector mShakeDetector;
+    @ViewById(R.id.bank_balance)
+   TextView bankBalanceTextView;
 
 
     @Override
@@ -145,9 +148,13 @@ public class ClientActivity extends Activity {
             System.out.println("ERROR: joining game");
         }
     }
+    public void updateBankBalanceText(int numCoins) {
+        bankBalanceTextView.setText(String.valueOf(numCoins));
+    }
 
     public void updateGrid(GridWrapper gw) {
         mGridAdapter.updateList(gw.getGrid());
+        updateBankBalanceText(mGridAdapter.numCoins);
     }
 
     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})

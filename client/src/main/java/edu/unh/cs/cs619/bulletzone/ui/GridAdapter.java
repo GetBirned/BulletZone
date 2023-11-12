@@ -18,9 +18,23 @@ import edu.unh.cs.cs619.bulletzone.R;
 public class GridAdapter extends BaseAdapter {
 
     private final Object monitor = new Object();
+    Random random = new Random();
     @SystemService
     protected LayoutInflater inflater;
     private int[][] mEntities = new int[16][16];
+    int lastFriendlyDirection; // keeps record of last friendly direction
+    int lastEnemyDirection; // keeps record of last enemy direction
+    int numItems;
+    int numPlayers;
+    double chance;
+
+    private int[][] hasPowerUp = new int[16][16];
+    // 0 grass, // 1 thingamajig //2 nuke //3 apple
+    //4 hill // 5 rocky // 6 forest
+    private int currentItemIndex = 0;
+    private static final String TAGFRIEND = "GridAdapter (Friendly):";
+    private static final String TAGENEMY = "GridAdapter (Enemy):";
+    public int numCoins = 1000;
 
     private static final int[] ITEM_RESOURCES = {
             R.drawable.applepowerupgrass,
@@ -34,10 +48,6 @@ public class GridAdapter extends BaseAdapter {
             this.notifyDataSetChanged();
         }
     }
-
-    private int currentItemIndex = 0;
-    private static final String TAGFRIEND = "GridAdapter (Friendly):";
-    private static final String TAGENEMY = "GridAdapter (Enemy):";
 
     @Override
     public int getCount() {
@@ -59,17 +69,6 @@ public class GridAdapter extends BaseAdapter {
         tankID = tankID.substring(2, 4);
         return Integer.parseInt(tankID);
     }
-
-    int lastFriendlyDirection; // keeps record of last friendly direction
-    int lastEnemyDirection; // keeps record of last enemy direction
-    int numItems;
-    int numPlayers;
-    double chance;
-
-    private int[][] hasPowerUp = new int[16][16];
-    // 0 grass, // 1 thingamajig //2 nuke //3 apple
-    //4 hill // 5 rocky // 6 forest
-
     public void setFriendlyTank(ImageView imageView, int direction, int val) {
 
         lastFriendlyDirection = direction;
@@ -111,6 +110,13 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val >= 2000000 && val <= 3000000) {
                     imageView.setImageResource(R.drawable.bulletgrass);
                     if(hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                        if(hasPowerUp[row][col] == 1){
+                            int rand = random.nextInt(196) + 5;
+                            numCoins += rand;
+                            Log.d("NUMCOINS:", this.numCoins+"");
+                        }
+                        if(hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3){
+                        }
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
                         hasPowerUp[row][col] = 0;
                         numItems--;
@@ -119,6 +125,13 @@ public class GridAdapter extends BaseAdapter {
 
                     if(hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
+                        if(hasPowerUp[row][col] == 1){
+                            int rand = random.nextInt(196) + 5;
+                            numCoins += rand;
+                            Log.d("NUMCOINS:", this.numCoins+"");
+                        }
+                        if(hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3){
+                        }
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }

@@ -31,7 +31,7 @@ public class ClientSideTesting {
 
     @Mock
     private LongWrapper longWrapper;
-    ClientActivity mainActivity;
+    //ReplayActivity replayActivity;
 
     @Mock
     private GridWrapper gridWrapper;
@@ -44,7 +44,7 @@ public class ClientSideTesting {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        //mainActivity.createHistory();
+        //replayActivity.set();
     }
     @After
     public void release(){
@@ -209,7 +209,7 @@ public class ClientSideTesting {
     public void testHistorySetup_0() {
         //long now = System.currentTimeMillis();
         //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
-        //assert(restClient.getHistory(now).contains(restClient.join.toString());
+        //assert(restClient.getHistory(now).getResult().contains(restClient.join.toString());
     }
     @Test
     public void testHistory_0(){
@@ -223,10 +223,9 @@ public class ClientSideTesting {
     public void testHistory_1(){
         //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
         //long now = System.currentTimeMillis();
-        //String[] eventArr = restClient.getHistory(now).thenReturn(StringArrayWrapper).getResult();
         //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
         //assertNotNull(restClient.getHistory(now)));
-        //assert(eventArr.contains();
+        //assert(restClient.getHistory(now).getResult().contains(restClient.join.toString());
     }
     @Test
     public void testHistory_2(){
@@ -236,18 +235,15 @@ public class ClientSideTesting {
         //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
         //when(restClient.turn(tankId, dir2)).thenReturn(booleanWrapper);
         //long now = System.currentTimeMillis();
-        //String eventArr = restClient.getHistory(now).thenReturn(StringArrayWrapper).getResult();
         //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
         //assertNotNull(restClient.getHistory(now)));
-        //assert(eventArr.contains("Fire --> " + anyLong());
-        //assert(eventArr.contains("Turn: 6 --> " + anyLong());
-        //assert(eventArr.contains("Turn: 4 --> " + anyLong());
-        System.out.println("Hey" + anyLong());
+        //assert(restClient.getHistory(now).getResult().contains(restClient.fire(tankId).toString();
+        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir).toString();
+        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir2).toString();
 
     }
     @Test
     public void testGridUpdate_0(){
-        //List<GridEvent> mock = mainActivity.createHistory();
         //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
         //long now = System.currentTimeMillis();
         //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
@@ -256,7 +252,6 @@ public class ClientSideTesting {
     @Test
     public void testGridUpdate_1(){
         //byte dir = 4;
-        //List<GridEvent> mock = mainActivity.createHistory();
         //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
         //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
         //long now = System.currentTimeMillis();
@@ -264,12 +259,40 @@ public class ClientSideTesting {
         //verify(restClient, never()).grid()
 
     }
+    @Test
+    public void testReplay_0() {
+        //when(restClient.join());
+        //String[][] eventHistory = replayActivity.getRestClient.replay();
+        //long now = System.currentTimeMillis();
+        //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
+        //assert(restClient.getHistory(now)).getResult().contains(restClient.fire(tankId).toString();
+    }
 
 @Test
-public void testReplay_0() {
+public void testReplay_1() {
    //restClient.join();
-   ;
+   //byte dir = 6;
+    //byte dir2 = 4;
+    //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+    //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
+    //when(restClient.turn(tankId, dir2)).thenReturn(booleanWrapper);
+    //long now = System.currentTimeMillis();
+    //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
+    //assertNotNull(restClient.getHistory(now)));
+    //assert(eventHistory.contains(restClient.fire(tankId).toString();
+    //assert(restClient.getHistory(now)).getResult().contains(restClient.turn(tankId, dir).toString());
+    //assert(restClient.getHistory(now)).getResult().contains(restClient.turn(tankId, dir2).toString();
+
 }
+@Test
+    public void testReplay_2() {
+        //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        //long now = System.currentTimeMillis();
+        //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
+        //assertNotNull(restClient.getHistory(now)));
+        //assert(restClient.getHistory(now)).getResult().contains(restClient.fire(tankId).toString();
+    }
+
 
 }
 
