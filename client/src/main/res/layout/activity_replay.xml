@@ -15,7 +15,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginTop="50dp">
         <GridView
-            android:id="@+id/idGVcourses"
+            android:id="@+id/replayGV"
             android:layout_width="830px"
             android:layout_height="830px"
             android:layout_gravity="center"

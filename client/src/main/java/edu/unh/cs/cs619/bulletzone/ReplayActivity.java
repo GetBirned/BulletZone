@@ -37,7 +37,7 @@ public class ReplayActivity extends AppCompatActivity {
         frame = 0;
         // initialize adapter
         //replayAdapter = new ReplayGridAdapter(this, board_state);
-
+        replay_gv = (GridView) findViewById(R.id.replayGV);
         replay_gv.setAdapter(replayAdapter);
 
         play = (Button) findViewById(R.id.play);

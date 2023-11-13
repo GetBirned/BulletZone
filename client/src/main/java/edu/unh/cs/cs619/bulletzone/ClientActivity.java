@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridView;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
@@ -97,7 +99,6 @@ public class ClientActivity extends Activity {
             }
         });
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
-
     }
 
 
@@ -229,6 +230,13 @@ public class ClientActivity extends Activity {
     @Background
     protected void onButtonFire() {
         restClient.fire(tankId);
+    }
+
+    @Click(R.id.buttonReplay)
+    @Background
+    void replayButton() {
+        Intent intent = new Intent(this, ReplayActivity.class);
+        startActivity(intent);
     }
 
     @Click(R.id.buttonLeave)
