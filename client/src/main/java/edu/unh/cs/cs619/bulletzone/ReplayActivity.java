@@ -53,7 +53,7 @@ public class ReplayActivity extends AppCompatActivity {
         leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // destroy? activity
+                finish(); // ending activity
             }
         });
 
