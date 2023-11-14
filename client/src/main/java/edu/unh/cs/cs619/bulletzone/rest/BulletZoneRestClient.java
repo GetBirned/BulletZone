@@ -52,6 +52,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Put("/{tankId}/fire/1")
     BooleanWrapper fire(@Path long tankId);
 
+//    @Put("/account/modifyBalance/{accountID}/{amount}")
+//    BooleanWrapper modifyBalance(@Path int accountID, @Path double amount);
+
     @Delete("/{tankId}/leave")
     BooleanWrapper leave(@Path long tankId);
 }

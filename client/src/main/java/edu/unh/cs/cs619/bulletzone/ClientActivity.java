@@ -86,7 +86,6 @@ public class ClientActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Establish shake/sensorManager. Will handle shakes.
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mShakeDetector = new ShakeDetector();
@@ -281,4 +280,5 @@ public class ClientActivity extends Activity {
         BackgroundExecutor.cancelAll("grid_poller_task", true);
         restClient.leave(tankId);
     }
+
 }
