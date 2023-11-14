@@ -1,80 +1,36 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LinearLayout1"
+    android:id="@+id/RelativeLayoutRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ClientActivity">
-
-    <GridView
-        android:id="@+id/gridView"
-        android:layout_width="wrap_content"
-        android:layout_height="730dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF"
-        android:numColumns="16"
-        tools:listitem="@layout/field_item"></GridView>
-
+    android:layout_height="match_parent">
     <RelativeLayout
-        android:id="@+id/LinearLayoutControl"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:id="@+id/relativeLayout1"
+        android:layout_width="800dp"
+        android:layout_height="60dp">
+        <ImageView
+            android:id="@+id/bulletZoneLage"
+            android:layout_width="302dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="300dp"
+            android:layout_marginRight="-6dp"
+            android:contentDescription="BulletZone Logo"
+            android:src="@drawable/bulletzonelarge" />
 
-        <ImageButton
-            android:id="@+id/buttonDown"
-            android:layout_width="71dp"
-            android:layout_height="66dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="Button for Down"
-            android:src="@drawable/downarrow" />
+        <!-- Your views go here -->
 
-        <ImageButton
-            android:id="@+id/buttonUp"
-            android:layout_width="67dp"
-            android:layout_height="68dp"
-            android:layout_above="@+id/buttonDown"
-            android:layout_alignLeft="@+id/buttonDown"
-            android:layout_alignRight="@+id/buttonDown"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:contentDescription="Button for Up"
-            android:src="@drawable/uparrow" />
-
-        <ImageButton
-            android:id="@+id/buttonLeft"
-            android:layout_width="66dp"
-            android:layout_height="66dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/buttonDown"
-            android:contentDescription="Button for Down"
-            android:src="@drawable/leftarrow" />
-
-        <ImageButton
-            android:id="@+id/buttonRight"
-            android:layout_width="68dp"
-            android:layout_height="67dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/buttonDown"
-            android:contentDescription="Button for Right"
-            android:src="@drawable/rightarrow" />
-
-        <ImageButton
-            android:id="@+id/buttonFire"
-            android:layout_width="199dp"
-            android:layout_height="59dp"
-            android:layout_alignLeft="@+id/buttonUp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="-65dp"
-            android:layout_marginRight="-65dp"
-            android:layout_toLeftOf="@+id/buttonRight"
-            android:src="@drawable/fire" />
-
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="380dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="80dp">
         <TextView
             android:id="@+id/bank_balance"
             android:layout_width="wrap_content"
@@ -92,47 +48,224 @@
             android:id="@+id/balanceImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/buttonFire"
-            android:layout_marginBottom="-80dp"
+            android:layout_marginBottom="650dp"
+            android:layout_marginTop="50dp"
             android:contentDescription="@string/balanceimage"
             android:src="@drawable/balance" />
 
-        <ImageButton
-            android:id="@+id/buttonLeave"
+        <TextView
+            android:id="@+id/tankHealth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/close" />
 
-        <ImageButton
-            android:id="@+id/buttonReplay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginRight="164dp"
-            android:src="@drawable/replay" />
+            android:layout_marginTop="130dp"
+            android:layout_marginLeft="30dp"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/bulletZoneLarge"
-            android:layout_width="282dp"
-            android:layout_height="252dp"
-            android:layout_above="@+id/buttonFire"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="88dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="100dp"
-            android:contentDescription="BulletZone Logo"
-            android:src="@drawable/bulletzonelarge" />
-
-
+            android:id="@+id/tankHealthDesc"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="650dp"
+            android:layout_marginTop="100dp"
+            android:src="@drawable/health" />
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context=".ClientActivity">
 
 
-</LinearLayout>
+        <GridView
+            android:id="@+id/gridView"
+
+            android:layout_width="wrap_content"
+            android:layout_height="430dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"
+            android:numColumns="16"
+            tools:listitem="@layout/field_item"
+            android:layout_marginTop="280dp"
+            android:layout_marginBottom="-32dp"></GridView>
+
+
+
+        <RelativeLayout
+            android:id="@+id/LinearLayoutControl"
+            android:layout_width="match_parent"
+            android:layout_height="850dp"
+            android:layout_weight="1"
+            android:layout_marginTop="68dp">
+
+            <ImageButton
+                android:id="@+id/buttonDown"
+                android:layout_width="71dp"
+                android:layout_height="66dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="Button for Down"
+                android:src="@drawable/downarrow" />
+
+            <ImageButton
+                android:id="@+id/buttonUp"
+                android:layout_width="67dp"
+                android:layout_height="68dp"
+                android:layout_above="@+id/buttonDown"
+                android:layout_marginTop="60dp"
+                android:layout_alignLeft="@+id/buttonDown"
+                android:layout_alignRight="@+id/buttonDown"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:contentDescription="Button for Up"
+                android:src="@drawable/uparrow" />
+
+            <ImageButton
+                android:id="@+id/buttonLeft"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/buttonDown"
+                android:contentDescription="Button for Down"
+                android:src="@drawable/leftarrow" />
+
+            <ImageButton
+                android:id="@+id/buttonRight"
+                android:layout_width="68dp"
+                android:layout_height="67dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/buttonDown"
+                android:contentDescription="Button for Right"
+                android:src="@drawable/rightarrow" />
+
+            <ImageButton
+                android:id="@+id/buttonFire"
+                android:layout_width="199dp"
+                android:layout_height="59dp"
+                android:layout_alignLeft="@+id/buttonUp"
+                android:layout_marginLeft="-65dp"
+                android:layout_marginRight="-65dp"
+                android:layout_marginTop="680dp"
+                android:layout_toLeftOf="@+id/buttonRight"
+                android:src="@drawable/fire" />
+
+            <ImageButton
+                android:id="@+id/buttonLeave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/close" />
+
+            <ImageButton
+                android:id="@+id/buttonReplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="200dp"
+                android:src="@drawable/replay" />
+
+
+            <Button
+                android:id="@+id/buttonMoveCustom"
+                android:layout_width="240dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="150dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="100dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="-95dp"
+                android:layout_centerHorizontal="true"
+                android:text="Move to a specific cell"
+                android:textSize="17sp"/>
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="32"
+                android:progress="16"
+                android:layout_marginTop="270dp"
+                android:layout_marginBottom="16dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+            <TextView
+                android:id="@+id/movingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Enter how many cells you would like to move"
+                android:layout_marginTop="220dp"
+                android:textSize="12sp"/>
+
+
+
+            <TextView
+                android:id="@+id/turningText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Enter how many cells you would like to turn"
+                android:layout_marginTop="340dp"
+                android:textSize="12sp"/>
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="360dp">
+
+                <RadioButton
+                    android:id="@+id/optionMinus2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-2"/>
+
+                <RadioButton
+                    android:id="@+id/optionMinus1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-1"/>
+
+                <RadioButton
+                    android:id="@+id/option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"/>
+
+                <RadioButton
+                    android:id="@+id/option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"/>
+            </RadioGroup>
+            <Button
+                android:id="@+id/submitButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:layout_marginTop="400dp"/>
+
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+</RelativeLayout>

@@ -122,6 +122,8 @@ public class InMemoryGameRepository implements GameRepository {
         return aci.executeCommand(tankId, move_me);
     }
 
+
+
     @Override
     public boolean fire(long tankId, int bulletType)
             throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException {
@@ -203,6 +205,22 @@ public class InMemoryGameRepository implements GameRepository {
     public LinkedList<GridEvent> getHistory(Timestamp timestamp) {
         return aci.getHistory(timestamp);
     }
+
+    @Override
+    public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+        Command updateLifeCommand = new ConcreteUpdateLifeCommand(action, tankId, newLife);
+        aci.executeCommand(tankId, updateLifeCommand);
+    }
+
+    @Override
+    public int getHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+        Command getHealth = new ConcreteGetHealthCommand(action, tankId);
+        //aci.executeCommand(tankId, getHealth);
+        int res = getHealth.execute1();
+
+        return res;
+    }
+
 
     public Stack<GridEvent> getCommandHistory() {
         return aci.getCommandHistory();

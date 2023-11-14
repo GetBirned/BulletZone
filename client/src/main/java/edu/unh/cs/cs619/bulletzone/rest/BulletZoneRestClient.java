@@ -15,14 +15,16 @@ import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
+
 /** "http://stman1.cs.unh.edu:6191/games"
  * "http://10.0.0.145:6191/games"
  * http://10.0.2.2:8080/
  * Created by simon on 10/1/14.
  */
-
+//10.21.154.118
+       // "http://stman1.cs.unh.edu:61907/games"
 //@Rest(rootUrl = "http://10.21.159.62:8080/games",
-@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+@Rest(rootUrl = "http://10.21.206.173:6197/games",
 //@Rest(rootUrl = "http://stman1.cs.unh.edu:61902/games",
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
         // TODO: disable intercepting and logging
@@ -54,4 +56,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Delete("/{tankId}/leave")
     BooleanWrapper leave(@Path long tankId);
+    @Put("/{tankId}/updateLife/{newLife}")
+    BooleanWrapper updateLife(@Path long tankId, @Path int newLife);
+
+    @Get("/{tankId}/getHealth")
+    LongWrapper getHealth(@Path long tankId);
 }

@@ -138,4 +138,23 @@ class GamesController {
     String handleBadRequests(Exception e) {
         return e.getMessage();
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "{tankId}/updateLife", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void updateLife(@PathVariable long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+        // Find the tank with tankId and update its life
+       gameRepository.updateLife(tankId, newLife);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getHealth", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<Long> getHealth(@PathVariable long tankId) {
+        try {
+            int health = gameRepository.getHealth(tankId);
+            return new ResponseEntity<>((long) health, HttpStatus.OK);
+        } catch (Exception e) {
+            // Handle exceptions if necessary
+            return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

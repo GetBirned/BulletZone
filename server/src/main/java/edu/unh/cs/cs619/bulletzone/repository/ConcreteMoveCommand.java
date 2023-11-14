@@ -38,6 +38,11 @@ public class ConcreteMoveCommand implements Command{
         return res_t;
     }
 
+    @Override
+    public int execute1() {
+        return 0;
+    }
+
     public boolean moveConstraintCheck() {
         /*
         Tank can only move forward or back relative to its current direction. No sideways movements are allowed.
