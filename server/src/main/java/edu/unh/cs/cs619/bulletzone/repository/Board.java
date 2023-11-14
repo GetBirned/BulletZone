@@ -54,6 +54,7 @@ public class Board {
                     downHolder = game.getHolderGrid().get(((i + 1) % FIELD_DIM)
                             * FIELD_DIM + j);
 
+                    // mark targetHolders I+J
                     targetHolder.addNeighbor(Direction.Right, rightHolder);
                     rightHolder.addNeighbor(Direction.Left, targetHolder);
 

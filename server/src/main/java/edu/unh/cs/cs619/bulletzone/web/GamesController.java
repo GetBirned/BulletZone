@@ -138,4 +138,15 @@ class GamesController {
     String handleBadRequests(Exception e) {
         return e.getMessage();
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/soldier/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    ResponseEntity<LongWrapper> deploySoldier(@PathVariable long tankId) {
+        LongWrapper soldierId = gameRepository.deploySoldier(tankId);
+        return new ResponseEntity<LongWrapper>(
+                new LongWrapper(soldierId.getResult()),
+                HttpStatus.CREATED
+        );
+    }
 }

@@ -16,9 +16,7 @@ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
-
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 @Component
 public class InMemoryGameRepository implements GameRepository {
@@ -58,7 +56,7 @@ public class InMemoryGameRepository implements GameRepository {
 
             Long tankId = this.idGenerator.getAndIncrement();
 
-            tank = new Tank(tankId, Direction.Up, ip);
+            tank = new Tank(tankId, Direction.Up, ip, 1);
             tank.setLife(TANK_LIFE);
 
             Random random = new Random();
@@ -208,5 +206,8 @@ public class InMemoryGameRepository implements GameRepository {
         return aci.getCommandHistory();
     }
 
-
+    @Override
+    public LongWrapper deploySoldier(long tankID) {
+        return game.deploySoldier(tankID);
+    }
 }

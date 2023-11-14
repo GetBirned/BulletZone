@@ -34,6 +34,14 @@
             android:contentDescription="Button for Down"
             android:src="@drawable/downarrow" />
 
+        <TextView
+            android:id="@+id/tankLifeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/deploySoldier"
+            android:layout_marginBottom="-120dp"
+            android:text="Health: 100" />
+
         <ImageButton
             android:id="@+id/buttonUp"
             android:layout_width="67dp"
@@ -74,6 +82,20 @@
             android:layout_marginRight="-65dp"
             android:layout_toLeftOf="@+id/buttonRight"
             android:src="@drawable/fire" />
+
+        <Button
+            android:id="@+id/deploySoldier"
+            android:layout_width="199dp"
+            android:layout_height="59dp"
+            android:layout_alignLeft="@+id/buttonUp"
+            android:layout_alignTop="@+id/buttonFire"
+            android:layout_alignBottom="@+id/buttonFire"
+            android:layout_marginLeft="-65dp"
+            android:layout_marginTop="218dp"
+            android:layout_marginRight="-61dp"
+            android:layout_marginBottom="-218dp"
+            android:layout_toLeftOf="@+id/buttonRight"
+            android:text="Deploy Soldier" />
 
         <TextView
             android:id="@+id/bank_balance"

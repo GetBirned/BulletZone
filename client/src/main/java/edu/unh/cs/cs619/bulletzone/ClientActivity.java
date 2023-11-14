@@ -1,22 +1,15 @@
 package edu.unh.cs.cs619.bulletzone;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridView;
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import com.squareup.otto.Subscribe;
-
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -35,13 +28,14 @@ import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
 
 import edu.unh.cs.cs619.bulletzone.events.BusProvider;
+import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
 import edu.unh.cs.cs619.bulletzone.rest.BZRestErrorhandler;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
-import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
+import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 
 @EActivity(R.layout.activity_client)
@@ -75,17 +69,20 @@ public class ClientActivity extends Activity {
      * Remote tank identifier
      */
     private long tankId = -1;
+
+    private long soldierId = -1;
     private SensorManager sensorManager;
     private Sensor mAccelerometer;
 
      ShakeDetector mShakeDetector;
-    @ViewById(R.id.bank_balance)
-   TextView bankBalanceTextView;
+
+     private int tankIsActive;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // Establish shake/sensorManager. Will handle shakes.
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -99,6 +96,7 @@ public class ClientActivity extends Activity {
             }
         });
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+
     }
 
 
@@ -145,17 +143,14 @@ public class ClientActivity extends Activity {
         try {
             tankId = restClient.join().getResult();
             gridPollTask.doPoll();
+            tankIsActive = 1;
         } catch (Exception e) {
             System.out.println("ERROR: joining game");
         }
     }
-    public void updateBankBalanceText(int numCoins) {
-        bankBalanceTextView.setText(String.valueOf(numCoins));
-    }
 
     public void updateGrid(GridWrapper gw) {
         mGridAdapter.updateList(gw.getGrid());
-        updateBankBalanceText(mGridAdapter.numCoins);
     }
 
     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})
@@ -163,80 +158,134 @@ public class ClientActivity extends Activity {
         final int viewId = view.getId();
         byte direction = 0;
         final Object lock = new Object();
-
+        Log.d(TAG, "ID: " + tankId);
         switch (viewId) {
             case R.id.buttonUp:
                 direction = 0;
                 tempDirection = 0;
-            //    tankId = 0;
+                //    tankId = 0;
                 break;
             case R.id.buttonDown:
                 direction = 4;
                 tempDirection = 4;
-             //   tankId = 4;
+                //   tankId = 4;
                 break;
             case R.id.buttonLeft:
                 direction = 6;
                 tempDirection = 6;
-             //   tankId = 6;
+                //   tankId = 6;
                 break;
             case R.id.buttonRight:
                 direction = 2;
                 tempDirection = 2;
-               // tankId = 2;
+                // tankId = 2;
                 break;
             default:
                 Log.e(TAG, "Unknown movement button id: " + viewId);
                 break;
         }
-
-        if (previousDirection == direction) {
-            previousDirection = tempDirection;
-            this.moveAsync(tankId, direction);
-        } else {
-            if (previousDirection == 2 && direction == 6) {
-                previousDirection = tempDirection;
-                this.moveAsync(tankId, direction);
-            } else if (previousDirection == 6 && direction == 2) {
-                previousDirection = tempDirection;
-                this.moveAsync(tankId, direction);
-            } else if (previousDirection == 0 && direction == 4) {
-                previousDirection = tempDirection;
-                this.moveAsync(tankId, direction);
-            } else if (previousDirection == 4 && direction == 0) {
+        if (tankIsActive == 1) {
+            if (previousDirection == direction) {
                 previousDirection = tempDirection;
                 this.moveAsync(tankId, direction);
             } else {
+                if (previousDirection == 2 && direction == 6) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(tankId, direction);
+                } else if (previousDirection == 6 && direction == 2) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(tankId, direction);
+                } else if (previousDirection == 0 && direction == 4) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(tankId, direction);
+                } else if (previousDirection == 4 && direction == 0) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(tankId, direction);
+                } else {
+                    previousDirection = tempDirection;
+                    this.turnAsync(tankId, direction);
+                }
+            }
+        } else {
+            if (previousDirection == direction) {
                 previousDirection = tempDirection;
-                this.turnAsync(tankId, direction);
+                this.moveAsync(soldierId, direction);
+            } else {
+                if (previousDirection == 2 && direction == 6) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(soldierId, direction);
+                } else if (previousDirection == 6 && direction == 2) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(soldierId, direction);
+                } else if (previousDirection == 0 && direction == 4) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(soldierId, direction);
+                } else if (previousDirection == 4 && direction == 0) {
+                    previousDirection = tempDirection;
+                    this.moveAsync(soldierId, direction);
+                } else {
+                    previousDirection = tempDirection;
+                    this.turnAsync(soldierId, direction);
+                }
             }
         }
-
     }
 
     @Background
     void moveAsync(long tankId, byte direction) {
         restClient.move(tankId, direction);
-
     }
 
     @Background
     void turnAsync(long tankId, byte direction) {
         restClient.turn(tankId, direction);
+    }
 
+    @Click(R.id.deploySoldier)
+    @Background
+    protected void deploySoldier() {
+        tankIsActive = 0;
+        deploySoldierAsync();
+    }
+    private boolean isSoldierDeployed = false;
+
+    protected void deploySoldierAsync() {
+        try {
+            //if (!isSoldierDeployed) {
+                // Attempt to deploy a soldier
+                LongWrapper soldierWrapper = restClient.deploySoldier(tankId);
+
+                if (soldierWrapper != null) {
+                    // Deployment successful
+                    soldierId = soldierWrapper.getResult();
+                    isSoldierDeployed = true;
+
+                    Log.d(TAG, "SoldierID is " + soldierId);
+                    // Other deployment-related logic...
+                } else {
+                    Log.d(TAG, "SoldierID is NULL.\n");
+                    // Handle other HTTP status codes if needed
+                }
+                /**
+            } else {
+                Log.d(TAG, "Soldier already deployed. Cannot deploy another.");
+                // Notify the user or handle accordingly
+            }
+                 */
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Method to reset soldier status after reentry
+    private void resetSoldierStatus() {
+        isSoldierDeployed = false;
     }
 
     @Click(R.id.buttonFire)
     @Background
     protected void onButtonFire() {
         restClient.fire(tankId);
-    }
-
-    @Click(R.id.buttonReplay)
-    @Background
-    void replayButton() {
-        Intent intent = new Intent(this, ReplayActivity.class);
-        startActivity(intent);
     }
 
     @Click(R.id.buttonLeave)
