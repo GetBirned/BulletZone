@@ -21,16 +21,13 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 
-@Rest(rootUrl = "http://10.21.122.245:6191/games",
-//@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+//@Rest(rootUrl = "http://10.21.159.62:8080/games",
+@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
 //@Rest(rootUrl = "http://stman1.cs.unh.edu:61902/games",
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
         // TODO: disable intercepting and logging
         // , interceptors = { HttpLoggerInterceptor.class }
-
-
 )
-
 public interface BulletZoneRestClient extends RestClientErrorHandling {
     void setRootUrl(String rootUrl);
 
@@ -60,4 +57,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Post("/soldier/{tankId}")
     LongWrapper deploySoldier(@Path long tankId);
+    @Put("/{tankId}/updateLife/{newLife}")
+    BooleanWrapper updateLife(@Path long tankId, @Path int newLife);
+
+    @Get("/{tankId}/getHealth")
+    LongWrapper getHealth(@Path long tankId);
 }

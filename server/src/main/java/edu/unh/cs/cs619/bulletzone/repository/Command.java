@@ -7,5 +7,7 @@ import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 public interface Command {
     boolean execute() throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
 
+    public int execute1();
+
     String getCommandType();
 }

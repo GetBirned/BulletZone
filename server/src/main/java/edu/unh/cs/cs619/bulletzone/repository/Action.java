@@ -2,6 +2,10 @@ package edu.unh.cs.cs619.bulletzone.repository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.sql.SQLOutput;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,8 +33,6 @@ public class Action {
     private int bulletDamage[]={10,30,50};
     private int bulletDelay[]={500,1000,1500};
     private int trackActiveBullets[]={0,0};
-
-
 
     /**
      * Bullet step time in milliseconds
@@ -419,5 +421,21 @@ public class Action {
                 return true;
             }
         }
+    }
+    public void updateLife(long tankId, int newLife) {
+        // Find the tank with tankId and update its life
+        Tank tank = game.getTanks().get(tankId);
+        if (tank != null) {
+            tank.setLife(newLife);
+            // Add any additional logic needed, e.g., notifying other players
+        }
+    }
+
+    public int getHealth(long tankId) {
+        Tank tank = game.getTanks().get(tankId);
+        if(tank != null) {
+            return tank.getLife();
+        }
+        return 0;
     }
 }

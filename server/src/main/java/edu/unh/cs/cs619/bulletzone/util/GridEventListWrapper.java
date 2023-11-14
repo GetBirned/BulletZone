@@ -2,7 +2,7 @@ package edu.unh.cs.cs619.bulletzone.util;
 
 import java.util.LinkedList;
 
-import edu.unh.cs.cs619.bulletzone.model.GridEvent;
+import edu.unh.cs.cs619.bulletzone.repository.GridEvent;
 
 public class GridEventListWrapper {
     private LinkedList<GridEvent> collection;
