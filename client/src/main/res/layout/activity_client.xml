@@ -107,6 +107,21 @@
             android:layout_weight="1"
             android:layout_marginTop="68dp">
 
+
+            <Button
+                android:id="@+id/deploySoldier"
+                android:layout_width="199dp"
+                android:layout_height="59dp"
+                android:layout_alignLeft="@+id/buttonUp"
+                android:layout_alignTop="@+id/buttonFire"
+                android:layout_alignBottom="@+id/buttonFire"
+                android:layout_marginLeft="-62dp"
+                android:layout_marginTop="-111dp"
+                android:layout_marginRight="-62dp"
+                android:layout_marginBottom="112dp"
+                android:layout_toLeftOf="@+id/buttonRight"
+                android:text="Deploy Soldier" />
+
             <ImageButton
                 android:id="@+id/buttonDown"
                 android:layout_width="71dp"

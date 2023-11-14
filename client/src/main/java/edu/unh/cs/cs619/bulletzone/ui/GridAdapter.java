@@ -38,6 +38,8 @@ public class GridAdapter extends BaseAdapter {
 
     int tankRow;
     int tankCol;
+
+    public int numCoins = 1000;
     private static final String TAGFRIEND = "GridAdapter (Friendly):";
     private static final String TAGENEMY = "GridAdapter (Enemy):";
 
