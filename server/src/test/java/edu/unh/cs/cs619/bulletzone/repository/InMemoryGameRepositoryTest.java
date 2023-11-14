@@ -1,7 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.repository;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,15 +11,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Stack;
-import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
-import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
-import jdk.internal.net.http.common.Pair;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class InMemoryGameRepositoryTest {
@@ -36,6 +30,7 @@ public class InMemoryGameRepositoryTest {
         tank = repo.join("");
     }
 
+    //Milestone 1 Tests
     @Test
     public void testJoin() throws Exception {
         Assert.assertNotNull(tank);
@@ -162,6 +157,28 @@ public class InMemoryGameRepositoryTest {
         Assert.assertEquals(tank.getId() + " - Move", s.get(3).getCommand());
     }
 
+    //Milestone 2 Tests
+    @Test
+    public void testPickingUpPowerups() throws Exception {
+
+    }
+
+    @Test
+    public void testPowerupBehaviors() throws Exception {
+
+    }
+    @Test
+    public void testSinglePowerupTerrainMovement() throws Exception {
+
+    }
+    @Test
+    public void testRockyHillyMovement() throws Exception {
+
+    }
+    @Test
+    public void testNewTimedVehicleInteractions() throws Exception {
+
+    }
     @Test
     public void testDisconnect() throws Exception {
         long id = tank.getId();
