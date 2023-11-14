@@ -4,12 +4,11 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
-import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
-import sun.awt.image.ImageWatched;
+import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 public interface GameRepository {
 
@@ -30,4 +29,9 @@ public interface GameRepository {
             throws TankDoesNotExistException;
 
     public LinkedList<GridEvent> getHistory(Timestamp timestamp);
+
+    public LongWrapper deploySoldier(long tankID);
+    public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
+
+    public int getHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
 }

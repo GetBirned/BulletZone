@@ -1,6 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.ui;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,23 +17,9 @@ import edu.unh.cs.cs619.bulletzone.R;
 public class GridAdapter extends BaseAdapter {
 
     private final Object monitor = new Object();
-    Random random = new Random();
     @SystemService
     protected LayoutInflater inflater;
     private int[][] mEntities = new int[16][16];
-    int lastFriendlyDirection; // keeps record of last friendly direction
-    int lastEnemyDirection; // keeps record of last enemy direction
-    int numItems;
-    int numPlayers;
-    double chance;
-
-    private int[][] hasPowerUp = new int[16][16];
-    // 0 grass, // 1 thingamajig //2 nuke //3 apple
-    //4 hill // 5 rocky // 6 forest
-    private int currentItemIndex = 0;
-    private static final String TAGFRIEND = "GridAdapter (Friendly):";
-    private static final String TAGENEMY = "GridAdapter (Enemy):";
-    public int numCoins = 1000;
 
     private static final int[] ITEM_RESOURCES = {
             R.drawable.applepowerupgrass,
@@ -48,6 +33,15 @@ public class GridAdapter extends BaseAdapter {
             this.notifyDataSetChanged();
         }
     }
+
+    private int currentItemIndex = 0;
+
+    int tankRow;
+    int tankCol;
+
+    public int numCoins = 1000;
+    private static final String TAGFRIEND = "GridAdapter (Friendly):";
+    private static final String TAGENEMY = "GridAdapter (Enemy):";
 
     @Override
     public int getCount() {
@@ -69,6 +63,19 @@ public class GridAdapter extends BaseAdapter {
         tankID = tankID.substring(2, 4);
         return Integer.parseInt(tankID);
     }
+
+    int lastFriendlyDirection; // keeps record of last friendly direction
+    int lastEnemyDirection; // keeps record of last enemy direction
+    int numItems;
+    int numPlayers;
+    double chance;
+
+    private int[][] tankLocation = new int[16][16];
+
+    private int[][] hasPowerUp = new int[16][16];
+    // 0 grass, // 1 thingamajig //2 nuke //3 apple
+    //4 hill // 5 rocky // 6 forest // 7 soldier
+
     public void setFriendlyTank(ImageView imageView, int direction, int val) {
 
         lastFriendlyDirection = direction;
@@ -80,6 +87,11 @@ public class GridAdapter extends BaseAdapter {
         lastEnemyDirection = direction;
         TerrainUI t = new TerrainUI();
         t.enemyTankImage(imageView, direction, val);
+    }
+
+    public void addSoldier(long soldierId) {
+        mEntities[tankRow + 1][tankCol] = (int) soldierId;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -109,38 +121,39 @@ public class GridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
                     imageView.setImageResource(R.drawable.bulletgrass);
-                    if(hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
-                        if(hasPowerUp[row][col] == 1){
-                            int rand = random.nextInt(196) + 5;
-                            numCoins += rand;
-                            Log.d("NUMCOINS:", this.numCoins+"");
-                        }
-                        if(hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3){
-                        }
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
                 } else if (val >= 10000000 && val <= 20000000) {
 
-                    if(hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
-                        if(hasPowerUp[row][col] == 1){
-                            int rand = random.nextInt(196) + 5;
-                            numCoins += rand;
-                            Log.d("NUMCOINS:", this.numCoins+"");
-                        }
-                        if(hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3){
-                        }
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
                     numPlayers++;
                     if (friendlyTank(val) == 0) {
-                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
-
+                        setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
                     } else {
+                        tankRow = row;
+                        tankCol = col;
                         setEnemyTank(imageView, direction, hasPowerUp[row][col]); // Set proper enemy tank image
+                    }
+                } else if (val >= 40000000 && val <= 50000000) {
+                    if (direction == 0) {
+                        // Check if cell above is tank
+                        imageView.setImageResource(R.drawable.soldiergrassup);
+                    } else if (direction == 2) {
+                        // Check if cell above is tank
+                        imageView.setImageResource(R.drawable.soldiergrassright);
+                    } else if (direction == 4) {
+                        // Check if cell above is tank
+                        imageView.setImageResource(R.drawable.soldiergrassdown);
+                    } else if (direction == 6) {
+                        // Check if cell above is tank
+                        imageView.setImageResource(R.drawable.soldiergrassleft);
                     }
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
@@ -156,8 +169,8 @@ public class GridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.applepowerupgrass);
                 } else if (val == 2) {
                     hasPowerUp[row][col] = 4;
-                    imageView.setImageResource(R.drawable.hillysoldierup);
-                } else if (val == 1 ) {
+                    imageView.setImageResource(R.drawable.hillyterrain);
+                } else if (val == 1) {
                     hasPowerUp[row][col] = 5;
                     imageView.setImageResource(R.drawable.rockyterrain);
                 } else if (val == 3) {

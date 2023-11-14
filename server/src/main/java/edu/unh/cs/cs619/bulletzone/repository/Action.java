@@ -2,6 +2,8 @@ package edu.unh.cs.cs619.bulletzone.repository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.springframework.web.bind.annotation.PathVariable;
+
 import java.sql.SQLOutput;
 import java.util.Objects;
 import java.util.Timer;
@@ -15,6 +17,7 @@ import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
+import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
@@ -56,11 +59,27 @@ public class Action {
             }
 
             long millis = System.currentTimeMillis();
+            if (tank.getIsActive() == 1) {
+                if(millis < tank.getLastMoveTime())
+                    return false;
 
-            if(millis < tank.getLastMoveTime())
-                return false;
+                tank.setLastMoveTime(millis+tank.getAllowedMoveInterval());
 
-            tank.setLastMoveTime(millis+tank.getAllowedMoveInterval());
+                /*try {
+                    Thread.sleep(500);
+                } catch(InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }*/
+
+                tank.setDirection(direction);
+
+                return true;
+            } else {
+                Soldier soldier = game.getSoldiers().get(tankId);
+                if(millis < soldier.getLastMoveTime())
+                    return false;
+
+                soldier.setLastMoveTime(millis+tank.getAllowedMoveInterval());
 
             /*try {
                 Thread.sleep(500);
@@ -68,9 +87,10 @@ public class Action {
                 Thread.currentThread().interrupt();
             }*/
 
-            tank.setDirection(direction);
+                soldier.setDirection(direction);
 
-            return true;
+                return true;
+            }
         }
     }
 
@@ -91,25 +111,26 @@ public class Action {
 
             //if tank direction is not equal to forwards or backwards
             //move constraint
-            if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
-                return false;
-            }
+            if (tank.getIsActive() == 1) {
+                if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
+                    return false;
+                }
 
 
-            long millis = System.currentTimeMillis();
-            if(millis < tank.getLastMoveTime())
-                return false;
+                long millis = System.currentTimeMillis();
+                if(millis < tank.getLastMoveTime())
+                    return false;
 
-            tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());
+                tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());
 
-            FieldHolder parent = tank.getParent();
+                FieldHolder parent = tank.getParent();
 
-            FieldHolder nextField = parent.getNeighbor(direction);
-            checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
+                FieldHolder nextField = parent.getNeighbor(direction);
+                checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
 
-            boolean isCompleted;
-            if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
-                // If the next field is empty move the user
+                boolean isCompleted;
+                if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
+                    // If the next field is empty move the user
 
                 /*try {
                     Thread.sleep(500);
@@ -117,16 +138,65 @@ public class Action {
                     Thread.currentThread().interrupt();
                 }*/
 
-                parent.clearField();
-                nextField.setFieldEntity(tank);
-                tank.setParent(nextField);
+                    parent.clearField();
+                    nextField.setFieldEntity(tank);
+                    tank.setParent(nextField);
 
-                isCompleted = true;
+                    isCompleted = true;
+                } else {
+                    isCompleted = false;
+                }
+
+                return isCompleted;
             } else {
-                isCompleted = false;
-            }
+                Soldier soldier = game.getSoldiers().get(tankId);
+                if (Direction.toByte(direction) != Direction.toByte(soldier.getDirection()) && Direction.toByte(direction) != Direction.opposite(soldier.getDirection())) {
+                    return false;
+                }
 
-            return isCompleted;
+
+                long millis = System.currentTimeMillis();
+                if(millis < soldier.getLastMoveTime())
+                    return false;
+
+                soldier.setLastMoveTime(millis + soldier.getAllowedMoveInterval());
+
+                FieldHolder parent = soldier.getParent();
+
+                FieldHolder nextField = parent.getNeighbor(direction);
+                checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
+
+                boolean isCompleted;
+                if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
+                    // If the next field is empty move the user
+
+                /*try {
+                    Thread.sleep(500);
+                } catch(InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }*/
+
+                    parent.clearField();
+                    nextField.setFieldEntity(soldier);
+                    soldier.setParent(nextField);
+
+                    isCompleted = true;
+                } else if (nextField.getEntity() instanceof Tank) {
+                    if (soldier.reenterTank(tank)) {
+                        game.removeSoldier(tankId);
+                        soldier.getParent().clearField();
+                        isCompleted = true;
+                    } else {
+                        // Re-entry failed, soldier is already in a tank
+                        isCompleted = false;
+                    }
+                }
+                else {
+                    isCompleted = false;
+                }
+
+                return isCompleted;
+            }
         }
     }
 
@@ -142,101 +212,230 @@ public class Action {
                 //return false;
                 throw new TankDoesNotExistException(tankId);
             }
+            if (tank.getIsActive() == 1) {
+                if (tank.getNumberOfBullets() >= tank.getAllowedNumberOfBullets())
+                    return false;
 
-            if(tank.getNumberOfBullets() >= tank.getAllowedNumberOfBullets())
-                return false;
+                long millis = System.currentTimeMillis();
+                if (millis < tank.getLastFireTime()/*>tank.getAllowedFireInterval()*/) {
+                    return false;
+                }
 
-            long millis = System.currentTimeMillis();
-            if(millis < tank.getLastFireTime()/*>tank.getAllowedFireInterval()*/){
-                return false;
-            }
+                //Log.i(TAG, "Cannot find user with id: " + tankId);
+                Direction direction = tank.getDirection();
+                FieldHolder parent = tank.getParent();
+                tank.setNumberOfBullets(tank.getNumberOfBullets() + 1);
 
-            //Log.i(TAG, "Cannot find user with id: " + tankId);
-            Direction direction = tank.getDirection();
-            FieldHolder parent = tank.getParent();
-            tank.setNumberOfBullets(tank.getNumberOfBullets() + 1);
+                if (!(bulletType >= 1 && bulletType <= 3)) {
+                    System.out.println("Bullet type must be 1, 2 or 3, set to 1 by default.");
+                    bulletType = 1;
+                }
 
-            if(!(bulletType>=1 && bulletType<=3)) {
-                System.out.println("Bullet type must be 1, 2 or 3, set to 1 by default.");
-                bulletType = 1;
-            }
+                tank.setLastFireTime(millis + bulletDelay[bulletType - 1]);
 
-            tank.setLastFireTime(millis + bulletDelay[bulletType - 1]);
+                int bulletId = 0;
+                if (trackActiveBullets[0] == 0) {
+                    bulletId = 0;
+                    trackActiveBullets[0] = 1;
+                } else if (trackActiveBullets[1] == 0) {
+                    bulletId = 1;
+                    trackActiveBullets[1] = 1;
+                }
 
-            int bulletId=0;
-            if(trackActiveBullets[0]==0){
-                bulletId = 0;
-                trackActiveBullets[0] = 1;
-            }else if(trackActiveBullets[1]==0){
-                bulletId = 1;
-                trackActiveBullets[1] = 1;
-            }
+                // Create a new bullet to fire
+                final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType - 1]);
+                // Set the same parent for the bullet.
+                // This should be only a one way reference.
+                bullet.setParent(parent);
+                bullet.setBulletId(bulletId);
 
-            // Create a new bullet to fire
-            final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType-1]);
-            // Set the same parent for the bullet.
-            // This should be only a one way reference.
-            bullet.setParent(parent);
-            bullet.setBulletId(bulletId);
+                // TODO make it nicer
+                timer.schedule(new TimerTask() {
 
-            // TODO make it nicer
-            timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        synchronized (monitor) {
+                            System.out.println("Active Bullet: " + tank.getNumberOfBullets() + "---- Bullet ID: " + bullet.getIntValue());
+                            FieldHolder currentField = bullet.getParent();
+                            Direction direction = bullet.getDirection();
+                            FieldHolder nextField = currentField
+                                    .getNeighbor(direction);
 
-                @Override
-                public void run() {
-                    synchronized (monitor) {
-                        System.out.println("Active Bullet: "+tank.getNumberOfBullets()+"---- Bullet ID: "+bullet.getIntValue());
-                        FieldHolder currentField = bullet.getParent();
-                        Direction direction = bullet.getDirection();
-                        FieldHolder nextField = currentField
-                                .getNeighbor(direction);
-
-                        // Is the bullet visible on the field?
-                        boolean isVisible = currentField.isPresent()
-                                && (currentField.getEntity() == bullet);
+                            // Is the bullet visible on the field?
+                            boolean isVisible = currentField.isPresent()
+                                    && (currentField.getEntity() == bullet);
 
 
-                        if (nextField.isPresent()) {
-                            // Something is there, hit it
-                            nextField.getEntity().hit(bullet.getDamage());
+                            if (nextField.isPresent()) {
+                                // Something is there, hit it
+                                nextField.getEntity().hit(bullet.getDamage());
 
-                            if ( nextField.getEntity() instanceof  Tank){
-                                Tank t = (Tank) nextField.getEntity();
-                                System.out.println("tank is hit, tank life: " + t.getLife());
-                                if (t.getLife() <= 0 ){
-                                    t.getParent().clearField();
-                                    t.setParent(null);
-                                    game.removeTank(t.getId());
+                                if (nextField.getEntity() instanceof Tank) {
+                                    Tank t = (Tank) nextField.getEntity();
+                                    System.out.println("tank is hit, tank life: " + t.getLife());
+                                    if (t.getLife() <= 0) {
+                                        t.getParent().clearField();
+                                        t.setParent(null);
+                                        game.removeTank(t.getId());
+                                    }
+                                } else if (nextField.getEntity() instanceof Soldier) { // Soldier Hit
+                                    Soldier s = (Soldier) nextField.getEntity();
+                                    System.out.println("soldier is hit, soldier life: " + s.getLife());
+                                    if (s.getLife() <= 0) {
+                                        s.getParent().clearField();
+                                        s.setParent(null);
+                                        game.removeSoldier(s.getId());
+                                        tank.setIsActive(0);
+                                    }
+                                } else if (nextField.getEntity() instanceof Wall) {
+                                    Wall w = (Wall) nextField.getEntity();
+                                    if (w.getIntValue() > 1000 && w.getIntValue() <= 2000) {
+                                        game.getHolderGrid().get(w.getPos()).clearField();
+                                    }
                                 }
-                            }
-                            else if ( nextField.getEntity() instanceof Wall){
-                                Wall w = (Wall) nextField.getEntity();
-                                if (w.getIntValue() >1000 && w.getIntValue()<=2000 ){
-                                    game.getHolderGrid().get(w.getPos()).clearField();
+                                if (isVisible) {
+                                    // Remove bullet from field
+                                    currentField.clearField();
                                 }
-                            }
-                            if (isVisible) {
-                                // Remove bullet from field
-                                currentField.clearField();
-                            }
-                            trackActiveBullets[bullet.getBulletId()]=0;
-                            tank.setNumberOfBullets(tank.getNumberOfBullets()-1);
-                            cancel();
+                                trackActiveBullets[bullet.getBulletId()] = 0;
+                                tank.setNumberOfBullets(tank.getNumberOfBullets() - 1);
+                                cancel();
 
-                        } else {
-                            if (isVisible) {
-                                // Remove bullet from field
-                                currentField.clearField();
-                            }
+                            } else {
+                                if (isVisible) {
+                                    // Remove bullet from field
+                                    currentField.clearField();
+                                }
 
-                            nextField.setFieldEntity(bullet);
-                            bullet.setParent(nextField);
+                                nextField.setFieldEntity(bullet);
+                                bullet.setParent(nextField);
+                            }
                         }
                     }
-                }
-            }, 0, BULLET_PERIOD);
+                }, 0, BULLET_PERIOD);
 
-            return true;
+                return true;
+            } else { // Soldier fire
+                Soldier soldier = game.getSoldiers().get(tankId);
+                if (soldier.getNumberOfBullets() >= soldier.getAllowedNumberOfBullets())
+                    return false;
+
+                long millis = System.currentTimeMillis();
+                if (millis < soldier.getLastFireTime()/*>tank.getAllowedFireInterval()*/) {
+                    return false;
+                }
+
+                //Log.i(TAG, "Cannot find user with id: " + tankId);
+                Direction direction = soldier.getDirection();
+                FieldHolder parent = soldier.getParent();
+                soldier.setNumberOfBullets(soldier.getNumberOfBullets() + 1);
+
+                if (!(bulletType >= 1 && bulletType <= 3)) {
+                    System.out.println("Bullet type must be 1, 2 or 3, set to 1 by default.");
+                    bulletType = 1;
+                }
+
+                soldier.setLastFireTime(millis + bulletDelay[bulletType - 1]);
+
+                int bulletId = 0;
+                if (trackActiveBullets[0] == 0) {
+                    bulletId = 0;
+                    trackActiveBullets[0] = 1;
+                } else if (trackActiveBullets[1] == 0) {
+                    bulletId = 1;
+                    trackActiveBullets[1] = 1;
+                }
+
+                // Create a new bullet to fire
+                final Bullet bullet = new Bullet(tankId, direction, 5);
+                // Set the same parent for the bullet.
+                // This should be only a one way reference.
+                bullet.setParent(parent);
+                bullet.setBulletId(bulletId);
+
+                // TODO make it nicer
+                timer.schedule(new TimerTask() {
+
+                    @Override
+                    public void run() {
+                        synchronized (monitor) {
+                            System.out.println("Soldier Active Bullet: " + soldier.getNumberOfBullets() + "---- Bullet ID: " + bullet.getIntValue());
+                            FieldHolder currentField = bullet.getParent();
+                            Direction direction = bullet.getDirection();
+                            FieldHolder nextField = currentField
+                                    .getNeighbor(direction);
+
+                            // Is the bullet visible on the field?
+                            boolean isVisible = currentField.isPresent()
+                                    && (currentField.getEntity() == bullet);
+
+
+                            if (nextField.isPresent()) {
+                                // Something is there, hit it
+                                nextField.getEntity().hit(bullet.getDamage());
+
+                                if (nextField.getEntity() instanceof Tank) { // Tank Hit
+                                    Tank t = (Tank) nextField.getEntity();
+                                    System.out.println("tank is hit, tank life: " + t.getLife());
+                                    if (t.getLife() <= 0) {
+                                        t.getParent().clearField();
+                                        t.setParent(null);
+                                        game.removeTank(t.getId());
+                                    }
+                                } else if (nextField.getEntity() instanceof Soldier) { // Soldier Hit
+                                    Soldier s = (Soldier) nextField.getEntity();
+                                    System.out.println("soldier is hit, soldier life: " + s.getLife());
+                                    if (s.getLife() <= 0) {
+                                        s.getParent().clearField();
+                                        s.setParent(null);
+                                        game.removeSoldier(s.getId());
+                                        tank.setIsActive(0);
+                                    }
+                                } else if (nextField.getEntity() instanceof Wall) {
+                                    Wall w = (Wall) nextField.getEntity();
+                                    if (w.getIntValue() > 1000 && w.getIntValue() <= 2000) {
+                                        game.getHolderGrid().get(w.getPos()).clearField();
+                                    }
+                                }
+                                if (isVisible) {
+                                    // Remove bullet from field
+                                    currentField.clearField();
+                                }
+                                trackActiveBullets[bullet.getBulletId()] = 0;
+                                soldier.setNumberOfBullets(soldier.getNumberOfBullets() - 1);
+                                cancel();
+
+                            } else {
+                                if (isVisible) {
+                                    // Remove bullet from field
+                                    currentField.clearField();
+                                }
+
+                                nextField.setFieldEntity(bullet);
+                                bullet.setParent(nextField);
+                            }
+                        }
+                    }
+                }, 0, BULLET_PERIOD);
+
+                return true;
+            }
         }
+    }
+    public void updateLife(long tankId, int newLife) {
+        // Find the tank with tankId and update its life
+        Tank tank = game.getTanks().get(tankId);
+        if (tank != null) {
+            tank.setLife(newLife);
+            // Add any additional logic needed, e.g., notifying other players
+        }
+    }
+
+    public int getHealth(long tankId) {
+        Tank tank = game.getTanks().get(tankId);
+        if(tank != null) {
+            return tank.getLife();
+        }
+        return 0;
     }
 }

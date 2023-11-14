@@ -1,0 +1,1042 @@
+Index: client/src/main/res/layout/activity_client.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/LinearLayout1\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"horizontal\"\r\n    android:paddingBottom=\"@dimen/activity_vertical_margin\"\r\n    android:paddingLeft=\"@dimen/activity_horizontal_margin\"\r\n    android:paddingRight=\"@dimen/activity_horizontal_margin\"\r\n    android:paddingTop=\"@dimen/activity_vertical_margin\"\r\n    tools:context=\".ClientActivity\">\r\n\r\n    <GridView\r\n        android:id=\"@+id/gridView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"730dp\"\r\n        android:layout_weight=\"1\"\r\n        android:background=\"#FFFFFF\"\r\n        android:numColumns=\"16\"\r\n        tools:listitem=\"@layout/field_item\"></GridView>\r\n\r\n    <RelativeLayout\r\n        android:id=\"@+id/LinearLayoutControl\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:layout_weight=\"1\">\r\n\r\n        <ImageButton\r\n            android:id=\"@+id/buttonDown\"\r\n            android:layout_width=\"71dp\"\r\n            android:layout_height=\"66dp\"\r\n            android:layout_alignParentBottom=\"true\"\r\n            android:layout_centerHorizontal=\"true\"\r\n            android:contentDescription=\"Button for Down\"\r\n            android:src=\"@drawable/downarrow\" />\r\n\r\n        <ImageButton\r\n            android:id=\"@+id/buttonUp\"\r\n            android:layout_width=\"67dp\"\r\n            android:layout_height=\"68dp\"\r\n            android:layout_above=\"@+id/buttonDown\"\r\n            android:layout_alignLeft=\"@+id/buttonDown\"\r\n            android:layout_alignRight=\"@+id/buttonDown\"\r\n            android:layout_marginLeft=\"2dp\"\r\n            android:layout_marginRight=\"2dp\"\r\n            android:contentDescription=\"Button for Up\"\r\n            android:src=\"@drawable/uparrow\" />\r\n\r\n        <ImageButton\r\n            android:id=\"@+id/buttonLeft\"\r\n            android:layout_width=\"66dp\"\r\n            android:layout_height=\"66dp\"\r\n            android:layout_alignParentBottom=\"true\"\r\n            android:layout_toLeftOf=\"@+id/buttonDown\"\r\n            android:contentDescription=\"Button for Down\"\r\n            android:src=\"@drawable/leftarrow\" />\r\n\r\n        <ImageButton\r\n            android:id=\"@+id/buttonRight\"\r\n            android:layout_width=\"68dp\"\r\n            android:layout_height=\"67dp\"\r\n            android:layout_alignParentBottom=\"true\"\r\n            android:layout_toRightOf=\"@+id/buttonDown\"\r\n            android:contentDescription=\"Button for Right\"\r\n            android:src=\"@drawable/rightarrow\" />\r\n\r\n        <ImageButton\r\n            android:id=\"@+id/buttonFire\"\r\n            android:layout_width=\"199dp\"\r\n            android:layout_height=\"59dp\"\r\n            android:layout_alignLeft=\"@+id/buttonUp\"\r\n            android:layout_centerVertical=\"true\"\r\n            android:layout_marginLeft=\"-65dp\"\r\n            android:layout_marginRight=\"-65dp\"\r\n            android:layout_toLeftOf=\"@+id/buttonRight\"\r\n            android:src=\"@drawable/fire\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/bank_balance\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_alignBottom=\"@+id/balanceImage\"\r\n            android:layout_marginStart=\"16dp\"\r\n            android:layout_marginTop=\"16dp\"\r\n            android:layout_marginBottom=\"-32dp\"\r\n            android:text=\"1000\"\r\n            android:textColor=\"@android:color/black\"\r\n            android:textSize=\"18sp\"\r\n            android:textStyle=\"bold\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/balanceImage\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_alignBottom=\"@+id/buttonFire\"\r\n            android:layout_marginBottom=\"-80dp\"\r\n            android:contentDescription=\"@string/balanceimage\"\r\n            android:src=\"@drawable/balance\" />\r\n\r\n        <ImageButton\r\n            android:id=\"@+id/buttonLeave\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_alignParentTop=\"true\"\r\n            android:layout_alignParentRight=\"true\"\r\n            android:src=\"@drawable/close\" />\r\n\r\n        <ImageButton\r\n            android:id=\"@+id/buttonLogin\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_alignParentLeft=\"true\"\r\n            android:layout_alignParentTop=\"true\"\r\n            android:src=\"@drawable/login\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/bulletZoneLarge\"\r\n            android:layout_width=\"282dp\"\r\n            android:layout_height=\"252dp\"\r\n            android:layout_above=\"@+id/buttonFire\"\r\n            android:layout_alignParentStart=\"true\"\r\n            android:layout_alignParentTop=\"true\"\r\n            android:layout_alignParentEnd=\"true\"\r\n            android:layout_marginStart=\"3dp\"\r\n            android:layout_marginTop=\"88dp\"\r\n            android:layout_marginEnd=\"0dp\"\r\n            android:layout_marginBottom=\"100dp\"\r\n            android:contentDescription=\"BulletZone Logo\"\r\n            android:src=\"@drawable/bulletzonelarge\" />\r\n\r\n\r\n    </RelativeLayout>\r\n\r\n\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/client/src/main/res/layout/activity_client.xml b/client/src/main/res/layout/activity_client.xml
+--- a/client/src/main/res/layout/activity_client.xml	
++++ b/client/src/main/res/layout/activity_client.xml	
+@@ -75,6 +75,20 @@
+             android:layout_toLeftOf="@+id/buttonRight"
+             android:src="@drawable/fire" />
+ 
++        <Button
++            android:id="@+id/createSoldier"
++            android:layout_width="199dp"
++            android:layout_height="59dp"
++            android:layout_below="@+id/buttonFire"
++            android:layout_alignLeft="@+id/buttonUp"
++            android:layout_alignBottom="@+id/buttonFire"
++            android:layout_marginLeft="-64dp"
++            android:layout_marginTop="130dp"
++            android:layout_marginRight="-58dp"
++            android:layout_marginBottom="-188dp"
++            android:layout_toLeftOf="@+id/buttonRight"
++            android:text="Deploy Soldier"/>
++
+         <TextView
+             android:id="@+id/bank_balance"
+             android:layout_width="wrap_content"
+Index: client/src/main/java/edu/unh/cs/cs619/bulletzone/ClientActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone;\r\n\r\nimport android.app.Activity;\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.os.SystemClock;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.GridView;\r\nimport android.content.Context;\r\nimport android.hardware.Sensor;\r\nimport android.hardware.SensorManager;\r\n\r\nimport com.squareup.otto.Subscribe;\r\n\r\n\r\nimport androidx.appcompat.app.AlertDialog;\r\n\r\nimport com.squareup.otto.Subscribe;\r\n\r\nimport org.androidannotations.annotations.AfterInject;\r\nimport org.androidannotations.annotations.AfterViews;\r\nimport org.androidannotations.annotations.Background;\r\nimport org.androidannotations.annotations.Bean;\r\nimport org.androidannotations.annotations.Click;\r\nimport org.androidannotations.annotations.EActivity;\r\nimport org.androidannotations.annotations.NonConfigurationInstance;\r\nimport org.androidannotations.annotations.UiThread;\r\nimport org.androidannotations.annotations.ViewById;\r\nimport org.androidannotations.api.BackgroundExecutor;\r\nimport org.androidannotations.rest.spring.annotations.RestService;\r\n\r\nimport edu.unh.cs.cs619.bulletzone.events.BusProvider;\r\nimport edu.unh.cs.cs619.bulletzone.rest.BZRestErrorhandler;\r\nimport edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;\r\nimport edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;\r\nimport edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;\r\nimport edu.unh.cs.cs619.bulletzone.ui.GridAdapter;\r\nimport edu.unh.cs.cs619.bulletzone.util.GridWrapper;\r\nimport edu.unh.cs.cs619.bulletzone.events.ShakeDetector;\r\n\r\n\r\n@EActivity(R.layout.activity_client)\r\npublic class ClientActivity extends Activity {\r\n\r\n    private static final String TAG = \"ClientActivity\";\r\n\r\n    @Bean\r\n    protected GridAdapter mGridAdapter;\r\n\r\n    @ViewById\r\n    protected GridView gridView;\r\n\r\n    @Bean\r\n    BusProvider busProvider;\r\n\r\n    @NonConfigurationInstance\r\n    @Bean\r\n    GridPollerTask gridPollTask;\r\n\r\n    @RestService\r\n    BulletZoneRestClient restClient;\r\n\r\n    @Bean\r\n    BZRestErrorhandler bzRestErrorhandler;\r\n\r\n    byte previousDirection;\r\n    byte tempDirection;\r\n\r\n    /**\r\n     * Remote tank identifier\r\n     */\r\n    private long tankId = -1;\r\n    private SensorManager sensorManager;\r\n    private Sensor mAccelerometer;\r\n\r\n     ShakeDetector mShakeDetector;\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        // Establish shake/sensorManager. Will handle shakes.\r\n        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);\r\n        mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);\r\n        mShakeDetector = new ShakeDetector();\r\n        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {\r\n\r\n            @Override\r\n            public void onShake() {\r\n                Log.d(TAG, \"Shake initiated, firing bullet\");\r\n                onButtonFire();\r\n            }\r\n        });\r\n        sensorManager.registerListener(mShakeDetector, mAccelerometer,\tSensorManager.SENSOR_DELAY_UI);\r\n\r\n    }\r\n\r\n\r\n    @Override\r\n    protected void onDestroy() {\r\n        super.onDestroy();\r\n        busProvider.getEventBus().unregister(gridEventHandler);\r\n        sensorManager.unregisterListener(mShakeDetector);    }\r\n\r\n    /**\r\n     * Otto has a limitation (as per design) that it will only find\r\n     * methods on the immediate class type. As a result, if at runtime this instance\r\n     * actually points to a subclass implementation, the methods registered in this class will\r\n     * not be found. This immediately becomes a problem when using the AndroidAnnotations\r\n     * framework as it always produces a subclass of annotated classes.\r\n     *\r\n     * To get around the class hierarchy limitation, one can use a separate anonymous class to\r\n     * handle the events.\r\n     */\r\n    private Object gridEventHandler = new Object()\r\n    {\r\n        @Subscribe\r\n        public void onUpdateGrid(GridUpdateEvent event) {\r\n            updateGrid(event.gw);\r\n        }\r\n    };\r\n\r\n\r\n    @AfterViews\r\n    protected void afterViewInjection() {\r\n        joinAsync();\r\n        SystemClock.sleep(500);\r\n        gridView.setAdapter(mGridAdapter);\r\n    }\r\n\r\n    @AfterInject\r\n    void afterInject() {\r\n        restClient.setRestErrorHandler(bzRestErrorhandler);\r\n        busProvider.getEventBus().register(gridEventHandler);\r\n    }\r\n\r\n    @Background\r\n    void joinAsync() {\r\n        try {\r\n            tankId = restClient.join().getResult();\r\n            gridPollTask.doPoll();\r\n        } catch (Exception e) {\r\n            System.out.println(\"ERROR: joining game\");\r\n        }\r\n    }\r\n\r\n    public void updateGrid(GridWrapper gw) {\r\n        mGridAdapter.updateList(gw.getGrid());\r\n    }\r\n\r\n    @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})\r\n    protected void onButtonMove(View view) {\r\n        final int viewId = view.getId();\r\n        byte direction = 0;\r\n        final Object lock = new Object();\r\n\r\n        switch (viewId) {\r\n            case R.id.buttonUp:\r\n                direction = 0;\r\n                tempDirection = 0;\r\n            //    tankId = 0;\r\n                break;\r\n            case R.id.buttonDown:\r\n                direction = 4;\r\n                tempDirection = 4;\r\n             //   tankId = 4;\r\n                break;\r\n            case R.id.buttonLeft:\r\n                direction = 6;\r\n                tempDirection = 6;\r\n             //   tankId = 6;\r\n                break;\r\n            case R.id.buttonRight:\r\n                direction = 2;\r\n                tempDirection = 2;\r\n               // tankId = 2;\r\n                break;\r\n            default:\r\n                Log.e(TAG, \"Unknown movement button id: \" + viewId);\r\n                break;\r\n        }\r\n\r\n        if (previousDirection == direction) {\r\n            previousDirection = tempDirection;\r\n            this.moveAsync(tankId, direction);\r\n        } else {\r\n            if (previousDirection == 2 && direction == 6) {\r\n                previousDirection = tempDirection;\r\n                this.moveAsync(tankId, direction);\r\n            } else if (previousDirection == 6 && direction == 2) {\r\n                previousDirection = tempDirection;\r\n                this.moveAsync(tankId, direction);\r\n            } else if (previousDirection == 0 && direction == 4) {\r\n                previousDirection = tempDirection;\r\n                this.moveAsync(tankId, direction);\r\n            } else if (previousDirection == 4 && direction == 0) {\r\n                previousDirection = tempDirection;\r\n                this.moveAsync(tankId, direction);\r\n            } else {\r\n                previousDirection = tempDirection;\r\n                this.turnAsync(tankId, direction);\r\n            }\r\n        }\r\n\r\n    }\r\n\r\n    @Background\r\n    void moveAsync(long tankId, byte direction) {\r\n        restClient.move(tankId, direction);\r\n\r\n    }\r\n\r\n    @Background\r\n    void turnAsync(long tankId, byte direction) {\r\n        restClient.turn(tankId, direction);\r\n\r\n    }\r\n\r\n    @Click(R.id.buttonFire)\r\n    @Background\r\n    protected void onButtonFire() {\r\n        restClient.fire(tankId);\r\n    }\r\n\r\n    @Click(R.id.buttonLeave)\r\n    @Background\r\n    void leaveGame() {\r\n        showConfirmationDialog();\r\n    }\r\n\r\n    public void performLeave() {\r\n        System.out.println(\"leaveGame() called, tank ID: \"+tankId);\r\n        BackgroundExecutor.cancelAll(\"grid_poller_task\", true);\r\n        restClient.leave(tankId);\r\n    }\r\n\r\n    @UiThread\r\n    public void showConfirmationDialog() {\r\n        new AlertDialog.Builder(this)\r\n                .setTitle(\"Confirmation\")\r\n                .setMessage(\"Are you sure you want to quit BulletZone?\")\r\n                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {\r\n                    public void onClick(DialogInterface dialog, int which) {\r\n                        // User clicked Yes, proceed with leave action\r\n                        performLeave();\r\n                    }\r\n                })\r\n                .setNegativeButton(android.R.string.no, null)\r\n                .setIcon(android.R.drawable.ic_dialog_alert)\r\n                .show();\r\n    }\r\n\r\n    @Click(R.id.buttonLogin)\r\n    void login() {\r\n        Intent intent = new Intent(this, AuthenticateActivity_.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    @Background\r\n    void leaveAsync(long tankId) {\r\n        System.out.println(\"Leave called, tank ID: \" + tankId);\r\n        BackgroundExecutor.cancelAll(\"grid_poller_task\", true);\r\n        restClient.leave(tankId);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/client/src/main/java/edu/unh/cs/cs619/bulletzone/ClientActivity.java b/client/src/main/java/edu/unh/cs/cs619/bulletzone/ClientActivity.java
+--- a/client/src/main/java/edu/unh/cs/cs619/bulletzone/ClientActivity.java	
++++ b/client/src/main/java/edu/unh/cs/cs619/bulletzone/ClientActivity.java	
+@@ -1,19 +1,16 @@
+ package edu.unh.cs.cs619.bulletzone;
+ 
+ import android.app.Activity;
++import android.content.Context;
+ import android.content.DialogInterface;
+ import android.content.Intent;
++import android.hardware.Sensor;
++import android.hardware.SensorManager;
+ import android.os.Bundle;
+ import android.os.SystemClock;
+ import android.util.Log;
+ import android.view.View;
+ import android.widget.GridView;
+-import android.content.Context;
+-import android.hardware.Sensor;
+-import android.hardware.SensorManager;
+-
+-import com.squareup.otto.Subscribe;
+-
+ 
+ import androidx.appcompat.app.AlertDialog;
+ 
+@@ -32,13 +29,13 @@
+ import org.androidannotations.rest.spring.annotations.RestService;
+ 
+ import edu.unh.cs.cs619.bulletzone.events.BusProvider;
++import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
+ import edu.unh.cs.cs619.bulletzone.rest.BZRestErrorhandler;
+ import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
+ import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
+ import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
+ import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
+ import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
+-import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
+ 
+ 
+ @EActivity(R.layout.activity_client)
+@@ -52,6 +49,8 @@
+     @ViewById
+     protected GridView gridView;
+ 
++    private int isControllingTank = -1;
++
+     @Bean
+     BusProvider busProvider;
+ 
+@@ -72,6 +71,8 @@
+      * Remote tank identifier
+      */
+     private long tankId = -1;
++
++    private long soldierID = -1;
+     private SensorManager sensorManager;
+     private Sensor mAccelerometer;
+ 
+@@ -140,6 +141,8 @@
+     void joinAsync() {
+         try {
+             tankId = restClient.join().getResult();
++            soldierID = tankId + 30000000;
++            isControllingTank = 1;
+             gridPollTask.doPoll();
+         } catch (Exception e) {
+             System.out.println("ERROR: joining game");
+@@ -152,76 +155,151 @@
+ 
+     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})
+     protected void onButtonMove(View view) {
+-        final int viewId = view.getId();
+-        byte direction = 0;
+-        final Object lock = new Object();
++        if (isControllingTank == 1) {
++            final int viewId = view.getId();
++            byte direction = 0;
++            final Object lock = new Object();
+ 
+-        switch (viewId) {
+-            case R.id.buttonUp:
+-                direction = 0;
+-                tempDirection = 0;
+-            //    tankId = 0;
+-                break;
+-            case R.id.buttonDown:
+-                direction = 4;
+-                tempDirection = 4;
+-             //   tankId = 4;
+-                break;
+-            case R.id.buttonLeft:
+-                direction = 6;
+-                tempDirection = 6;
+-             //   tankId = 6;
+-                break;
+-            case R.id.buttonRight:
+-                direction = 2;
+-                tempDirection = 2;
+-               // tankId = 2;
+-                break;
+-            default:
+-                Log.e(TAG, "Unknown movement button id: " + viewId);
+-                break;
+-        }
++            switch (viewId) {
++                case R.id.buttonUp:
++                    direction = 0;
++                    tempDirection = 0;
++                    //    tankId = 0;
++                    break;
++                case R.id.buttonDown:
++                    direction = 4;
++                    tempDirection = 4;
++                    //   tankId = 4;
++                    break;
++                case R.id.buttonLeft:
++                    direction = 6;
++                    tempDirection = 6;
++                    //   tankId = 6;
++                    break;
++                case R.id.buttonRight:
++                    direction = 2;
++                    tempDirection = 2;
++                    // tankId = 2;
++                    break;
++                default:
++                    Log.e(TAG, "Unknown movement button id: " + viewId);
++                    break;
++            }
+ 
+-        if (previousDirection == direction) {
+-            previousDirection = tempDirection;
+-            this.moveAsync(tankId, direction);
+-        } else {
+-            if (previousDirection == 2 && direction == 6) {
+-                previousDirection = tempDirection;
+-                this.moveAsync(tankId, direction);
+-            } else if (previousDirection == 6 && direction == 2) {
+-                previousDirection = tempDirection;
+-                this.moveAsync(tankId, direction);
+-            } else if (previousDirection == 0 && direction == 4) {
+-                previousDirection = tempDirection;
+-                this.moveAsync(tankId, direction);
+-            } else if (previousDirection == 4 && direction == 0) {
+-                previousDirection = tempDirection;
+-                this.moveAsync(tankId, direction);
+-            } else {
+-                previousDirection = tempDirection;
+-                this.turnAsync(tankId, direction);
+-            }
+-        }
++            if (previousDirection == direction) {
++                previousDirection = tempDirection;
++                this.moveAsync(tankId, direction);
++            } else {
++                if (previousDirection == 2 && direction == 6) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(tankId, direction);
++                } else if (previousDirection == 6 && direction == 2) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(tankId, direction);
++                } else if (previousDirection == 0 && direction == 4) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(tankId, direction);
++                } else if (previousDirection == 4 && direction == 0) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(tankId, direction);
++                } else {
++                    previousDirection = tempDirection;
++                    this.turnAsync(tankId, direction);
++                }
++            }
++        } else {
++            final int viewId = view.getId();
++            byte direction = 0;
++            final Object lock = new Object();
+ 
++            switch (viewId) {
++                case R.id.buttonUp:
++                    direction = 0;
++                    tempDirection = 0;
++                    //    tankId = 0;
++                    break;
++                case R.id.buttonDown:
++                    direction = 4;
++                    tempDirection = 4;
++                    //   tankId = 4;
++                    break;
++                case R.id.buttonLeft:
++                    direction = 6;
++                    tempDirection = 6;
++                    //   tankId = 6;
++                    break;
++                case R.id.buttonRight:
++                    direction = 2;
++                    tempDirection = 2;
++                    // tankId = 2;
++                    break;
++                default:
++                    Log.e(TAG, "Unknown movement button id: " + viewId);
++                    break;
++            }
++
++            if (previousDirection == direction) {
++                previousDirection = tempDirection;
++                this.moveAsync(soldierID, direction);
++            } else {
++                if (previousDirection == 2 && direction == 6) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(soldierID, direction);
++                } else if (previousDirection == 6 && direction == 2) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(soldierID, direction);
++                } else if (previousDirection == 0 && direction == 4) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(soldierID, direction);
++                } else if (previousDirection == 4 && direction == 0) {
++                    previousDirection = tempDirection;
++                    this.moveAsync(soldierID, direction);
++                } else {
++                    previousDirection = tempDirection;
++                    this.turnAsync(soldierID, direction);
++                }
++            }
++        }
+     }
+ 
+     @Background
+     void moveAsync(long tankId, byte direction) {
+-        restClient.move(tankId, direction);
+-
++        if (isControllingTank == 1) {
++            restClient.move(tankId, direction);
++        } else {
++            restClient.move(soldierID, direction);
++        }
+     }
+ 
+     @Background
+     void turnAsync(long tankId, byte direction) {
+-        restClient.turn(tankId, direction);
++        if (isControllingTank == 1) {
++            restClient.turn(tankId, direction);
++        } else {
++            restClient.turn(soldierID, direction);
++        }
++    }
+ 
++
++    @Background
++    void createSoldier() {
++        try {
++            isControllingTank = 0;
++            //long soldierId = restClient.createSoldier(tankId).getResult(); // Assuming createSoldier() returns a soldier ID
++            ////moveSoldierToPosition(soldierId); // Move the soldier to the desired position
++        } catch (Exception e) {
++            System.out.println("ERROR: creating soldier");
++        }
+     }
+ 
+     @Click(R.id.buttonFire)
+     @Background
+     protected void onButtonFire() {
+-        restClient.fire(tankId);
++        if (isControllingTank == 1) {
++            restClient.fire(tankId);
++        } else {
++            restClient.fire(soldierID);
++        }
+     }
+ 
+     @Click(R.id.buttonLeave)
+Index: server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/InMemoryGameRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone.repository;\r\n\r\nimport org.springframework.stereotype.Component;\r\n\r\nimport java.sql.Timestamp;\r\nimport java.util.LinkedList;\r\nimport java.util.Random;\r\nimport java.util.Stack;\r\nimport java.util.concurrent.atomic.AtomicLong;\r\n\r\nimport edu.unh.cs.cs619.bulletzone.model.Direction;\r\nimport edu.unh.cs.cs619.bulletzone.model.FieldHolder;\r\nimport edu.unh.cs.cs619.bulletzone.model.Game;\r\nimport edu.unh.cs.cs619.bulletzone.model.GridEvent;\r\nimport edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;\r\nimport edu.unh.cs.cs619.bulletzone.model.LimitExceededException;\r\nimport edu.unh.cs.cs619.bulletzone.model.Tank;\r\nimport edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;\r\n\r\n\r\nimport static com.google.common.base.Preconditions.checkNotNull;\r\n\r\n@Component\r\npublic class InMemoryGameRepository implements GameRepository {\r\n\r\n    /**\r\n     * Field dimensions\r\n     */\r\n    private static final int FIELD_DIM = 16;\r\n\r\n\r\n    /**\r\n     * Bullet's impact effect [life]\r\n     */\r\n    private static final int BULLET_DAMAGE = 1;\r\n\r\n    /**\r\n     * Tank's default life [life]\r\n     */\r\n    private static final int TANK_LIFE = 100;\r\n    private final AtomicLong idGenerator = new AtomicLong();\r\n    private final Object monitor = new Object();\r\n    private Game game = null;\r\n    private Action action;\r\n    private ActionCommandInvoker aci;\r\n\r\n    @Override\r\n    public Tank join(String ip) {\r\n        synchronized (this.monitor) {\r\n            Tank tank;\r\n            if (game == null) {\r\n                this.create();\r\n            }\r\n\r\n            if( (tank = game.getTank(ip)) != null){\r\n                return tank;\r\n            }\r\n\r\n            Long tankId = this.idGenerator.getAndIncrement();\r\n\r\n            tank = new Tank(tankId, Direction.Up, ip);\r\n            tank.setLife(TANK_LIFE);\r\n\r\n            Random random = new Random();\r\n            int x;\r\n            int y;\r\n\r\n            // This may run for forever.. If there is no free space. XXX\r\n            for (; ; ) {\r\n                x = random.nextInt(FIELD_DIM);\r\n                y = random.nextInt(FIELD_DIM);\r\n                FieldHolder fieldElement = game.getHolderGrid().get(x * FIELD_DIM + y);\r\n                if (!fieldElement.isPresent()) {\r\n                    fieldElement.setFieldEntity(tank);\r\n                    tank.setParent(fieldElement);\r\n                    break;\r\n                }\r\n            }\r\n\r\n            game.addTank(ip, tank);\r\n\r\n            /*\r\n            I have abstracted this into the Action class\r\n            - I think I need to make this a command pattern\r\n\r\n            Join will be called first\r\n             */\r\n\r\n            // SETH\r\n            // creating a new action and invoker class\r\n            action = new Action(monitor, game); // Watch placement\r\n            aci = new ActionCommandInvoker();\r\n\r\n            return tank;\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public int[][] getGrid() {\r\n        synchronized (this.monitor) {\r\n            if (game == null) {\r\n                this.create();\r\n            }\r\n        }\r\n        return game.getGrid2D();\r\n    }\r\n\r\n    @Override\r\n    public boolean turn(long tankId, Direction direction)\r\n            throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {\r\n        // calling our new Action class\r\n        //boolean res = action.turn(tankId, direction);\r\n        Command turn_me = new ConcreteTurnCommand(action, tankId, direction);\r\n        return aci.executeCommand(tankId, turn_me);\r\n    }\r\n\r\n    @Override\r\n    public boolean move(long tankId, Direction direction)\r\n            throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {\r\n        //boolean res = action.move(tankId, direction);\r\n        Command move_me = new ConcreteMoveCommand(action, tankId, direction);\r\n        return aci.executeCommand(tankId, move_me);\r\n    }\r\n\r\n    @Override\r\n    public boolean fire(long tankId, int bulletType)\r\n            throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException {\r\n        //boolean res = action.fire(tankId, bulletType);\r\n        Command fire_me = new ConcreteFireCommand(action, tankId, bulletType);\r\n        return aci.executeCommand(tankId, fire_me);\r\n    }\r\n\r\n    @Override\r\n    public void leave(long tankId)\r\n            throws TankDoesNotExistException {\r\n        synchronized (this.monitor) {\r\n            if (!this.game.getTanks().containsKey(tankId)) {\r\n                throw new TankDoesNotExistException(tankId);\r\n            }\r\n\r\n            System.out.println(\"leave() called, tank ID: \" + tankId);\r\n\r\n            Tank tank = game.getTanks().get(tankId);\r\n            FieldHolder parent = tank.getParent();\r\n            parent.clearField();\r\n            game.removeTank(tankId);\r\n        }\r\n    }\r\n\r\n\r\n\r\n    public void create() {\r\n        if (game != null) {\r\n            return;\r\n        }\r\n        synchronized (this.monitor) {\r\n\r\n            this.game = new Game();\r\n\r\n            createFieldHolderGrid(game);\r\n            FieldEntities f = new FieldEntities();\r\n            game = f.set(game);\r\n\r\n        }\r\n    }\r\n\r\n    private void createFieldHolderGrid(Game game) {\r\n        synchronized (this.monitor) {\r\n            game.getHolderGrid().clear();\r\n            for (int i = 0; i < FIELD_DIM * FIELD_DIM; i++) {\r\n                game.getHolderGrid().add(new FieldHolder());\r\n            }\r\n\r\n            FieldHolder targetHolder;\r\n            FieldHolder rightHolder;\r\n            FieldHolder downHolder;\r\n\r\n            // Build connections\r\n            for (int i = 0; i < FIELD_DIM; i++) {\r\n                for (int j = 0; j < FIELD_DIM; j++) {\r\n                    targetHolder = game.getHolderGrid().get(i * FIELD_DIM + j);\r\n                    rightHolder = game.getHolderGrid().get(i * FIELD_DIM\r\n                            + ((j + 1) % FIELD_DIM));\r\n                    downHolder = game.getHolderGrid().get(((i + 1) % FIELD_DIM)\r\n                            * FIELD_DIM + j);\r\n\r\n                    targetHolder.addNeighbor(Direction.Right, rightHolder);\r\n                    rightHolder.addNeighbor(Direction.Left, targetHolder);\r\n\r\n                    targetHolder.addNeighbor(Direction.Down, downHolder);\r\n                    downHolder.addNeighbor(Direction.Up, targetHolder);\r\n                }\r\n            }\r\n        }\r\n    }\r\n    //TODO: not initializing correctly?\r\n//    public void create() {\r\n//        Board brd = new Board(this.game, this.monitor);\r\n//        brd.create();\r\n//        this.game = brd.getGame();\r\n//    }\r\n\r\n    public LinkedList<GridEvent> getHistory(Timestamp timestamp) {\r\n        return aci.getHistory(timestamp);\r\n    }\r\n\r\n    public Stack<GridEvent> getCommandHistory() {\r\n        return aci.getCommandHistory();\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/InMemoryGameRepository.java b/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/InMemoryGameRepository.java
+--- a/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/InMemoryGameRepository.java	
++++ b/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/InMemoryGameRepository.java	
+@@ -2,22 +2,17 @@
+ 
+ import org.springframework.stereotype.Component;
+ 
+-import java.sql.Timestamp;
+-import java.util.LinkedList;
+ import java.util.Random;
+-import java.util.Stack;
+ import java.util.concurrent.atomic.AtomicLong;
+ 
+ import edu.unh.cs.cs619.bulletzone.model.Direction;
+ import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
+ import edu.unh.cs.cs619.bulletzone.model.Game;
+-import edu.unh.cs.cs619.bulletzone.model.GridEvent;
+ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
+ import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
+ import edu.unh.cs.cs619.bulletzone.model.Tank;
+ import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+ 
+-
+ import static com.google.common.base.Preconditions.checkNotNull;
+ 
+ @Component
+@@ -58,7 +53,7 @@
+ 
+             Long tankId = this.idGenerator.getAndIncrement();
+ 
+-            tank = new Tank(tankId, Direction.Up, ip);
++            tank = new Tank(tankId, Direction.Up, ip, 1);
+             tank.setLife(TANK_LIFE);
+ 
+             Random random = new Random();
+@@ -111,7 +106,7 @@
+         // calling our new Action class
+         //boolean res = action.turn(tankId, direction);
+         Command turn_me = new ConcreteTurnCommand(action, tankId, direction);
+-        return aci.executeCommand(tankId, turn_me);
++        return aci.executeCommand(turn_me);
+     }
+ 
+     @Override
+@@ -119,7 +114,7 @@
+             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
+         //boolean res = action.move(tankId, direction);
+         Command move_me = new ConcreteMoveCommand(action, tankId, direction);
+-        return aci.executeCommand(tankId, move_me);
++        return aci.executeCommand(move_me);
+     }
+ 
+     @Override
+@@ -127,8 +122,10 @@
+             throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException {
+         //boolean res = action.fire(tankId, bulletType);
+         Command fire_me = new ConcreteFireCommand(action, tankId, bulletType);
+-        return aci.executeCommand(tankId, fire_me);
++        return aci.executeCommand(fire_me);
+     }
++
++
+ 
+     @Override
+     public void leave(long tankId)
+@@ -147,8 +144,6 @@
+         }
+     }
+ 
+-
+-
+     public void create() {
+         if (game != null) {
+             return;
+@@ -193,20 +188,5 @@
+             }
+         }
+     }
+-    //TODO: not initializing correctly?
+-//    public void create() {
+-//        Board brd = new Board(this.game, this.monitor);
+-//        brd.create();
+-//        this.game = brd.getGame();
+-//    }
+-
+-    public LinkedList<GridEvent> getHistory(Timestamp timestamp) {
+-        return aci.getHistory(timestamp);
+-    }
+-
+-    public Stack<GridEvent> getCommandHistory() {
+-        return aci.getCommandHistory();
+-    }
+-
+ 
+ }
+Index: server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Game.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone.model;\r\n\r\nimport com.fasterxml.jackson.annotation.JsonIgnore;\r\nimport java.util.Optional;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.concurrent.ConcurrentHashMap;\r\nimport java.util.concurrent.ConcurrentMap;\r\n\r\npublic final class Game {\r\n    /**\r\n     * Field dimensions\r\n     */\r\n    private static final int FIELD_DIM = 16;\r\n    private final long id;\r\n    private final ArrayList<FieldHolder> holderGrid = new ArrayList<>();\r\n\r\n    private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();\r\n    private final ConcurrentMap<String, Long> playersIP = new ConcurrentHashMap<>();\r\n\r\n    private final Object monitor = new Object();\r\n\r\n    public Game() {\r\n        this.id = 0;\r\n    }\r\n\r\n    @JsonIgnore\r\n    public long getId() {\r\n        return id;\r\n    }\r\n\r\n    @JsonIgnore\r\n    public ArrayList<FieldHolder> getHolderGrid() {\r\n        return holderGrid;\r\n    }\r\n\r\n    public void addTank(String ip, Tank tank) {\r\n        synchronized (tanks) {\r\n            tanks.put(tank.getId(), tank);\r\n            playersIP.put(ip, tank.getId());\r\n        }\r\n    }\r\n\r\n    public Tank getTank(int tankId) {\r\n        return tanks.get(tankId);\r\n    }\r\n\r\n    public ConcurrentMap<Long, Tank> getTanks() {\r\n        return tanks;\r\n    }\r\n\r\n    public List<Optional<FieldEntity>> getGrid() {\r\n        synchronized (holderGrid) {\r\n            List<Optional<FieldEntity>> entities = new ArrayList<Optional<FieldEntity>>();\r\n\r\n            FieldEntity entity;\r\n            for (FieldHolder holder : holderGrid) {\r\n                if (holder.isPresent()) {\r\n                    entity = holder.getEntity();\r\n                    entity = entity.copy();\r\n\r\n                    entities.add(Optional.<FieldEntity>of(entity));\r\n                } else {\r\n                    entities.add(Optional.<FieldEntity>empty());\r\n                }\r\n            }\r\n            return entities;\r\n        }\r\n    }\r\n\r\n    public Tank getTank(String ip){\r\n        if (playersIP.containsKey(ip)){\r\n            return tanks.get(playersIP.get(ip));\r\n        }\r\n        return null;\r\n    }\r\n\r\n    public void removeTank(long tankId){\r\n        synchronized (tanks) {\r\n            Tank t = tanks.remove(tankId);\r\n            if (t != null) {\r\n                playersIP.remove(t.getIp());\r\n            }\r\n        }\r\n    }\r\n\r\n    public int[][] getGrid2D() {\r\n        int[][] grid = new int[FIELD_DIM][FIELD_DIM];\r\n\r\n        synchronized (holderGrid) {\r\n            FieldHolder holder;\r\n            for (int i = 0; i < FIELD_DIM; i++) {\r\n                for (int j = 0; j < FIELD_DIM; j++) {\r\n                    holder = holderGrid.get(i * FIELD_DIM + j);\r\n                    if (holder.isPresent()) {\r\n                        grid[i][j] = holder.getEntity().getIntValue();\r\n                    } else {\r\n                        grid[i][j] = 0;\r\n                    }\r\n                }\r\n            }\r\n        }\r\n\r\n        return grid;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Game.java b/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Game.java
+--- a/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Game.java	
++++ b/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Game.java	
+@@ -17,6 +17,8 @@
+     private final ArrayList<FieldHolder> holderGrid = new ArrayList<>();
+ 
+     private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
++
++    private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
+     private final ConcurrentMap<String, Long> playersIP = new ConcurrentHashMap<>();
+ 
+     private final Object monitor = new Object();
+@@ -42,6 +44,13 @@
+         }
+     }
+ 
++    public void addSoldier(String ip, Soldier soldier) {
++        synchronized (soldier) {
++            soldiers.put(soldier.getId(), soldier);
++            playersIP.put(ip, soldier.getId());
++        }
++    }
++
+     public Tank getTank(int tankId) {
+         return tanks.get(tankId);
+     }
+@@ -50,6 +59,10 @@
+         return tanks;
+     }
+ 
++    public ConcurrentMap<Long, Soldier> getSoldiers() {
++        return soldiers;
++    }
++
+     public List<Optional<FieldEntity>> getGrid() {
+         synchronized (holderGrid) {
+             List<Optional<FieldEntity>> entities = new ArrayList<Optional<FieldEntity>>();
+@@ -69,6 +82,27 @@
+         }
+     }
+ 
++    public Optional<FieldEntity> getEntityAtPosition(int x, int y) {
++        synchronized (holderGrid) {
++            FieldHolder holder = holderGrid.get(x + y * 16);
++            return holder.isPresent() ? Optional.of(holder.getEntity()) : Optional.empty();
++        }
++    }
++
++    public Optional<Tank> findTankPosition() {
++        synchronized (holderGrid) {
++            for (int y = 0; y < 16; y++) {
++                for (int x = 0; x < 16; x++) {
++                    Optional<FieldEntity> entityOptional = getEntityAtPosition(x, y);
++                    if (entityOptional.isPresent() && entityOptional.get() instanceof Tank) {
++                        return Optional.of((Tank) entityOptional.get());
++                    }
++                }
++            }
++            return Optional.empty(); // No tank found
++        }
++    }
++
+     public Tank getTank(String ip){
+         if (playersIP.containsKey(ip)){
+             return tanks.get(playersIP.get(ip));
+@@ -85,6 +119,25 @@
+         }
+     }
+ 
++    /**
++    public Tank getSoldier(String ip){
++        if (playersIP.containsKey(ip)){
++            return soldiers.get(playersIP.get(ip));
++        }
++        return null;
++    }
++     */
++
++    public void removeSoldier(long soldierID){
++        synchronized (tanks) {
++            Tank t = tanks.remove(soldierID);
++            if (t != null) {
++                playersIP.remove(t.getIp());
++            }
++        }
++    }
++
++
+     public int[][] getGrid2D() {
+         int[][] grid = new int[FIELD_DIM][FIELD_DIM];
+ 
+Index: server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Tank.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone.model;\r\n\r\nimport com.fasterxml.jackson.annotation.JsonIgnore;\r\n\r\npublic class Tank extends FieldEntity {\r\n\r\n    private static final String TAG = \"Tank\";\r\n\r\n    private final long id;\r\n\r\n    private final String ip;\r\n\r\n    private long lastMoveTime;\r\n    private int allowedMoveInterval;\r\n\r\n    private long lastFireTime;\r\n    private int allowedFireInterval;\r\n\r\n    private int numberOfBullets;\r\n    private int allowedNumberOfBullets;\r\n\r\n    private int life;\r\n\r\n    private Direction direction;\r\n\r\n\r\n    public Tank(long id, Direction direction, String ip) {\r\n        this.id = id;\r\n        this.direction = direction;\r\n        this.ip = ip;\r\n        numberOfBullets = 0;\r\n        allowedNumberOfBullets = 2;\r\n        lastFireTime = 0;\r\n        allowedFireInterval = 1500;\r\n        lastMoveTime = 0;\r\n        allowedMoveInterval = 500;\r\n    }\r\n\r\n    @Override\r\n    public FieldEntity copy() {\r\n        return new Tank(id, direction, ip);\r\n    }\r\n\r\n    @Override\r\n    public void hit(int damage) {\r\n        life = life - damage;\r\n        System.out.println(\"Tank life: \" + id + \" : \" + life);\r\n//\t\tLog.d(TAG, \"TankId: \" + id + \" hit -> life: \" + life);\r\n\r\n        if (life <= 0) {\r\n//\t\t\tLog.d(TAG, \"Tank event\");\r\n            //eventBus.post(Tank.this);\r\n            //eventBus.post(new Object());\r\n        }\r\n    }\r\n\r\n\r\n    public long getLastMoveTime() {\r\n        return lastMoveTime;\r\n    }\r\n\r\n    public void setLastMoveTime(long lastMoveTime) {\r\n        this.lastMoveTime = lastMoveTime;\r\n    }\r\n\r\n    public long getAllowedMoveInterval() {\r\n        return allowedMoveInterval;\r\n    }\r\n\r\n    public void setAllowedMoveInterval(int allowedMoveInterval) {\r\n        this.allowedMoveInterval = allowedMoveInterval;\r\n    }\r\n\r\n    public long getLastFireTime() {\r\n        return lastFireTime;\r\n    }\r\n\r\n    public void setLastFireTime(long lastFireTime) {\r\n        this.lastFireTime = lastFireTime;\r\n    }\r\n\r\n    public long getAllowedFireInterval() {\r\n        return allowedFireInterval;\r\n    }\r\n\r\n    public void setAllowedFireInterval(int allowedFireInterval) {\r\n        this.allowedFireInterval = allowedFireInterval;\r\n    }\r\n\r\n    public int getNumberOfBullets() {\r\n        return numberOfBullets;\r\n    }\r\n\r\n    public void setNumberOfBullets(int numberOfBullets) {\r\n        this.numberOfBullets = numberOfBullets;\r\n    }\r\n\r\n    public int getAllowedNumberOfBullets() {\r\n        return allowedNumberOfBullets;\r\n    }\r\n\r\n    public void setAllowedNumberOfBullets(int allowedNumberOfBullets) {\r\n        this.allowedNumberOfBullets = allowedNumberOfBullets;\r\n    }\r\n\r\n    public Direction getDirection() {\r\n        return direction;\r\n    }\r\n\r\n    public void setDirection(Direction direction) {\r\n        this.direction = direction;\r\n    }\r\n\r\n    @JsonIgnore\r\n    public long getId() {\r\n        return id;\r\n    }\r\n\r\n    @Override\r\n    public int getIntValue() {\r\n        return (int) (10000000 + 10000 * id + 10 * life + Direction\r\n                .toByte(direction));\r\n    }\r\n\r\n    @Override\r\n    public String toString() {\r\n        return \"T\";\r\n    }\r\n\r\n    public int getLife() {\r\n        return life;\r\n    }\r\n\r\n    public void setLife(int life) {\r\n        this.life = life;\r\n    }\r\n\r\n    public String getIp(){\r\n        return ip;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Tank.java b/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Tank.java
+--- a/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Tank.java	
++++ b/server/src/main/java/edu/unh/cs/cs619/bulletzone/model/Tank.java	
+@@ -23,11 +23,14 @@
+ 
+     private Direction direction;
+ 
++    private int isActive;
+ 
+-    public Tank(long id, Direction direction, String ip) {
++
++    public Tank(long id, Direction direction, String ip, int isActive) {
+         this.id = id;
+         this.direction = direction;
+         this.ip = ip;
++        this.isActive = isActive;
+         numberOfBullets = 0;
+         allowedNumberOfBullets = 2;
+         lastFireTime = 0;
+@@ -38,7 +41,7 @@
+ 
+     @Override
+     public FieldEntity copy() {
+-        return new Tank(id, direction, ip);
++        return new Tank(id, direction, ip, isActive);
+     }
+ 
+     @Override
+@@ -54,6 +57,20 @@
+         }
+     }
+ 
++    public Soldier ejectSoldier() {
++        Soldier soldier = new Soldier(id + 30000, direction, ip);
++
++        // Set up the position and other attributes of the soldier if needed
++        return soldier;
++    }
++
++    public int getIsActive() {
++        return isActive;
++    }
++
++    public void setIsActive(int isActive) {
++        this.isActive = isActive;
++    }
+ 
+     public long getLastMoveTime() {
+         return lastMoveTime;
+Index: server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/Action.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone.repository;\r\n\r\nimport static com.google.common.base.Preconditions.checkNotNull;\r\n\r\nimport java.sql.SQLOutput;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\n\r\nimport edu.unh.cs.cs619.bulletzone.model.Bullet;\r\nimport edu.unh.cs.cs619.bulletzone.model.Direction;\r\nimport edu.unh.cs.cs619.bulletzone.model.FieldHolder;\r\nimport edu.unh.cs.cs619.bulletzone.model.Game;\r\nimport edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;\r\nimport edu.unh.cs.cs619.bulletzone.model.LimitExceededException;\r\nimport edu.unh.cs.cs619.bulletzone.model.Tank;\r\nimport edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;\r\nimport edu.unh.cs.cs619.bulletzone.model.Wall;\r\n\r\n/*\r\n    I believe this should ultimately be a command? pattern\r\n */\r\npublic class Action {\r\n    private final Object monitor;\r\n    private Game game;\r\n    private final Timer timer = new Timer();\r\n\r\n    private int bulletDamage[]={10,30,50};\r\n    private int bulletDelay[]={500,1000,1500};\r\n    private int trackActiveBullets[]={0,0};\r\n\r\n    /**\r\n     * Bullet step time in milliseconds\r\n     */\r\n    private static final int BULLET_PERIOD = 200;\r\n\r\n    public Action(Object monitor, Game game) {\r\n        this.monitor = monitor;\r\n        this.game = game;\r\n    }\r\n\r\n    public boolean turn(long tankId, Direction direction)\r\n            throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {\r\n        synchronized (this.monitor) {\r\n            checkNotNull(direction);\r\n\r\n            //System.out.println(\"Turning \" + tankId + \" \" + direction.toString());\r\n\r\n            // Find user\r\n            Tank tank = game.getTanks().get(tankId);\r\n            if (tank == null) {\r\n                //Log.i(TAG, \"Cannot find user with id: \" + tankId);\r\n                throw new TankDoesNotExistException(tankId);\r\n            }\r\n\r\n            long millis = System.currentTimeMillis();\r\n\r\n            if(millis < tank.getLastMoveTime())\r\n                return false;\r\n\r\n            tank.setLastMoveTime(millis+tank.getAllowedMoveInterval());\r\n\r\n            /*try {\r\n                Thread.sleep(500);\r\n            } catch(InterruptedException ex) {\r\n                Thread.currentThread().interrupt();\r\n            }*/\r\n\r\n            tank.setDirection(direction);\r\n\r\n            return true;\r\n        }\r\n    }\r\n\r\n\r\n    public boolean move(long tankId, Direction direction)\r\n            throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {\r\n       // System.out.println(\"move before sync\");\r\n        synchronized (this.monitor) {\r\n            // Find tank\r\n          //  System.out.println(\"Moving \" + tankId + \" \" + direction.toString());\r\n\r\n            Tank tank = game.getTanks().get(tankId);\r\n            if (tank == null) {\r\n                //Log.i(TAG, \"Cannot find user with id: \" + tankId);\r\n                //return false;\r\n                throw new TankDoesNotExistException(tankId);\r\n            }\r\n\r\n            //if tank direction is not equal to forwards or backwards\r\n            //move constraint\r\n            if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {\r\n                return false;\r\n            }\r\n\r\n\r\n            long millis = System.currentTimeMillis();\r\n            if(millis < tank.getLastMoveTime())\r\n                return false;\r\n\r\n            tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());\r\n\r\n            FieldHolder parent = tank.getParent();\r\n\r\n            FieldHolder nextField = parent.getNeighbor(direction);\r\n            checkNotNull(parent.getNeighbor(direction), \"Neightbor is not available\");\r\n\r\n            boolean isCompleted;\r\n            if (!nextField.isPresent()) {\r\n                // If the next field is empty move the user\r\n\r\n                /*try {\r\n                    Thread.sleep(500);\r\n                } catch(InterruptedException ex) {\r\n                    Thread.currentThread().interrupt();\r\n                }*/\r\n\r\n                parent.clearField();\r\n                nextField.setFieldEntity(tank);\r\n                tank.setParent(nextField);\r\n\r\n                isCompleted = true;\r\n            } else {\r\n                isCompleted = false;\r\n            }\r\n\r\n            return isCompleted;\r\n        }\r\n    }\r\n\r\n\r\n    public boolean fire(long tankId, int bulletType)\r\n            throws TankDoesNotExistException, LimitExceededException {\r\n        synchronized (this.monitor) {\r\n\r\n            // Find tank\r\n            Tank tank = game.getTanks().get(tankId);\r\n            if (tank == null) {\r\n                //Log.i(TAG, \"Cannot find user with id: \" + tankId);\r\n                //return false;\r\n                throw new TankDoesNotExistException(tankId);\r\n            }\r\n\r\n            if(tank.getNumberOfBullets() >= tank.getAllowedNumberOfBullets())\r\n                return false;\r\n\r\n            long millis = System.currentTimeMillis();\r\n            if(millis < tank.getLastFireTime()/*>tank.getAllowedFireInterval()*/){\r\n                return false;\r\n            }\r\n\r\n            //Log.i(TAG, \"Cannot find user with id: \" + tankId);\r\n            Direction direction = tank.getDirection();\r\n            FieldHolder parent = tank.getParent();\r\n            tank.setNumberOfBullets(tank.getNumberOfBullets() + 1);\r\n\r\n            if(!(bulletType>=1 && bulletType<=3)) {\r\n                System.out.println(\"Bullet type must be 1, 2 or 3, set to 1 by default.\");\r\n                bulletType = 1;\r\n            }\r\n\r\n            tank.setLastFireTime(millis + bulletDelay[bulletType - 1]);\r\n\r\n            int bulletId=0;\r\n            if(trackActiveBullets[0]==0){\r\n                bulletId = 0;\r\n                trackActiveBullets[0] = 1;\r\n            }else if(trackActiveBullets[1]==0){\r\n                bulletId = 1;\r\n                trackActiveBullets[1] = 1;\r\n            }\r\n\r\n            // Create a new bullet to fire\r\n            final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType-1]);\r\n            // Set the same parent for the bullet.\r\n            // This should be only a one way reference.\r\n            bullet.setParent(parent);\r\n            bullet.setBulletId(bulletId);\r\n\r\n            // TODO make it nicer\r\n            timer.schedule(new TimerTask() {\r\n\r\n                @Override\r\n                public void run() {\r\n                    synchronized (monitor) {\r\n                        System.out.println(\"Active Bullet: \"+tank.getNumberOfBullets()+\"---- Bullet ID: \"+bullet.getIntValue());\r\n                        FieldHolder currentField = bullet.getParent();\r\n                        Direction direction = bullet.getDirection();\r\n                        FieldHolder nextField = currentField\r\n                                .getNeighbor(direction);\r\n\r\n                        // Is the bullet visible on the field?\r\n                        boolean isVisible = currentField.isPresent()\r\n                                && (currentField.getEntity() == bullet);\r\n\r\n\r\n                        if (nextField.isPresent()) {\r\n                            // Something is there, hit it\r\n                            nextField.getEntity().hit(bullet.getDamage());\r\n\r\n                            if ( nextField.getEntity() instanceof  Tank){\r\n                                Tank t = (Tank) nextField.getEntity();\r\n                                System.out.println(\"tank is hit, tank life: \" + t.getLife());\r\n                                if (t.getLife() <= 0 ){\r\n                                    t.getParent().clearField();\r\n                                    t.setParent(null);\r\n                                    game.removeTank(t.getId());\r\n                                }\r\n                            }\r\n                            else if ( nextField.getEntity() instanceof Wall){\r\n                                Wall w = (Wall) nextField.getEntity();\r\n                                if (w.getIntValue() >1000 && w.getIntValue()<=2000 ){\r\n                                    game.getHolderGrid().get(w.getPos()).clearField();\r\n                                }\r\n                            }\r\n                            if (isVisible) {\r\n                                // Remove bullet from field\r\n                                currentField.clearField();\r\n                            }\r\n                            trackActiveBullets[bullet.getBulletId()]=0;\r\n                            tank.setNumberOfBullets(tank.getNumberOfBullets()-1);\r\n                            cancel();\r\n\r\n                        } else {\r\n                            if (isVisible) {\r\n                                // Remove bullet from field\r\n                                currentField.clearField();\r\n                            }\r\n\r\n                            nextField.setFieldEntity(bullet);\r\n                            bullet.setParent(nextField);\r\n                        }\r\n                    }\r\n                }\r\n            }, 0, BULLET_PERIOD);\r\n\r\n            return true;\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/Action.java b/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/Action.java
+--- a/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/Action.java	
++++ b/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/Action.java	
+@@ -2,7 +2,6 @@
+ 
+ import static com.google.common.base.Preconditions.checkNotNull;
+ 
+-import java.sql.SQLOutput;
+ import java.util.Timer;
+ import java.util.TimerTask;
+ 
+@@ -12,6 +11,7 @@
+ import edu.unh.cs.cs619.bulletzone.model.Game;
+ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
+ import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
++import edu.unh.cs.cs619.bulletzone.model.Soldier;
+ import edu.unh.cs.cs619.bulletzone.model.Tank;
+ import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+ import edu.unh.cs.cs619.bulletzone.model.Wall;
+@@ -47,27 +47,32 @@
+ 
+             // Find user
+             Tank tank = game.getTanks().get(tankId);
++            long soldierId = tankId + 30000000;
+             if (tank == null) {
+                 //Log.i(TAG, "Cannot find user with id: " + tankId);
+                 throw new TankDoesNotExistException(tankId);
+             }
+ 
+             long millis = System.currentTimeMillis();
+-
+-            if(millis < tank.getLastMoveTime())
+-                return false;
+-
+-            tank.setLastMoveTime(millis+tank.getAllowedMoveInterval());
+-
+-            /*try {
+-                Thread.sleep(500);
+-            } catch(InterruptedException ex) {
+-                Thread.currentThread().interrupt();
+-            }*/
+-
+-            tank.setDirection(direction);
++            if (tank.getIsActive() == 1) {
++                if (millis < tank.getLastMoveTime()) {
++                    return false;
++                }
++                tank.setLastMoveTime(millis+tank.getAllowedMoveInterval());
++                tank.setDirection(direction);
+ 
+-            return true;
++                return true;
++            } else {
++
++                Soldier soldier = game.getSoldiers().get(soldierId);
++                if(millis < soldier.getLastMoveTime()) {
++                    return false;
++                }
++                soldier.setLastMoveTime(millis+soldier.getAllowedMoveInterval());
++                soldier.setDirection(direction);
++
++                return true;
++            }
+         }
+     }
+ 
+@@ -80,33 +85,34 @@
+           //  System.out.println("Moving " + tankId + " " + direction.toString());
+ 
+             Tank tank = game.getTanks().get(tankId);
++            long soldierId = tankId + 30000000;
+             if (tank == null) {
+                 //Log.i(TAG, "Cannot find user with id: " + tankId);
+                 //return false;
+                 throw new TankDoesNotExistException(tankId);
+             }
+-
+-            //if tank direction is not equal to forwards or backwards
+-            //move constraint
+-            if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
+-                return false;
+-            }
++            if (tank.getIsActive() == 1) {
++                //if tank direction is not equal to forwards or backwards
++                //move constraint
++                if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
++                    return false;
++                }
+ 
+ 
+-            long millis = System.currentTimeMillis();
+-            if(millis < tank.getLastMoveTime())
+-                return false;
++                long millis = System.currentTimeMillis();
++                if(millis < tank.getLastMoveTime())
++                    return false;
+ 
+-            tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());
++                tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());
+ 
+-            FieldHolder parent = tank.getParent();
++                FieldHolder parent = tank.getParent();
+ 
+-            FieldHolder nextField = parent.getNeighbor(direction);
+-            checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
++                FieldHolder nextField = parent.getNeighbor(direction);
++                checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
+ 
+-            boolean isCompleted;
+-            if (!nextField.isPresent()) {
+-                // If the next field is empty move the user
++                boolean isCompleted;
++                if (!nextField.isPresent()) {
++                    // If the next field is empty move the user
+ 
+                 /*try {
+                     Thread.sleep(500);
+@@ -114,16 +120,57 @@
+                     Thread.currentThread().interrupt();
+                 }*/
+ 
+-                parent.clearField();
+-                nextField.setFieldEntity(tank);
+-                tank.setParent(nextField);
++                    parent.clearField();
++                    nextField.setFieldEntity(tank);
++                    tank.setParent(nextField);
+ 
+-                isCompleted = true;
+-            } else {
+-                isCompleted = false;
+-            }
++                    isCompleted = true;
++                } else {
++                    isCompleted = false;
++                }
++
++                return isCompleted;
++            } else {
++                //if tank direction is not equal to forwards or backwards
++                //move constraint
++                if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
++                    return false;
++                }
++                Soldier soldier = game.getSoldiers().get(soldierId);
++
++
++                long millis = System.currentTimeMillis();
++                if(millis < soldier.getLastMoveTime())
++                    return false;
++
++                soldier.setLastMoveTime(millis + soldier.getAllowedMoveInterval());
++
++                FieldHolder parent = soldier.getParent();
++
++                FieldHolder nextField = parent.getNeighbor(direction);
++                checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
++
++                boolean isCompleted;
++                if (!nextField.isPresent()) {
++                    // If the next field is empty move the user
++
++                /*try {
++                    Thread.sleep(500);
++                } catch(InterruptedException ex) {
++                    Thread.currentThread().interrupt();
++                }*/
++
++                    parent.clearField();
++                    nextField.setFieldEntity(soldier);
++                    soldier.setParent(nextField);
++
++                    isCompleted = true;
++                } else {
++                    isCompleted = false;
++                }
+ 
+-            return isCompleted;
++                return isCompleted;
++            }
+         }
+     }
+ 
+@@ -134,106 +181,204 @@
+ 
+             // Find tank
+             Tank tank = game.getTanks().get(tankId);
++            long soldierId = tankId + 30000000;
+             if (tank == null) {
+                 //Log.i(TAG, "Cannot find user with id: " + tankId);
+                 //return false;
+                 throw new TankDoesNotExistException(tankId);
+             }
+-
+-            if(tank.getNumberOfBullets() >= tank.getAllowedNumberOfBullets())
+-                return false;
++            if (tank.getIsActive() == 1) {
++                if(tank.getNumberOfBullets() >= tank.getAllowedNumberOfBullets())
++                    return false;
+ 
+-            long millis = System.currentTimeMillis();
+-            if(millis < tank.getLastFireTime()/*>tank.getAllowedFireInterval()*/){
+-                return false;
+-            }
++                long millis = System.currentTimeMillis();
++                if(millis < tank.getLastFireTime()/*>tank.getAllowedFireInterval()*/){
++                    return false;
++                }
+ 
+-            //Log.i(TAG, "Cannot find user with id: " + tankId);
+-            Direction direction = tank.getDirection();
+-            FieldHolder parent = tank.getParent();
+-            tank.setNumberOfBullets(tank.getNumberOfBullets() + 1);
++                //Log.i(TAG, "Cannot find user with id: " + tankId);
++                Direction direction = tank.getDirection();
++                FieldHolder parent = tank.getParent();
++                tank.setNumberOfBullets(tank.getNumberOfBullets() + 1);
+ 
+-            if(!(bulletType>=1 && bulletType<=3)) {
+-                System.out.println("Bullet type must be 1, 2 or 3, set to 1 by default.");
+-                bulletType = 1;
+-            }
++                if(!(bulletType>=1 && bulletType<=3)) {
++                    System.out.println("Bullet type must be 1, 2 or 3, set to 1 by default.");
++                    bulletType = 1;
++                }
+ 
+-            tank.setLastFireTime(millis + bulletDelay[bulletType - 1]);
++                tank.setLastFireTime(millis + bulletDelay[bulletType - 1]);
+ 
+-            int bulletId=0;
+-            if(trackActiveBullets[0]==0){
+-                bulletId = 0;
+-                trackActiveBullets[0] = 1;
+-            }else if(trackActiveBullets[1]==0){
+-                bulletId = 1;
+-                trackActiveBullets[1] = 1;
+-            }
++                int bulletId=0;
++                if(trackActiveBullets[0]==0){
++                    bulletId = 0;
++                    trackActiveBullets[0] = 1;
++                }else if(trackActiveBullets[1]==0){
++                    bulletId = 1;
++                    trackActiveBullets[1] = 1;
++                }
+ 
+-            // Create a new bullet to fire
+-            final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType-1]);
+-            // Set the same parent for the bullet.
+-            // This should be only a one way reference.
+-            bullet.setParent(parent);
+-            bullet.setBulletId(bulletId);
++                // Create a new bullet to fire
++                final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType-1]);
++                // Set the same parent for the bullet.
++                // This should be only a one way reference.
++                bullet.setParent(parent);
++                bullet.setBulletId(bulletId);
+ 
+-            // TODO make it nicer
+-            timer.schedule(new TimerTask() {
++                // TODO make it nicer
++                timer.schedule(new TimerTask() {
+ 
+-                @Override
+-                public void run() {
+-                    synchronized (monitor) {
+-                        System.out.println("Active Bullet: "+tank.getNumberOfBullets()+"---- Bullet ID: "+bullet.getIntValue());
+-                        FieldHolder currentField = bullet.getParent();
+-                        Direction direction = bullet.getDirection();
+-                        FieldHolder nextField = currentField
+-                                .getNeighbor(direction);
++                    @Override
++                    public void run() {
++                        synchronized (monitor) {
++                            System.out.println("Active Bullet: "+tank.getNumberOfBullets()+"---- Bullet ID: "+bullet.getIntValue());
++                            FieldHolder currentField = bullet.getParent();
++                            Direction direction = bullet.getDirection();
++                            FieldHolder nextField = currentField
++                                    .getNeighbor(direction);
+ 
+-                        // Is the bullet visible on the field?
+-                        boolean isVisible = currentField.isPresent()
+-                                && (currentField.getEntity() == bullet);
++                            // Is the bullet visible on the field?
++                            boolean isVisible = currentField.isPresent()
++                                    && (currentField.getEntity() == bullet);
+ 
+ 
+-                        if (nextField.isPresent()) {
+-                            // Something is there, hit it
+-                            nextField.getEntity().hit(bullet.getDamage());
++                            if (nextField.isPresent()) {
++                                // Something is there, hit it
++                                nextField.getEntity().hit(bullet.getDamage());
+ 
+-                            if ( nextField.getEntity() instanceof  Tank){
+-                                Tank t = (Tank) nextField.getEntity();
+-                                System.out.println("tank is hit, tank life: " + t.getLife());
+-                                if (t.getLife() <= 0 ){
+-                                    t.getParent().clearField();
+-                                    t.setParent(null);
+-                                    game.removeTank(t.getId());
+-                                }
+-                            }
+-                            else if ( nextField.getEntity() instanceof Wall){
+-                                Wall w = (Wall) nextField.getEntity();
+-                                if (w.getIntValue() >1000 && w.getIntValue()<=2000 ){
+-                                    game.getHolderGrid().get(w.getPos()).clearField();
+-                                }
+-                            }
+-                            if (isVisible) {
+-                                // Remove bullet from field
+-                                currentField.clearField();
+-                            }
+-                            trackActiveBullets[bullet.getBulletId()]=0;
+-                            tank.setNumberOfBullets(tank.getNumberOfBullets()-1);
+-                            cancel();
++                                if ( nextField.getEntity() instanceof  Tank){
++                                    Tank t = (Tank) nextField.getEntity();
++                                    System.out.println("tank is hit, tank life: " + t.getLife());
++                                    if (t.getLife() <= 0 ){
++                                        t.getParent().clearField();
++                                        t.setParent(null);
++                                        game.removeTank(t.getId());
++                                    }
++                                }
++                                else if ( nextField.getEntity() instanceof Wall){
++                                    Wall w = (Wall) nextField.getEntity();
++                                    if (w.getIntValue() >1000 && w.getIntValue()<=2000 ){
++                                        game.getHolderGrid().get(w.getPos()).clearField();
++                                    }
++                                }
++                                if (isVisible) {
++                                    // Remove bullet from field
++                                    currentField.clearField();
++                                }
++                                trackActiveBullets[bullet.getBulletId()]=0;
++                                tank.setNumberOfBullets(tank.getNumberOfBullets()-1);
++                                cancel();
++
++                            } else {
++                                if (isVisible) {
++                                    // Remove bullet from field
++                                    currentField.clearField();
++                                }
++
++                                nextField.setFieldEntity(bullet);
++                                bullet.setParent(nextField);
++                            }
++                        }
++                    }
++                }, 0, BULLET_PERIOD);
++
++                return true;
++            } else {
++                Soldier soldier = game.getSoldiers().get(soldierId);
++                if(soldier.getNumberOfBullets() >= soldier.getAllowedNumberOfBullets())
++                    return false;
++
++                long millis = System.currentTimeMillis();
++                if(millis < soldier.getLastFireTime()/*>tank.getAllowedFireInterval()*/){
++                    return false;
++                }
++
++                //Log.i(TAG, "Cannot find user with id: " + tankId);
++                Direction direction = soldier.getDirection();
++                FieldHolder parent = soldier.getParent();
++                tank.setNumberOfBullets(soldier.getNumberOfBullets() + 1);
++
++                if(!(bulletType>=1 && bulletType<=3)) {
++                    System.out.println("Bullet type must be 1, 2 or 3, set to 1 by default.");
++                    bulletType = 1;
++                }
++
++                soldier.setLastFireTime(millis + bulletDelay[bulletType - 1]);
++
++                int bulletId=0;
++                if(trackActiveBullets[0]==0){
++                    bulletId = 0;
++                    trackActiveBullets[0] = 1;
++                }else if(trackActiveBullets[1]==0){
++                    bulletId = 1;
++                    trackActiveBullets[1] = 1;
++                }
++
++                // Create a new bullet to fire
++                final Bullet bullet = new Bullet(soldierId, direction, bulletDamage[bulletType-1]);
++                // Set the same parent for the bullet.
++                // This should be only a one way reference.
++                bullet.setParent(parent);
++                bullet.setBulletId(bulletId);
++
++                // TODO make it nicer
++                timer.schedule(new TimerTask() {
++
++                    @Override
++                    public void run() {
++                        synchronized (monitor) {
++                            System.out.println("Active Bullet: "+tank.getNumberOfBullets()+"---- Soldier Bullet ID: "+bullet.getIntValue());
++                            FieldHolder currentField = bullet.getParent();
++                            Direction direction = bullet.getDirection();
++                            FieldHolder nextField = currentField
++                                    .getNeighbor(direction);
++
++                            // Is the bullet visible on the field?
++                            boolean isVisible = currentField.isPresent()
++                                    && (currentField.getEntity() == bullet);
++
++
++                            if (nextField.isPresent()) {
++                                // Something is there, hit it
++                                nextField.getEntity().hit(bullet.getDamage());
++
++                                if ( nextField.getEntity() instanceof  Tank){
++                                    Tank t = (Tank) nextField.getEntity();
++                                    System.out.println("tank is hit, tank life: " + t.getLife());
++                                    if (t.getLife() <= 0 ){
++                                        t.getParent().clearField();
++                                        t.setParent(null);
++                                        game.removeTank(t.getId());
++                                    }
++                                }
++                                else if ( nextField.getEntity() instanceof Wall){
++                                    Wall w = (Wall) nextField.getEntity();
++                                    if (w.getIntValue() >1000 && w.getIntValue()<=2000 ){
++                                        game.getHolderGrid().get(w.getPos()).clearField();
++                                    }
++                                }
++                                if (isVisible) {
++                                    // Remove bullet from field
++                                    currentField.clearField();
++                                }
++                                trackActiveBullets[bullet.getBulletId()]=0;
++                                soldier.setNumberOfBullets(soldier.getNumberOfBullets()-1);
++                                cancel();
+ 
+-                        } else {
+-                            if (isVisible) {
+-                                // Remove bullet from field
+-                                currentField.clearField();
+-                            }
++                            } else {
++                                if (isVisible) {
++                                    // Remove bullet from field
++                                    currentField.clearField();
++                                }
+ 
+-                            nextField.setFieldEntity(bullet);
+-                            bullet.setParent(nextField);
+-                        }
+-                    }
+-                }
+-            }, 0, BULLET_PERIOD);
++                                nextField.setFieldEntity(bullet);
++                                bullet.setParent(nextField);
++                            }
++                        }
++                    }
++                }, 0, BULLET_PERIOD);
+ 
+-            return true;
++                return true;
++            }
+         }
+     }
+ }

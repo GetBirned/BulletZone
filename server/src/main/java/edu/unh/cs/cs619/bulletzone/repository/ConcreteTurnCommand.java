@@ -37,6 +37,11 @@ public class ConcreteTurnCommand implements Command {
         return res_t;
     }
 
+    @Override
+    public int execute1() {
+        return 0;
+    }
+
     public Boolean turnConstraintCheck() {
         /*
         Tank can make only one turn per step. (E.g., Correct turn: NORTH -> WEST Incorrect turn: NORTH -> SOUTH);

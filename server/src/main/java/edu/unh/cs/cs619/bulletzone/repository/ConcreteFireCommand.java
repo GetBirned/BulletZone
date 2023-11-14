@@ -34,6 +34,11 @@ public class ConcreteFireCommand implements Command {
     }
 
     @Override
+    public int execute1() {
+        return 0;
+    }
+
+    @Override
     public String getCommandType() {
         return "Fire";
     }

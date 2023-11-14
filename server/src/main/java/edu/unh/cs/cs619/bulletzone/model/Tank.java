@@ -23,11 +23,14 @@ public class Tank extends FieldEntity {
 
     private Direction direction;
 
+    private int isActive;
 
-    public Tank(long id, Direction direction, String ip) {
+
+    public Tank(long id, Direction direction, String ip, int isActive) {
         this.id = id;
         this.direction = direction;
         this.ip = ip;
+        this.isActive = isActive;
         numberOfBullets = 0;
         allowedNumberOfBullets = 2;
         lastFireTime = 0;
@@ -38,8 +41,20 @@ public class Tank extends FieldEntity {
 
     @Override
     public FieldEntity copy() {
-        return new Tank(id, direction, ip);
+        return new Tank(id, direction, ip, isActive);
     }
+
+    /**
+    public interface OnLifeChangeListener {
+        void onLifeChanged(int newLife);
+    }
+     */
+
+    /**
+    public void setOnLifeChangeListener(OnLifeChangeListener listener) {
+        this.onLifeChangeListener = listener;
+    }
+     */
 
     @Override
     public void hit(int damage) {
@@ -137,6 +152,14 @@ public class Tank extends FieldEntity {
 
     public String getIp(){
         return ip;
+    }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
     }
 
 }

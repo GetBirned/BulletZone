@@ -1,0 +1,172 @@
+Index: client/src/main/java/edu/unh/cs/cs619/bulletzone/ui/GridAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone.ui;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.BaseAdapter;\r\nimport android.widget.ImageView;\r\n\r\nimport org.androidannotations.annotations.EBean;\r\nimport org.androidannotations.annotations.SystemService;\r\n\r\nimport edu.unh.cs.cs619.bulletzone.R;\r\n\r\n@EBean\r\npublic class GridAdapter extends BaseAdapter {\r\n\r\n    private final Object monitor = new Object();\r\n    @SystemService\r\n    protected LayoutInflater inflater;\r\n    private int[][] mEntities = new int[16][16];\r\n\r\n    public void updateList(int[][] entities) {\r\n        synchronized (monitor) {\r\n            this.mEntities = entities;\r\n            this.notifyDataSetChanged();\r\n        }\r\n    }\r\n    private static final String TAGFRIEND = \"GridAdapter (Friendly):\";\r\n    private static final String TAGENEMY = \"GridAdapter (Enemy):\";\r\n    @Override\r\n    public int getCount() {\r\n        return 16 * 16;\r\n    }\r\n\r\n    @Override\r\n    public Object getItem(int position) {\r\n        return mEntities[(int) position / 16][position % 16];\r\n    }\r\n\r\n    @Override\r\n    public long getItemId(int position) {\r\n        return position;\r\n    }\r\n\r\n    public int friendlyTank(int value) {\r\n        String tankID = Integer.toString(value);\r\n        tankID = tankID.substring(2,4);\r\n        return Integer.parseInt(tankID);\r\n    }\r\n\r\n    int lastFriendlyDirection; // keeps record of last friendly direction\r\n    int lastEnemyDirection; // keeps record of last enemy direction\r\n\r\n    public void setFriendlyTank(ImageView imageView, int direction) {\r\n        lastFriendlyDirection = direction;\r\n        if (direction == 0) {\r\n            imageView.setImageResource(R.drawable.friendlytankup);\r\n        } else if (direction == 2) {\r\n            imageView.setImageResource(R.drawable.friendlytankright);\r\n        } else if (direction == 4) {\r\n            imageView.setImageResource(R.drawable.friendlytankdown);\r\n        } else if (direction == 6) {\r\n            imageView.setImageResource(R.drawable.friendlytankleft);\r\n        }\r\n    }\r\n\r\n    public void setEnemyTank(ImageView imageView, int direction) {\r\n        lastEnemyDirection = direction;\r\n        if (direction == 0) {\r\n            imageView.setImageResource(R.drawable.enemytankup);\r\n        } else if (direction == 2) {\r\n            imageView.setImageResource(R.drawable.enemytankright);\r\n        } else if (direction == 4) {\r\n            imageView.setImageResource(R.drawable.enemytankdown);\r\n        } else if (direction == 6) {\r\n            imageView.setImageResource(R.drawable.enemytankleft);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public View getView(int position, View convertView, ViewGroup parent) {\r\n        if (convertView == null) {\r\n            convertView = inflater.inflate(R.layout.field_item, null);\r\n        }\r\n\r\n        ImageView imageView = convertView.findViewById(R.id.imageView);\r\n\r\n        int row = position / 16;\r\n        int col = position % 16;\r\n\r\n        int val = mEntities[row][col];\r\n        int friendly;\r\n\r\n        synchronized (monitor) {\r\n            if (val > 0) {\r\n                int direction = (val % 10);\r\n                if (val == 1000 || (val > 1000 && val <= 2000)) {\r\n                    imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls\r\n                } else if (val >= 2000000 && val <= 3000000) {\r\n                    imageView.setImageResource(R.drawable.bulletgrass);\r\n                } else if (val >= 10000000 && val <= 20000000) {\r\n                    if (friendlyTank(val) == 0) {\r\n                        setFriendlyTank(imageView, direction); // Set proper friendly tank image\r\n                    } else {\r\n                        setEnemyTank(imageView, direction); // Set proper enemy tank image\r\n                    }\r\n                }\r\n            } else {\r\n                imageView.setImageResource(R.drawable.grass); // Set a default image if no entity\r\n            }\r\n        }\r\n\r\n        return imageView;\r\n    }\r\n}\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/client/src/main/java/edu/unh/cs/cs619/bulletzone/ui/GridAdapter.java b/client/src/main/java/edu/unh/cs/cs619/bulletzone/ui/GridAdapter.java
+--- a/client/src/main/java/edu/unh/cs/cs619/bulletzone/ui/GridAdapter.java	
++++ b/client/src/main/java/edu/unh/cs/cs619/bulletzone/ui/GridAdapter.java	
+@@ -104,13 +104,15 @@
+                     } else {
+                         setEnemyTank(imageView, direction); // Set proper enemy tank image
+                     }
+-                }
+-            } else {
+-                imageView.setImageResource(R.drawable.grass); // Set a default image if no entity
+-            }
+-        }
++                } else if (val >= 40000000 && val <= 50000000) {
++                    imageView.setImageResource(R.drawable.soldiergrassright);
++                } else {
++                    imageView.setImageResource(R.drawable.grass); // Set a default image if no entity
++                }
++            }
+ 
+-        return imageView;
++            return imageView;
++        }
+     }
+ }
+ 
+Index: client/src/main/java/edu/unh/cs/cs619/bulletzone/AuthenticateActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone;\r\n\r\nimport android.content.Context;\r\nimport android.os.SystemClock;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport android.os.Bundle;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\n\r\nimport org.androidannotations.annotations.AfterInject;\r\nimport org.androidannotations.annotations.AfterViews;\r\nimport org.androidannotations.annotations.Background;\r\nimport org.androidannotations.annotations.Bean;\r\nimport org.androidannotations.annotations.Click;\r\nimport org.androidannotations.annotations.EActivity;\r\nimport org.androidannotations.annotations.UiThread;\r\nimport org.androidannotations.annotations.ViewById;\r\n\r\n@EActivity(R.layout.activity_authenticate)\r\npublic class AuthenticateActivity extends AppCompatActivity {\r\n    @ViewById\r\n    EditText username_editText;\r\n\r\n    @ViewById\r\n    EditText password_editText;\r\n\r\n    @ViewById\r\n    TextView status_message;\r\n\r\n    @Bean\r\n    AuthenticationController controller;\r\n\r\n    long userID;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        //Since we are using the @EActivity annotation, anything done past this point will\r\n        //be overridden by the work AndroidAnnotations does. If you need to do more setup,\r\n        //add to the methods under @AfterViews (for view items) or @AfterInject (for Bean items) below\r\n    }\r\n\r\n    @AfterViews\r\n    protected void afterViewInjection() {\r\n        //Put any view-setup code here (that you might normally put in onCreate)\r\n    }\r\n\r\n    @AfterInject\r\n    void afterInject() {\r\n        //Put any Bean-related setup code here (the you might normally put in onCreate)\r\n    }\r\n\r\n    /**\r\n     * Registers a new user and logs them in\r\n     */\r\n    @Click(R.id.register_button)\r\n    @Background\r\n    protected void onButtonRegister() {\r\n        String username = username_editText.getText().toString();\r\n        String password = password_editText.getText().toString();\r\n\r\n        boolean status = controller.register(username, password);\r\n\r\n        if (!status) {\r\n            setStatus(\"User \" + username + \" already exists or server error.\\nPlease login or try with a different username.\");\r\n        } else { //register successful\r\n            setStatus(\"Registration successful.\");\r\n            //Do you want to log in automatically, or force them to do it?\r\n            userID = controller.login(username, password);\r\n            if (userID < 0) {\r\n                setStatus(\"Registration unsuccessful--inconsistency with server.\");\r\n            }\r\n            //do other login things?\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Logs in an existing user\r\n     */\r\n    @Click(R.id.login_button)\r\n    @Background\r\n    protected void onButtonLogin() {\r\n        String username = username_editText.getText().toString();\r\n        String password = password_editText.getText().toString();\r\n\r\n        userID = controller.login(username, password);\r\n        if (userID < 0) {\r\n            setStatus(\"Invalid username and/or password.\\nPlease try again.\");\r\n        } else { //register successful\r\n            setStatus(\"Login successful.\");\r\n            //do other login things?\r\n        }\r\n    }\r\n\r\n    @UiThread\r\n    protected void setStatus(String message) {\r\n        status_message.setText(message);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/client/src/main/java/edu/unh/cs/cs619/bulletzone/AuthenticateActivity.java b/client/src/main/java/edu/unh/cs/cs619/bulletzone/AuthenticateActivity.java
+--- a/client/src/main/java/edu/unh/cs/cs619/bulletzone/AuthenticateActivity.java	
++++ b/client/src/main/java/edu/unh/cs/cs619/bulletzone/AuthenticateActivity.java	
+@@ -1,12 +1,12 @@
+ package edu.unh.cs.cs619.bulletzone;
+ 
+-import android.content.Context;
+-import android.os.SystemClock;
+-import androidx.appcompat.app.AppCompatActivity;
++import android.content.Intent;
+ import android.os.Bundle;
+ import android.widget.EditText;
+ import android.widget.TextView;
+ 
++import androidx.appcompat.app.AppCompatActivity;
++
+ import org.androidannotations.annotations.AfterInject;
+ import org.androidannotations.annotations.AfterViews;
+ import org.androidannotations.annotations.Background;
+@@ -42,7 +42,8 @@
+ 
+     @AfterViews
+     protected void afterViewInjection() {
+-        //Put any view-setup code here (that you might normally put in onCreate)
++        //Put any view-setup code here
++
+     }
+ 
+     @AfterInject
+@@ -66,6 +67,11 @@
+         } else { //register successful
+             setStatus("Registration successful.");
+             //Do you want to log in automatically, or force them to do it?
++
++            Intent intent = new Intent(this, ClientActivity.class);
++            intent.putExtra("USERNAME_EXTRA", username);
++            startActivity(intent);
++
+             userID = controller.login(username, password);
+             if (userID < 0) {
+                 setStatus("Registration unsuccessful--inconsistency with server.");
+@@ -88,6 +94,12 @@
+             setStatus("Invalid username and/or password.\nPlease try again.");
+         } else { //register successful
+             setStatus("Login successful.");
++
++            Intent intent = new Intent(this, ClientActivity.class);
++            intent.putExtra("USERNAME_EXTRA", username);
++            startActivity(intent);
++
++
+             //do other login things?
+         }
+     }
+Index: client/src/main/java/edu/unh/cs/cs619/bulletzone/rest/BulletZoneRestClient.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone.rest;\r\n\r\nimport org.androidannotations.rest.spring.annotations.Delete;\r\nimport org.androidannotations.rest.spring.annotations.Get;\r\nimport org.androidannotations.rest.spring.annotations.Path;\r\nimport org.androidannotations.rest.spring.annotations.Post;\r\nimport org.androidannotations.rest.spring.annotations.Put;\r\nimport org.androidannotations.rest.spring.annotations.Rest;\r\nimport org.androidannotations.rest.spring.api.RestClientErrorHandling;\r\nimport org.springframework.http.converter.StringHttpMessageConverter;\r\nimport org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;\r\nimport org.springframework.web.client.RestClientException;\r\n\r\nimport edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;\r\nimport edu.unh.cs.cs619.bulletzone.util.GridWrapper;\r\nimport edu.unh.cs.cs619.bulletzone.util.LongWrapper;\r\n\r\n/** \"http://stman1.cs.unh.edu:6191/games\"\r\n * \"http://10.0.0.145:6191/games\"\r\n * http://10.0.2.2:8080/\r\n * Created by simon on 10/1/14.\r\n */\r\n\r\n//@Rest(rootUrl = \"http://10.21.159.62:8080/games\",\r\n@Rest(rootUrl = \"http://stman1.cs.unh.edu:61907/games\",\r\n//@Rest(rootUrl = \"http://stman1.cs.unh.edu:61902/games\",\r\n        converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}\r\n        // TODO: disable intercepting and logging\r\n        // , interceptors = { HttpLoggerInterceptor.class }\r\n)\r\npublic interface BulletZoneRestClient extends RestClientErrorHandling {\r\n    void setRootUrl(String rootUrl);\r\n\r\n    @Post(\"\")\r\n    LongWrapper join() throws RestClientException;\r\n\r\n    @Get(\"\")\r\n    GridWrapper grid();\r\n\r\n    @Put(\"/account/register/{username}/{password}\")\r\n    BooleanWrapper register(@Path String username, @Path String password);\r\n\r\n    @Put(\"/account/login/{username}/{password}\")\r\n    LongWrapper login(@Path String username, @Path String password);\r\n\r\n    @Put(\"/{tankId}/move/{direction}\")\r\n    BooleanWrapper move(@Path long tankId, @Path byte direction);\r\n\r\n    @Put(\"/{tankId}/turn/{direction}\")\r\n    BooleanWrapper turn(@Path long tankId, @Path byte direction);\r\n\r\n    @Put(\"/{tankId}/fire/1\")\r\n    BooleanWrapper fire(@Path long tankId);\r\n\r\n    @Delete(\"/{tankId}/leave\")\r\n    BooleanWrapper leave(@Path long tankId);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/client/src/main/java/edu/unh/cs/cs619/bulletzone/rest/BulletZoneRestClient.java b/client/src/main/java/edu/unh/cs/cs619/bulletzone/rest/BulletZoneRestClient.java
+--- a/client/src/main/java/edu/unh/cs/cs619/bulletzone/rest/BulletZoneRestClient.java	
++++ b/client/src/main/java/edu/unh/cs/cs619/bulletzone/rest/BulletZoneRestClient.java	
+@@ -54,4 +54,5 @@
+ 
+     @Delete("/{tankId}/leave")
+     BooleanWrapper leave(@Path long tankId);
++
+ }
+Index: server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/DataRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.unh.cs.cs619.bulletzone.repository;\r\n\r\nimport org.springframework.stereotype.Component;\r\n\r\nimport java.util.Random;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\nimport java.util.concurrent.atomic.AtomicLong;\r\n\r\nimport edu.unh.cs.cs619.bulletzone.datalayer.BulletZoneData;\r\nimport edu.unh.cs.cs619.bulletzone.datalayer.user.GameUser;\r\nimport edu.unh.cs.cs619.bulletzone.model.Bullet;\r\nimport edu.unh.cs.cs619.bulletzone.model.Direction;\r\nimport edu.unh.cs.cs619.bulletzone.model.FieldHolder;\r\nimport edu.unh.cs.cs619.bulletzone.model.Game;\r\nimport edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;\r\nimport edu.unh.cs.cs619.bulletzone.model.LimitExceededException;\r\nimport edu.unh.cs.cs619.bulletzone.model.Tank;\r\nimport edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;\r\nimport edu.unh.cs.cs619.bulletzone.model.Wall;\r\n\r\nimport static com.google.common.base.Preconditions.checkNotNull;\r\n\r\n/**\r\n * This class provides tailored access to objects that are needed by the REST API/Controller\r\n * classes. The idea is that it will interface with a BulletZoneData instance as well as\r\n * any other objects it needs to answer requests having to do with users, items, accounts,\r\n * permissions, and other things that are related to what is stored in the database.\r\n *\r\n * The convention is that actual objects will be returned by the DataRepository so that internal\r\n * objects can make effective use of the results as well as the Controllers. This means that\r\n * all API/Controller classes will need to translate these objects into the strings they need\r\n * to communicate information back to the caller.\r\n */\r\n//Note that the @Component annotation below causes an instance of a DataRepository to be\r\n//created and used for the Controller classes in the \"web\" package.\r\n@Component\r\npublic class DataRepository {\r\n    private BulletZoneData bzdata;\r\n\r\n    DataRepository() {\r\n        //TODO: Replace database name, username, and password with what's appropriate for your group\r\n        String url = \"jdbc:mysql://stman1.cs.unh.edu:3306/cs61907\";\r\n        String username = \"rhea\";\r\n        String password = \"Dgebr3Vern6f\";\r\n//\r\n//        bzdata = new BulletZoneData(url, username, password);\r\n        bzdata = new BulletZoneData(); //just use in-memory database\r\n    }\r\n\r\n    /**\r\n     * Stub for a method that would create a user or validate the user. [You don't have\r\n     * to do it this way--feel free to make other methods if you like!]\r\n     * @param username Username for the user to create or validate\r\n     * @param password Password for the user\r\n     * @param create true if the user should be created, or false otherwise\r\n     * @return GameUser corresponding to the username/password if successful, null otherwise\r\n     */\r\n    public GameUser validateUser(String username, String password, boolean create) {\r\n        //TODO: something that invokes users.createUser(name, password) or\r\n        //      users.validateLogin(name, password) as appropriate, maybe does other bookkeeping\r\n\r\n        GameUser x = bzdata.users.createUser(username, username, password);\r\n\r\n        if(x == null) {\r\n            x = bzdata.users.validateLogin(username,password);\r\n        }\r\n\r\n        return x;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/DataRepository.java b/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/DataRepository.java
+--- a/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/DataRepository.java	
++++ b/server/src/main/java/edu/unh/cs/cs619/bulletzone/repository/DataRepository.java	
+@@ -2,24 +2,8 @@
+ 
+ import org.springframework.stereotype.Component;
+ 
+-import java.util.Random;
+-import java.util.Timer;
+-import java.util.TimerTask;
+-import java.util.concurrent.atomic.AtomicLong;
+-
+ import edu.unh.cs.cs619.bulletzone.datalayer.BulletZoneData;
+ import edu.unh.cs.cs619.bulletzone.datalayer.user.GameUser;
+-import edu.unh.cs.cs619.bulletzone.model.Bullet;
+-import edu.unh.cs.cs619.bulletzone.model.Direction;
+-import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
+-import edu.unh.cs.cs619.bulletzone.model.Game;
+-import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
+-import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
+-import edu.unh.cs.cs619.bulletzone.model.Tank;
+-import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+-import edu.unh.cs.cs619.bulletzone.model.Wall;
+-
+-import static com.google.common.base.Preconditions.checkNotNull;
+ 
+ /**
+  * This class provides tailored access to objects that are needed by the REST API/Controller
+@@ -40,9 +24,9 @@
+ 
+     DataRepository() {
+         //TODO: Replace database name, username, and password with what's appropriate for your group
+-        String url = "jdbc:mysql://stman1.cs.unh.edu:3306/cs61907";
+-        String username = "rhea";
+-        String password = "Dgebr3Vern6f";
++//        String url = "jdbc:mysql://stman1.cs.unh.edu:3306/cs6190";
++//        String username = "mdp";
++//        String password = "Drag56kes";
+ //
+ //        bzdata = new BulletZoneData(url, username, password);
+         bzdata = new BulletZoneData(); //just use in-memory database
+@@ -59,13 +43,6 @@
+     public GameUser validateUser(String username, String password, boolean create) {
+         //TODO: something that invokes users.createUser(name, password) or
+         //      users.validateLogin(name, password) as appropriate, maybe does other bookkeeping
+-
+-        GameUser x = bzdata.users.createUser(username, username, password);
+-
+-        if(x == null) {
+-            x = bzdata.users.validateLogin(username,password);
+-        }
+-
+-        return x;
++        return null;
+     }
+ }
