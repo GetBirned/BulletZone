@@ -1,10 +1,10 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,8 +16,8 @@ public final class Game {
      */
     private static final int FIELD_DIM = 16;
     private final long id;
-    private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Long> playersIP = new ConcurrentHashMap<>();
     private final Object monitor = new Object();
     private GameBoardBuilder gbb = null;
@@ -51,12 +51,74 @@ public final class Game {
         }
     }
 
-    public TankLocation findTank(Tank tank, long tankID) {
-        synchronized (holderGrid) {
+    public Tank getTank(int tankId) {
+        return tanks.get(tankId);
+    }
+
+    public ConcurrentMap<Long, Tank> getTanks() {
+        return tanks;
+    }
+
+
+
+    public Tank getTank(String ip){
+        if (playersIP.containsKey(ip)){
+            return tanks.get(playersIP.get(ip));
+        }
+        return null;
+    }
+
+    public void removeTank(long tankId){
+        synchronized (tanks) {
+            Tank t = tanks.remove(tankId);
+            if (t != null) {
+                playersIP.remove(t.getIp());
+            }
+        }
+    }
+    public List<Optional<FieldEntity>> getGrid() {
+        synchronized (gbb.getBoard().getHolderGrid()) {
+            List<Optional<FieldEntity>> entities = new ArrayList<Optional<FieldEntity>>();
+
+            FieldEntity entity;
+            for (FieldHolder holder : gbb.getBoard().getHolderGrid()) {
+                if (holder.isPresent()) {
+                    entity = holder.getEntity();
+                    entity = entity.copy();
+
+                    entities.add(Optional.<FieldEntity>of(entity));
+                } else {
+                    entities.add(Optional.<FieldEntity>empty());
+                }
+            }
+            return entities;
+        }
+    }
+    public int[][] getGrid2D() {
+        int[][] grid = new int[FIELD_DIM][FIELD_DIM];
+
+        synchronized (gbb.getBoard().getHolderGrid()) {
             FieldHolder holder;
             for (int i = 0; i < FIELD_DIM; i++) {
                 for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = holderGrid.get(i * FIELD_DIM + j);
+                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
+                    if (holder.isPresent()) {
+                        grid[i][j] = holder.getEntity().getIntValue();
+                    } else {
+                        grid[i][j] = 0;
+                    }
+                }
+            }
+        }
+
+        return grid;
+    }
+    public TankLocation findTank(Tank tank, long tankID) {
+        synchronized (gbb.gb.holderGrid) {
+            FieldHolder holder;
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    holder = gbb.gb.holderGrid.get(i * FIELD_DIM + j);
                     if (holder.isPresent() && holder.getEntity() instanceof Tank) {
                         Tank currentTank = (Tank) holder.getEntity();
                         if (currentTank.getId() == tankID) {
@@ -142,8 +204,11 @@ public final class Game {
         }
     }
 
-    public Tank getTank(int tankId) {
-        return tanks.get(tankId);
+    public Soldier getSoldiers(String ip){
+        if (playersIP.containsKey(ip)){
+            return soldiers.get(playersIP.get(ip));
+        }
+        return null;
     }
 
     public Soldier getSoldier(int soldierID) {
@@ -152,26 +217,6 @@ public final class Game {
 
     public ConcurrentMap<Long, Soldier> getSoldiers() {
         return soldiers;
-    }
-
-    public ConcurrentMap<Long, Tank> getTanks() {
-        return tanks;
-    }
-
-
-
-    public Tank getTank(String ip){
-        if (playersIP.containsKey(ip)){
-            return tanks.get(playersIP.get(ip));
-        }
-        return null;
-    }
-
-    public Soldier getSoldiers(String ip){
-        if (playersIP.containsKey(ip)){
-            return soldiers.get(playersIP.get(ip));
-        }
-        return null;
     }
 
     public void removeSoldier(long soldierId){
@@ -185,51 +230,6 @@ public final class Game {
         }
     }
 
-    public void removeTank(long tankId){
-        synchronized (tanks) {
-            Tank t = tanks.remove(tankId);
-            if (t != null) {
-                playersIP.remove(t.getIp());
-            }
-        }
-    }
-    public List<Optional<FieldEntity>> getGrid() {
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            List<Optional<FieldEntity>> entities = new ArrayList<Optional<FieldEntity>>();
-
-            FieldEntity entity;
-            for (FieldHolder holder : gbb.getBoard().getHolderGrid()) {
-                if (holder.isPresent()) {
-                    entity = holder.getEntity();
-                    entity = entity.copy();
-
-                    entities.add(Optional.<FieldEntity>of(entity));
-                } else {
-                    entities.add(Optional.<FieldEntity>empty());
-                }
-            }
-            return entities;
-        }
-    }
-    public int[][] getGrid2D() {
-        int[][] grid = new int[FIELD_DIM][FIELD_DIM];
-
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            FieldHolder holder;
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
-                    if (holder.isPresent()) {
-                        grid[i][j] = holder.getEntity().getIntValue();
-                    } else {
-                        grid[i][j] = 0;
-                    }
-                }
-            }
-        }
-
-        return grid;
-    }
 }
 
 //

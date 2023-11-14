@@ -1,7 +1,7 @@
 package edu.unh.cs.cs619.bulletzone.model;
 public class GameBoardBuilder {
 
-    private GameBoard gb = null;
+    public GameBoard gb = null;
     private final Object monitor = new Object();
 
     public GameBoardBuilder() {
