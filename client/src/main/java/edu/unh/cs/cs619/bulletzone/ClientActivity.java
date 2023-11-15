@@ -230,6 +230,7 @@ public class ClientActivity extends Activity {
     public void updateGrid(GridWrapper gw) {
         if (gw != null) {
             mGridAdapter.updateList(gw.getGrid());
+            restClient.modifyBalance(this.tankId, mGridAdapter.numCoins);
             updateBankBalanceText(mGridAdapter.numCoins);
         } else {
             Log.e(TAG, "GridWrapper is null");

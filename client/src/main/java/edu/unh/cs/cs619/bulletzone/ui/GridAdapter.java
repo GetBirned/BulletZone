@@ -1,10 +1,12 @@
 package edu.unh.cs.cs619.bulletzone.ui;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import java.util.Random;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
@@ -20,6 +22,7 @@ public class GridAdapter extends BaseAdapter {
     @SystemService
     protected LayoutInflater inflater;
     private int[][] mEntities = new int[16][16];
+    Random random = new Random();
 
     private static final int[] ITEM_RESOURCES = {
             R.drawable.applepowerupgrass,
@@ -122,6 +125,11 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val >= 2000000 && val <= 3000000) {
                     imageView.setImageResource(R.drawable.bulletgrass);
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                        if(hasPowerUp[row][col] == 1){
+                            int rand = random.nextInt(196) + 5;
+                            numCoins += rand;
+                            Log.d("NUMCOINS:", this.numCoins+"");
+                        }
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
                         hasPowerUp[row][col] = 0;
                         numItems--;
@@ -129,6 +137,11 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val >= 10000000 && val <= 20000000) {
 
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                        if(hasPowerUp[row][col] == 1){
+                            int rand = random.nextInt(196) + 5;
+                            numCoins += rand;
+                            Log.d("NUMCOINS:", this.numCoins+"");
+                        }
                         //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
                         hasPowerUp[row][col] = 0;
                         numItems--;
