@@ -181,6 +181,7 @@ public final class Game {
                     // Add the soldier to the game
                     addSoldier(soldier.getIp(), soldier);
                     soldier.setIsInTank(false);
+                    soldier.setLife(25);
 
                     return new LongWrapper(soldierId);
                 } else {
