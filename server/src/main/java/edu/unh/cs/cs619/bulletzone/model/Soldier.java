@@ -26,7 +26,6 @@ public class Soldier extends FieldEntity {
 
     public Soldier(long id, Direction direction, String ip) {
         this.id = id;
-        this.life = 25; // Initialize soldier with 25 armor/life
         this.direction = direction;
         this.ip = ip;
         numberOfBullets = 0;
@@ -157,7 +156,7 @@ public class Soldier extends FieldEntity {
         this.direction = direction;
     }
 
-    public void takeDamage(int damage) {
+    public void hit(int damage) {
         life = life - damage;
         System.out.println("Soldier life: " + id + " : " + life);
 //		Log.d(TAG, "TankId: " + id + " hit -> life: " + life);
