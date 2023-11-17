@@ -16,6 +16,7 @@ public final class Game {
      */
     private static final int FIELD_DIM = 16;
     private final long id;
+    private long lastEjectionTime;
     private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Long> playersIP = new ConcurrentHashMap<>();
@@ -134,57 +135,74 @@ public final class Game {
         return null;
     }
 
+
+    public void startEjectionCooldown() {
+        lastEjectionTime = System.currentTimeMillis();
+    }
+
+    public boolean canEject() {
+        // Check if the ejection cooldown period has elapsed
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - lastEjectionTime) >= 3000;
+    }
+
     public LongWrapper deploySoldier(long tankId) {
         synchronized (tanks) {
             Tank tank = tanks.get(tankId);
             if (tank != null) {
-                tank.setIsActive(0);
-                TankLocation currentTank = findTank(tank, tankId);
-                long soldierId = tankId;
+                if (soldiers.get(tankId) == null) {
+                    tank.setIsActive(0);
+                    TankLocation currentTank = findTank(tank, tankId);
+                    long soldierId = tankId;
 
-                // Create a new soldier
+                    // Create a new soldier
 
-                Soldier soldier = new Soldier(soldierId, tank.getDirection(), tank.getIp());
-                if (soldier.canEject()) {
+                    Soldier soldier = new Soldier(soldierId, tank.getDirection(), tank.getIp());
+                    if (canEject()) {
 
-                    int x = currentTank.getRow();
-                    int y = currentTank.getColumn();
+                        int x = currentTank.getRow();
+                        int y = currentTank.getColumn();
 
-                    int maxIterations = FIELD_DIM * FIELD_DIM; // Set a maximum number of iterations
-                    for (int i = 0; i < maxIterations; i++) {
-                        // Attempt placing below, then above, then to the right, then to the left
-                        int[][] offsets = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+                        int maxIterations = FIELD_DIM * FIELD_DIM; // Set a maximum number of iterations
+                        for (int i = 0; i < maxIterations; i++) {
+                            // Attempt placing below, then above, then to the right, then to the left
+                            int[][] offsets = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-                        for (int[] offset : offsets) {
-                            int newX = x + offset[0];
-                            int newY = y + offset[1];
+                            for (int[] offset : offsets) {
+                                int newX = x + offset[0];
+                                int newY = y + offset[1];
 
-                            if (isValidPosition(newX, newY) && !getHolderGrid().get(newX * FIELD_DIM + newY).isPresent()) {
-                                x = newX;
-                                y = newY;
+                                if (isValidPosition(newX, newY) && !getHolderGrid().get(newX * FIELD_DIM + newY).isPresent()) {
+                                    x = newX;
+                                    y = newY;
+                                    break;
+                                }
+                            }
+
+                            FieldHolder fieldElement = getHolderGrid().get(x * FIELD_DIM + y);
+                            if (!fieldElement.isPresent()) {
+                                fieldElement.setFieldEntity(soldier);
+                                soldier.setParent(fieldElement);
                                 break;
                             }
                         }
 
-                        FieldHolder fieldElement = getHolderGrid().get(x * FIELD_DIM + y);
-                        if (!fieldElement.isPresent()) {
-                            fieldElement.setFieldEntity(soldier);
-                            soldier.setParent(fieldElement);
-                            break;
+                        if (soldier.getParent() == null) {
+                            throw new IllegalStateException("No free space found for soldier.");
                         }
+
+                        // Add the soldier to the game
+                        addSoldier(soldier.getIp(), soldier);
+                        soldier.setIsInTank(false);
+                        startEjectionCooldown();
+                        soldier.setLife(25);
+
+                        return new LongWrapper(soldierId);
+                    } else {
+                        throw new IllegalArgumentException("Soldier cannot be deployed.");
                     }
-
-                    if (soldier.getParent() == null) {
-                        throw new IllegalStateException("No free space found for soldier.");
-                    }
-
-                    // Add the soldier to the game
-                    addSoldier(soldier.getIp(), soldier);
-                    soldier.setIsInTank(false);
-
-                    return new LongWrapper(soldierId);
                 } else {
-                    throw new IllegalArgumentException("Soldier cannot be deployed.");
+                    throw new IllegalArgumentException("A soldier already exists for tankId = " + tankId);
                 }
             } else {
                 // Handle the case where the tank is not found

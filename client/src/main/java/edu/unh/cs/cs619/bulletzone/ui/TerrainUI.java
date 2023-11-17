@@ -51,6 +51,44 @@ public class TerrainUI {
 
     }
 
+    public void soldierImage(ImageView imageView, int direction, int val) {
+        if (val == 4) {
+            if (direction == 0) {
+                imageView.setImageResource(R.drawable.hillysoldierup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.hillysoldierright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.hillysoldierdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.hillysoldierleft);
+            }
+        } else if (val == 5) {
+            if (direction == 0) {
+                imageView.setImageResource(R.drawable.rockysoldierup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.rockysoldierright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.rockysoldierdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.rockysoldierleft);
+            }
+        } else if (val == 6) {
+            //NEED TO DO THIS!!!!!!!!!!!!!!!!!
+            ;
+        } else {
+            if (direction == 0) {
+                imageView.setImageResource(R.drawable.soldiergrassup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.soldiergrassright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.soldiergrassdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.soldiergrassleft);
+            }
+        }
+
+    }
+
     public void enemyTankImage(ImageView imageView, int direction, int val) {
         if (val == 4) {
             if (direction == 0) {

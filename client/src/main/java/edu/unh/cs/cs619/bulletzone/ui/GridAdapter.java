@@ -89,6 +89,11 @@ public class GridAdapter extends BaseAdapter {
         t.enemyTankImage(imageView, direction, val);
     }
 
+    public void setSoldier(ImageView imageView, int direction, int val) {
+        TerrainUI t = new TerrainUI();
+        t.soldierImage(imageView, direction, val);
+    }
+
     public void addSoldier(long soldierId) {
         mEntities[tankRow + 1][tankCol] = (int) soldierId;
         notifyDataSetChanged();
@@ -142,19 +147,7 @@ public class GridAdapter extends BaseAdapter {
                         setEnemyTank(imageView, direction, hasPowerUp[row][col]); // Set proper enemy tank image
                     }
                 } else if (val >= 40000000 && val <= 50000000) {
-                    if (direction == 0) {
-                        // Check if cell above is tank
-                        imageView.setImageResource(R.drawable.soldiergrassup);
-                    } else if (direction == 2) {
-                        // Check if cell above is tank
-                        imageView.setImageResource(R.drawable.soldiergrassright);
-                    } else if (direction == 4) {
-                        // Check if cell above is tank
-                        imageView.setImageResource(R.drawable.soldiergrassdown);
-                    } else if (direction == 6) {
-                        // Check if cell above is tank
-                        imageView.setImageResource(R.drawable.soldiergrassleft);
-                    }
+                    setSoldier(imageView, direction, hasPowerUp[row][col]);
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
                     numItems++;
