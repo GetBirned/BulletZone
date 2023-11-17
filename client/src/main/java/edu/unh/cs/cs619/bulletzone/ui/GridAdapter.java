@@ -135,29 +135,7 @@ public class GridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
                     imageView.setImageResource(R.drawable.bulletgrass);
-                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
-                        if(hasPowerUp[row][col] == 1){
-                            int rand = random.nextInt(196) + 5;
-                            numCoins += rand;
-                            Log.d("NUMCOINS:", this.numCoins+"");
-                        } else if(hasPowerUp[row][col] != 1){
-                            final int finalType = hasPowerUp[row][col];
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(val), finalType);
-                                    Log.e("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + finalType);
-
-                                    return null;
-                                }
-                            }.execute();
-                        }
-
-                        hasPowerUp[row][col] = 0;
-                        numItems--;
-                    }
                 } else if (val >= 10000000 && val <= 20000000) {
-
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
                         if(hasPowerUp[row][col] == 1){
                             int rand = random.nextInt(196) + 5;
@@ -165,11 +143,11 @@ public class GridAdapter extends BaseAdapter {
                             Log.d("NUMCOINS:", this.numCoins+"");
                         }
                         else if(hasPowerUp[row][col] != 1){
-                            final int finalType = hasPowerUp[row][col];
+                            int finalType = hasPowerUp[row][col];
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(val), finalType);
+                                    restClient.setTankPowerup(friendlyTank(val), finalType, true);
                                     Log.e("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + finalType);
 
                                     return null;
@@ -189,6 +167,27 @@ public class GridAdapter extends BaseAdapter {
                     }
                 } else if (val >= 40000000 && val <= 50000000) {
                     setSoldier(imageView, direction, hasPowerUp[row][col]);
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                        if(hasPowerUp[row][col] == 1){
+                            int rand = random.nextInt(196) + 5;
+                            numCoins += rand;
+                            Log.d("NUMCOINS:", this.numCoins+"");
+                        }
+                        else if(hasPowerUp[row][col] != 1){
+                            int finalType = hasPowerUp[row][col];
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    restClient.setTankPowerup(friendlyTank(val), finalType, false);
+                                    Log.e("Sending " + friendlyTank(val) +  "toRestClient", "withVal: " + finalType);
+
+                                    return null;
+                                }
+                            }.execute();
+                        }
+                        hasPowerUp[row][col] = 0;
+                        numItems--;
+                    }
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
                     numItems++;

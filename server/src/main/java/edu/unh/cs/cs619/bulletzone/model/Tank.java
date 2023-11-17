@@ -47,16 +47,6 @@ public class Tank extends FieldEntity {
     }
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
-        //NUKE
-//        if(powerupValue == 2){
-//            setAllowedMoveInterval((int)(getAllowedMoveInterval() * 1.25));
-//            setAllowedNumberOfBullets(getAllowedNumberOfBullets() * 2);
-//        }
-//        //ANTIGRAV
-//        if(powerupValue == 3){
-//            setAllowedMoveInterval((int) getAllowedMoveInterval() / 2);
-//            setAllowedFireInterval((int) getAllowedFireInterval() + 100);
-//        }
     }
 
     @Override

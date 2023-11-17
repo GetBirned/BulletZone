@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
+import java.nio.file.Path;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -150,15 +152,15 @@ class GamesController {
                 HttpStatus.CREATED
         );
     }
-    @PostMapping(value = "{tankId}/setPowerup/{powerupValue}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/setTankPowerup/{tankId}/{powerupValue}/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    void setTankPowerup(@PathVariable long tankId, @PathVariable int powerupValue) {
+    void setTankPowerup(@PathVariable long tankId, @PathVariable int powerupValue, @PathVariable boolean isTank) {
         try {
             log.debug("setTankPowerup called with tankId: {} and powerupType: {}", tankId, powerupValue);
 
             // Call the method to set the tank's powerup
-            gameRepository.setTankPowerup(tankId, powerupValue);
+            gameRepository.setTankPowerup(tankId, powerupValue, isTank);
 
 
         } catch (Exception e) {

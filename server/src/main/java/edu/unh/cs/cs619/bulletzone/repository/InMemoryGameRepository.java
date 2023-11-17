@@ -9,7 +9,6 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
-import edu.unh.cs.cs619.bulletzone.model.FieldEntities;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
@@ -17,7 +16,6 @@ import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
-import jdk.internal.org.jline.utils.Log;
 
 @Component
 public class InMemoryGameRepository implements GameRepository {
@@ -93,12 +91,6 @@ public class InMemoryGameRepository implements GameRepository {
             return tank;
         }
     }
-
-    @Override
-    public void setTankPowerup(long tankId, int powerupValue) {
-        game.setTankPowerup(tankId,powerupValue);
-    }
-
     @Override
     public int[][] getGrid() {
         synchronized (this.monitor) {
@@ -225,6 +217,11 @@ public class InMemoryGameRepository implements GameRepository {
         int res = getHealth.execute1();
 
         return res;
+    }
+
+    @Override
+    public void setTankPowerup(long tankId, int powerupValue, boolean isTank) {
+        game.setTankPowerup(tankId,powerupValue,isTank);
     }
 
 

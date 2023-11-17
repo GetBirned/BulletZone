@@ -9,20 +9,21 @@ public class Soldier extends FieldEntity {
     private String ip;
 
     private long lastMoveTime;
-    private int allowedMoveInterval;
+    public int allowedMoveInterval;
 
     private boolean isInTank;
     private long lastEjectionTime;
 
     private long lastFireTime;
-    private int allowedFireInterval;
+    public int allowedFireInterval;
 
-    private int numberOfBullets;
+    public int numberOfBullets;
     private int allowedNumberOfBullets;
 
     private int life;
 
     private Direction direction;
+    private int powerUpType;
 
     public Soldier(long id, Direction direction, String ip) {
         this.id = id;
@@ -34,6 +35,9 @@ public class Soldier extends FieldEntity {
         allowedFireInterval = 250; // Shoot 250ms
         lastMoveTime = 0;
         allowedMoveInterval = 1000; // 1 second between move
+    }
+    public void setPowerUpType(int powerupValue) {
+        this.powerUpType = powerupValue;
     }
 
     public long getId() {
@@ -171,5 +175,9 @@ public class Soldier extends FieldEntity {
     @Override
     public FieldEntity copy() {
         return new Soldier(id, direction, ip);
+    }
+
+    public void setAllowedNumberOfBullets(int allowedNumberOfBullets) {
+        this.allowedNumberOfBullets = allowedNumberOfBullets;
     }
 }

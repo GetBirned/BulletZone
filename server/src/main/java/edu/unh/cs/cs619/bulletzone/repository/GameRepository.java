@@ -13,6 +13,9 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 public interface GameRepository {
 
     Tank join(String ip);
+
+    void setTankPowerup(long tankId, int powerupValue, boolean isTank);
+
     int[][] getGrid();
 
     boolean turn(long tankId, Direction direction)
@@ -32,5 +35,4 @@ public interface GameRepository {
     public LongWrapper deploySoldier(long tankID);
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
     public int getHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
-    public void setTankPowerup(long tankId, int powerupValue);
 }
