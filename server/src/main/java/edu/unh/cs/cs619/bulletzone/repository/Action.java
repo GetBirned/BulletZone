@@ -2,10 +2,6 @@ package edu.unh.cs.cs619.bulletzone.repository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.sql.SQLOutput;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -182,16 +178,24 @@ public class Action {
 
                     isCompleted = true;
                 } else if (nextField.getEntity() instanceof Tank) {
-                    if (soldier.reenterTank(tank)) {
-                        game.removeSoldier(tankId);
-                        soldier.getParent().clearField();
-                        isCompleted = true;
+                    Tank t = (Tank) nextField.getEntity();
+                    if (t.getId() == soldier.getId())  { // make sure soldier is attempting to join it's own tank
+                        if (t.getLife() != 0) { // cannot enter tank if its dead
+                            if (soldier.reenterTank(tank)) {
+                                game.removeSoldier(tankId);
+                                game.startEjectionCooldown();
+                                soldier.getParent().clearField();
+                                isCompleted = true;
+                            } else {
+                                // Re-entry failed, soldier is already in a tank
+                                isCompleted = false;
+                            }
+                        }
                     } else {
-                        // Re-entry failed, soldier is already in a tank
-                        isCompleted = false;
+                        return true;
                     }
-                }
-                else {
+                    return true;
+                } else {
                     isCompleted = false;
                 }
 
@@ -282,10 +286,13 @@ public class Action {
                                     Soldier s = (Soldier) nextField.getEntity();
                                     System.out.println("soldier is hit, soldier life: " + s.getLife());
                                     if (s.getLife() <= 0) {
+                                        Tank t = game.getTank(s.getIp());
+                                        t.getParent().clearField();
+                                        t.setParent(null);
                                         s.getParent().clearField();
                                         s.setParent(null);
                                         game.removeSoldier(s.getId());
-                                        tank.setIsActive(0);
+                                        game.removeTank(t.getId());
                                     }
                                 } else if (nextField.getEntity() instanceof Wall) {
                                     Wall w = (Wall) nextField.getEntity();
@@ -386,10 +393,13 @@ public class Action {
                                     Soldier s = (Soldier) nextField.getEntity();
                                     System.out.println("soldier is hit, soldier life: " + s.getLife());
                                     if (s.getLife() <= 0) {
+                                        Tank t = game.getTank(s.getIp());
+                                        t.getParent().clearField();
+                                        t.setParent(null);
                                         s.getParent().clearField();
                                         s.setParent(null);
                                         game.removeSoldier(s.getId());
-                                        tank.setIsActive(0);
+                                        game.removeTank(t.getId());
                                     }
                                 } else if (nextField.getEntity() instanceof Wall) {
                                     Wall w = (Wall) nextField.getEntity();
