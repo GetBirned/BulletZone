@@ -76,6 +76,10 @@ public class GameBoardBuilder {
         gb.setEntity(5, 11, new Forest());
         gb.setEntity(6, 11, new Forest());
 
+        //gb.setEntity(0, 0, new nukePowerUp());
+        //gb.setEntity(15, 0, new applePowerUp());
+       // gb.setEntity(0, 15, new Thingamajig());
+
         return gb;
     }
 }
