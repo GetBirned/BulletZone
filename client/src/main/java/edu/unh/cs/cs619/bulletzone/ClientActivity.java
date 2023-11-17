@@ -169,6 +169,7 @@ public class ClientActivity extends Activity {
         joinAsync();
         SystemClock.sleep(500);
         gridView.setAdapter(mGridAdapter);
+        mGridAdapter.setRestClient(restClient);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override

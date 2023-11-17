@@ -1,5 +1,6 @@
 package edu.unh.cs.cs619.bulletzone.ui;
 
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,9 @@ public class GridAdapter extends BaseAdapter {
             R.drawable.nukepowerupgrass,
             R.drawable.coingrass
     };
+    public void setRestClient(BulletZoneRestClient restClient) {
+        this.restClient = restClient;
+    }
 
     public void updateList(int[][] entities) {
         synchronized (monitor) {
@@ -46,7 +50,6 @@ public class GridAdapter extends BaseAdapter {
     int tankRow;
     int tankCol;
     public int flag = 0;
-    public int type = 0;
     public int numCoins = 1000;
     private static final String TAGFRIEND = "GridAdapter (Friendly):";
     private static final String TAGENEMY = "GridAdapter (Enemy):";
@@ -138,11 +141,18 @@ public class GridAdapter extends BaseAdapter {
                             numCoins += rand;
                             Log.d("NUMCOINS:", this.numCoins+"");
                         } else if(hasPowerUp[row][col] != 1){
-                            flag = 1;
-                            type = hasPowerUp[row][col];
+                            final int finalType = hasPowerUp[row][col];
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    restClient.setTankPowerup(friendlyTank(val), finalType);
+                                    Log.e("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + finalType);
+
+                                    return null;
+                                }
+                            }.execute();
                         }
 
-                        Log.d("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + hasPowerUp[row][col]);
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
@@ -155,8 +165,16 @@ public class GridAdapter extends BaseAdapter {
                             Log.d("NUMCOINS:", this.numCoins+"");
                         }
                         else if(hasPowerUp[row][col] != 1){
-                            flag = 1;
-                            type = hasPowerUp[row][col];
+                            final int finalType = hasPowerUp[row][col];
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    restClient.setTankPowerup(friendlyTank(val), finalType);
+                                    Log.e("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + finalType);
+
+                                    return null;
+                                }
+                            }.execute();
                         }
                         hasPowerUp[row][col] = 0;
                         numItems--;

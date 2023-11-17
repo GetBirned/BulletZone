@@ -96,7 +96,7 @@ public class InMemoryGameRepository implements GameRepository {
 
     @Override
     public void setTankPowerup(long tankId, int powerupValue) {
-        game.getTanks().get(tankId).setPowerUpType(powerupValue);
+        game.setTankPowerup(tankId,powerupValue);
     }
 
     @Override

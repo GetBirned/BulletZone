@@ -28,7 +28,6 @@ import edu.unh.cs.cs619.bulletzone.repository.GameRepository;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
-import jdk.internal.org.jline.utils.Log;
 
 @RestController
 @RequestMapping(value = "/games")
@@ -153,19 +152,18 @@ class GamesController {
     }
     @PostMapping(value = "{tankId}/setPowerup/{powerupValue}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<BooleanWrapper> setTankPowerup(@PathVariable long tankId, @PathVariable int powerupValue) {
+    @ResponseBody
+    void setTankPowerup(@PathVariable long tankId, @PathVariable int powerupValue) {
         try {
+            log.debug("setTankPowerup called with tankId: {} and powerupType: {}", tankId, powerupValue);
+
             // Call the method to set the tank's powerup
             gameRepository.setTankPowerup(tankId, powerupValue);
 
 
-            return new ResponseEntity<>(
-                    new BooleanWrapper(true),
-                    HttpStatus.OK
-            );
         } catch (Exception e) {
             // Handle exceptions if necessary
-            return new ResponseEntity<>(new BooleanWrapper(false), HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
         }
     }
 

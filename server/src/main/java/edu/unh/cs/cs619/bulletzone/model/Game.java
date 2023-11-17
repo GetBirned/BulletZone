@@ -247,6 +247,21 @@ public final class Game {
             }
         }
     }
+    public void setTankPowerup(long tankId, int powerupValue) {
+        System.out.println("HI");
+        getTank(tankId).setPowerUpType(powerupValue);
+        Tank curr = getTank(tankId);
+        if(powerupValue == 2){
+            curr.setAllowedMoveInterval((int)(curr.getAllowedMoveInterval() * 1.25));
+            curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
+        }
+        //ANTIGRAV
+        if(powerupValue == 3){
+            curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
+            curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        }
+
+    }
 
 }
 

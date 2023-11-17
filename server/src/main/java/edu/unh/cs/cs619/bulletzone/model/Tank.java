@@ -15,13 +15,13 @@ public class Tank extends FieldEntity {
     private final String ip;
 
     private long lastMoveTime;
-    private int allowedMoveInterval;
+    public int allowedMoveInterval;
 
     private long lastFireTime;
-    private int allowedFireInterval;
+    public int allowedFireInterval;
 
-    private int numberOfBullets;
-    private int allowedNumberOfBullets;
+    public int numberOfBullets;
+    public int allowedNumberOfBullets;
 
     private int life;
 
@@ -48,15 +48,15 @@ public class Tank extends FieldEntity {
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
         //NUKE
-        if(powerupValue == 2){
-            setAllowedMoveInterval((int)(getAllowedMoveInterval() * 1.25));
-            setAllowedNumberOfBullets(getAllowedNumberOfBullets() * 2);
-        }
-        //ANTIGRAV
-        if(powerupValue == 3){
-            setAllowedMoveInterval((int) getAllowedMoveInterval() / 2);
-            setAllowedFireInterval((int) getAllowedFireInterval() + 100);
-        }
+//        if(powerupValue == 2){
+//            setAllowedMoveInterval((int)(getAllowedMoveInterval() * 1.25));
+//            setAllowedNumberOfBullets(getAllowedNumberOfBullets() * 2);
+//        }
+//        //ANTIGRAV
+//        if(powerupValue == 3){
+//            setAllowedMoveInterval((int) getAllowedMoveInterval() / 2);
+//            setAllowedFireInterval((int) getAllowedFireInterval() + 100);
+//        }
     }
 
     @Override
