@@ -22,10 +22,10 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  */
 
 //@Rest(rootUrl = "http://10.21.159.62:8080/games",
-//@Rest(rootUrl = "http://10.21.206.173:6197/games",
+@Rest(rootUrl = "http://10.21.128.60:6197/games",
 //@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
     //"http://10.21.128.183:6197/games"
-@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+//@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
         // TODO: disable intercepting and logging
         // , interceptors = { HttpLoggerInterceptor.class }
@@ -54,8 +54,8 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Put("/{tankId}/fire/1")
     BooleanWrapper fire(@Path long tankId);
 
-    @Put("/account/modifyBalance/{accountID}/{amount}")
-    BooleanWrapper modifyBalance(@Path long accountID, @Path double amount);
+    @Post("/{tankId}/setPowerup/{powerupValue}")
+    void setTankPowerup(@Path long tankId, @Path int powerupValue);
 
     @Delete("/{tankId}/leave")
     BooleanWrapper leave(@Path long tankId);

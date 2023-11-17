@@ -10,10 +10,12 @@ import java.util.Random;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.rest.spring.annotations.RestService;
 
 import java.util.Random;
 
 import edu.unh.cs.cs619.bulletzone.R;
+import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 
 @EBean
 public class GridAdapter extends BaseAdapter {
@@ -24,6 +26,8 @@ public class GridAdapter extends BaseAdapter {
     private int[][] mEntities = new int[16][16];
     Random random = new Random();
 
+    @RestService
+    BulletZoneRestClient restClient;
     private static final int[] ITEM_RESOURCES = {
             R.drawable.applepowerupgrass,
             R.drawable.nukepowerupgrass,
@@ -41,7 +45,8 @@ public class GridAdapter extends BaseAdapter {
 
     int tankRow;
     int tankCol;
-
+    public int flag = 0;
+    public int type = 0;
     public int numCoins = 1000;
     private static final String TAGFRIEND = "GridAdapter (Friendly):";
     private static final String TAGENEMY = "GridAdapter (Enemy):";
@@ -73,8 +78,6 @@ public class GridAdapter extends BaseAdapter {
     int numPlayers;
     double chance;
 
-    private int[][] tankLocation = new int[16][16];
-
     private int[][] hasPowerUp = new int[16][16];
     // 0 grass, // 1 thingamajig //2 nuke //3 apple
     //4 hill // 5 rocky // 6 forest // 7 soldier
@@ -99,6 +102,7 @@ public class GridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        flag = 0;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.field_item, null);
         }
@@ -109,7 +113,6 @@ public class GridAdapter extends BaseAdapter {
         int col = position % 16;
 
         int val = mEntities[row][col];
-        int friendly;
 
         synchronized (monitor) {
             if(hasPowerUp[row][col] == 4) {
@@ -129,8 +132,12 @@ public class GridAdapter extends BaseAdapter {
                             int rand = random.nextInt(196) + 5;
                             numCoins += rand;
                             Log.d("NUMCOINS:", this.numCoins+"");
+                        } else if(hasPowerUp[row][col] != 1){
+                            flag = 1;
+                            type = hasPowerUp[row][col];
                         }
-                        //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
+
+                        Log.d("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + hasPowerUp[row][col]);
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
@@ -142,7 +149,10 @@ public class GridAdapter extends BaseAdapter {
                             numCoins += rand;
                             Log.d("NUMCOINS:", this.numCoins+"");
                         }
-                        //NEED TO SET THE TANK TO MARK THAT IT HAS A POWERUP
+                        else if(hasPowerUp[row][col] != 1){
+                            flag = 1;
+                            type = hasPowerUp[row][col];
+                        }
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }

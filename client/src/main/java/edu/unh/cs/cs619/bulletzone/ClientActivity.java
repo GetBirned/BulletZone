@@ -104,15 +104,16 @@ public class ClientActivity extends Activity {
     private SensorManager sensorManager;
     private Sensor mAccelerometer;
 
-     ShakeDetector mShakeDetector;
+    ShakeDetector mShakeDetector;
     @ViewById(R.id.bank_balance)
     TextView bankBalanceTextView;
-     private int tankIsActive;
+    private int tankIsActive;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Establish shake/sensorManager. Will handle shakes.
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mShakeDetector = new ShakeDetector();
@@ -230,7 +231,6 @@ public class ClientActivity extends Activity {
     public void updateGrid(GridWrapper gw) {
         if (gw != null) {
             mGridAdapter.updateList(gw.getGrid());
-            restClient.modifyBalance(this.tankId, mGridAdapter.numCoins);
             updateBankBalanceText(mGridAdapter.numCoins);
         } else {
             Log.e(TAG, "GridWrapper is null");
@@ -247,22 +247,22 @@ public class ClientActivity extends Activity {
             case R.id.buttonUp:
                 direction = 0;
                 tempDirection = 0;
-            //    tankId = 0;
+                //    tankId = 0;
                 break;
             case R.id.buttonDown:
                 direction = 4;
                 tempDirection = 4;
-             //   tankId = 4;
+                //   tankId = 4;
                 break;
             case R.id.buttonLeft:
                 direction = 6;
                 tempDirection = 6;
-             //   tankId = 6;
+                //   tankId = 6;
                 break;
             case R.id.buttonRight:
                 direction = 2;
                 tempDirection = 2;
-               // tankId = 2;
+                // tankId = 2;
                 break;
             default:
                 Log.e(TAG, "Unknown movement button id: " + viewId);
@@ -338,26 +338,26 @@ public class ClientActivity extends Activity {
     protected void deploySoldierAsync() {
         try {
             //if (!isSoldierDeployed) {
-                // Attempt to deploy a soldier
-                LongWrapper soldierWrapper = restClient.deploySoldier(tankId);
+            // Attempt to deploy a soldier
+            LongWrapper soldierWrapper = restClient.deploySoldier(tankId);
 
-                if (soldierWrapper != null) {
-                    // Deployment successful
-                    soldierId = soldierWrapper.getResult();
-                    isSoldierDeployed = true;
+            if (soldierWrapper != null) {
+                // Deployment successful
+                soldierId = soldierWrapper.getResult();
+                isSoldierDeployed = true;
 
-                    Log.d(TAG, "SoldierID is " + soldierId);
-                    // Other deployment-related logic...
-                } else {
-                    Log.d(TAG, "SoldierID is NULL.\n");
-                    // Handle other HTTP status codes if needed
-                }
-                /**
+                Log.d(TAG, "SoldierID is " + soldierId);
+                // Other deployment-related logic...
             } else {
-                Log.d(TAG, "Soldier already deployed. Cannot deploy another.");
-                // Notify the user or handle accordingly
+                Log.d(TAG, "SoldierID is NULL.\n");
+                // Handle other HTTP status codes if needed
             }
-                 */
+            /**
+             } else {
+             Log.d(TAG, "Soldier already deployed. Cannot deploy another.");
+             // Notify the user or handle accordingly
+             }
+             */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -475,12 +475,12 @@ public class ClientActivity extends Activity {
 
 
     /**
-    @Click(R.id.buttonLogin)
-    void login() {
-        Intent intent = new Intent(this, AuthenticateActivity_.class);
-        startActivity(intent);
-    }
-**/
+     @Click(R.id.buttonLogin)
+     void login() {
+     Intent intent = new Intent(this, AuthenticateActivity_.class);
+     startActivity(intent);
+     }
+     **/
 
     @Background
     void leaveAsync(long tankId) {
@@ -488,5 +488,5 @@ public class ClientActivity extends Activity {
         BackgroundExecutor.cancelAll("grid_poller_task", true);
         restClient.leave(tankId);
     }
-
 }
+

@@ -51,7 +51,7 @@ public final class Game {
         }
     }
 
-    public Tank getTank(int tankId) {
+    public Tank getTank(long tankId) {
         return tanks.get(tankId);
     }
 
@@ -104,11 +104,6 @@ public final class Game {
                     holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
                     if (holder.isPresent()) {
                         grid[i][j] = holder.getEntity().getIntValue();
-//                        if(holder.getEntity().getIntValue() == 2){
-//                            //set player's tank to have +1 nuke
-//                        } else if(holder.getEntity().getIntValue() == 3){
-//                            //set player's tank to have +1 apple
-//                        }
                     } else {
                         grid[i][j] = 0;
                     }

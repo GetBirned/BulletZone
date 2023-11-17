@@ -21,6 +21,7 @@ import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
+import jdk.internal.org.jline.utils.Log;
 
 /*
     I believe this should ultimately be a command? pattern
@@ -43,7 +44,6 @@ public class Action {
         this.monitor = monitor;
         this.game = game;
     }
-
     public boolean turn(long tankId, Direction direction)
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
         synchronized (this.monitor) {

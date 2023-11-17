@@ -2,11 +2,15 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
+
 public class Tank extends FieldEntity {
 
     private static final String TAG = "Tank";
 
     private final long id;
+    private int powerUpType;
+
 
     private final String ip;
 
@@ -25,7 +29,6 @@ public class Tank extends FieldEntity {
 
     private int isActive;
 
-
     public Tank(long id, Direction direction, String ip, int isActive) {
         this.id = id;
         this.direction = direction;
@@ -37,6 +40,23 @@ public class Tank extends FieldEntity {
         allowedFireInterval = 1500;
         lastMoveTime = 0;
         allowedMoveInterval = 500;
+        this.powerUpType = 0;
+    }
+    public int getPowerUpType() {
+        return powerUpType;
+    }
+    public void setPowerUpType(int powerupValue) {
+        this.powerUpType = powerupValue;
+        //NUKE
+        if(powerupValue == 2){
+            setAllowedMoveInterval((int)(getAllowedMoveInterval() * 1.25));
+            setAllowedNumberOfBullets(getAllowedNumberOfBullets() * 2);
+        }
+        //ANTIGRAV
+        if(powerupValue == 3){
+            setAllowedMoveInterval((int) getAllowedMoveInterval() / 2);
+            setAllowedFireInterval((int) getAllowedFireInterval() + 100);
+        }
     }
 
     @Override

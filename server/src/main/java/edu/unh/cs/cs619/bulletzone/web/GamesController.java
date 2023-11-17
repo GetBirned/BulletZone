@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +28,7 @@ import edu.unh.cs.cs619.bulletzone.repository.GameRepository;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
+import jdk.internal.org.jline.utils.Log;
 
 @RestController
 @RequestMapping(value = "/games")
@@ -148,6 +150,23 @@ class GamesController {
                 new LongWrapper(soldierId.getResult()),
                 HttpStatus.CREATED
         );
+    }
+    @PostMapping(value = "{tankId}/setPowerup/{powerupValue}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    ResponseEntity<BooleanWrapper> setTankPowerup(@PathVariable long tankId, @PathVariable int powerupValue) {
+        try {
+            // Call the method to set the tank's powerup
+            gameRepository.setTankPowerup(tankId, powerupValue);
+
+
+            return new ResponseEntity<>(
+                    new BooleanWrapper(true),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            // Handle exceptions if necessary
+            return new ResponseEntity<>(new BooleanWrapper(false), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "{tankId}/updateLife", produces = MediaType.APPLICATION_JSON_VALUE)
