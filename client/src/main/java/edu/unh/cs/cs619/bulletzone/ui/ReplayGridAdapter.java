@@ -55,30 +55,27 @@ public class ReplayGridAdapter extends BaseAdapter {
         int col = position % board[0].length;
         int cellValue = board[row][col];
 
-        // 0 grass, // 1 thingamajig //2 nuke //3 apple
-        //4 hill // 5 rocky // 6 forest
-
         int mill_scale = 1000000;
         if (cellValue == 0) {
             imageView.setImageResource(R.drawable.grass);
         } else if (cellValue == 1) {
             // CHANGE
-            imageView.setImageResource(R.drawable.grass);
-        } else if (cellValue == 2) {
-            imageView.setImageResource(R.drawable.nukepowerupgrass);
-        } else if (cellValue == 3) {
-            imageView.setImageResource(R.drawable.applepowerupgrass);
-        } else if (cellValue == 4) {
-            imageView.setImageResource(R.drawable.hillyterrain);
-        } else if (cellValue == 5) {
             imageView.setImageResource(R.drawable.rockyterrain);
-        } else if (cellValue == 6) {
+        } else if (cellValue == 2) {
+            imageView.setImageResource(R.drawable.hillyterrain);
+        } else if (cellValue == 3) {
             imageView.setImageResource(R.drawable.forestterrain);
-        } else if (cellValue == 1000) {
+        } else if (cellValue == 2003) {
+            imageView.setImageResource(R.drawable.nukepowerupgrass);
+        } else if (cellValue == 2002) {
+            imageView.setImageResource(R.drawable.applepowerupgrass);
+        } else if (cellValue == 7) {
+            imageView.setImageResource(R.drawable.coingrass);
+        } else if (cellValue == 1000 || (cellValue > 1000 && cellValue <= 2000)) {
             imageView.setImageResource(R.drawable.brick);
-        } else if (cellValue >= 2*mill_scale && cellValue < 3*mill_scale) {
+        } else if (cellValue >= 2 * mill_scale && cellValue < 3 * mill_scale) {
             imageView.setImageResource(R.drawable.bulletgrass);
-        } else if (cellValue >= 10*mill_scale && cellValue < 20*mill_scale) {
+        } else if (cellValue >= 10 * mill_scale && cellValue < 20 * mill_scale) {
             // we have a tank
             switch (cellValue % 10) {
                 case 0:
@@ -94,8 +91,23 @@ public class ReplayGridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.friendlytankleft);
                     break;
             }
+        } else if (cellValue >= 40 * mill_scale && cellValue <= 50 * mill_scale) {
+            // we have a tank
+            switch (cellValue % 10) {
+                case 0:
+                    imageView.setImageResource(R.drawable.soldiergrassup);
+                    break;
+                case 2:
+                    imageView.setImageResource(R.drawable.soldiergrassright);
+                    break;
+                case 4:
+                    imageView.setImageResource(R.drawable.soldiergrassdown);
+                    break;
+                case 6:
+                    imageView.setImageResource(R.drawable.soldiergrassleft);
+                    break;
+            }
         }
-
         return imageView;
     }
 }
