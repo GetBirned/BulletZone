@@ -247,7 +247,8 @@ public class Action {
                 }
 
                 // Create a new bullet to fire
-                final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType - 1]);
+                //CHANGING HERE **********************************************
+                final Bullet bullet = new Bullet(tankId, direction, 30);
                 // Set the same parent for the bullet.
                 // This should be only a one way reference.
                 bullet.setParent(parent);
