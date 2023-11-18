@@ -189,4 +189,27 @@ class GamesController {
             return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getSoldierHealth", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<Long> getSoldierHealth(@PathVariable long tankId) {
+        try {
+            // Add logging statement to print the incoming tankId
+            System.out.println("Received request for tankId: " + tankId);
+
+            int health = gameRepository.getSoldierHealth(tankId);
+
+            // Add logging statement to print the retrieved health
+            System.out.println("Retrieved health for tankId " + tankId + ": " + health);
+
+            return new ResponseEntity<>((long) health, HttpStatus.OK);
+        } catch (Exception e) {
+            // Add logging statement to print exceptions
+            e.printStackTrace();
+
+            // Handle exceptions if necessary
+            return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

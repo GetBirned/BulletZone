@@ -64,4 +64,7 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Get("/{tankId}/getHealth")
     LongWrapper getHealth(@Path long tankId);
+
+    @Get("/{tankId}/getSoldierHealth")
+    LongWrapper getSoldierHealth(@Path long tankId);
 }
