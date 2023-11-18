@@ -91,6 +91,12 @@ public class InMemoryGameRepository implements GameRepository {
             return tank;
         }
     }
+
+    @Override
+    public void setTankPowerup(long tankId, int powerupValue, boolean isTank) {
+
+    }
+
     @Override
     public int[][] getGrid() {
         synchronized (this.monitor) {
@@ -220,10 +226,16 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     @Override
-    public void setTankPowerup(long tankId, int powerupValue, boolean isTank) {
-        game.setTankPowerup(tankId,powerupValue,isTank);
+    public void setTankPowerup(long tankId, int powerupValue) {
+
+        game.setTankPowerup(tankId,powerupValue);
     }
 
+    @Override
+    public void setSoldierPowerup(long tankId, int powerupValue) {
+
+        game.setSoldierPowerup(tankId,powerupValue);
+    }
 
     public Stack<GridEvent> getCommandHistory() {
         return aci.getCommandHistory();

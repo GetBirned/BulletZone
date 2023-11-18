@@ -226,7 +226,7 @@ public class GridAdapter extends BaseAdapter {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
                                     restClient.setTankPowerup(friendlyTank(val), finalType, false);
-                                    Log.e("Sending " + friendlyTank(val) +  "toRestClient", "withVal: " + finalType);
+                                    Log.e("Solder #: " + friendlyTank(val) +  "toRestClient", "withVal: " + finalType);
 
                                     return null;
                                 }

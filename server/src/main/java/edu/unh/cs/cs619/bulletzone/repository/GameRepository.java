@@ -32,6 +32,10 @@ public interface GameRepository {
 
     public LinkedList<GridEvent> getHistory(Timestamp timestamp);
 
+    void setSoldierPowerup(long tankId, int powerupValue);
+
+    void setTankPowerup(long tankId, int powerupValue);
+
     public LongWrapper deploySoldier(long tankID);
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
     public int getHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;

@@ -160,11 +160,14 @@ class GamesController {
             log.debug("setTankPowerup called with tankId: {} and powerupType: {}", tankId, powerupValue);
 
             // Call the method to set the tank's powerup
-            gameRepository.setTankPowerup(tankId, powerupValue, isTank);
+            if(isTank) {
+                gameRepository.setTankPowerup(tankId, powerupValue);
+            } else{
+                gameRepository.setSoldierPowerup(tankId,powerupValue);
+            }
 
 
         } catch (Exception e) {
-            // Handle exceptions if necessary
             e.printStackTrace();
         }
     }
