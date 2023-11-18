@@ -13,7 +13,6 @@ import edu.unh.cs.cs619.bulletzone.datalayer.permission.OwnableEntity;
 public class GameUser extends Entity {
     protected String name;
     protected String username;
-
     //password info not stored in game
     protected HashSet<OwnableEntity> ownedEntities = new HashSet<OwnableEntity>();
 
