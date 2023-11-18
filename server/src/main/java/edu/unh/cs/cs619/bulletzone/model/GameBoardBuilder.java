@@ -1,29 +1,33 @@
 package edu.unh.cs.cs619.bulletzone.model;
 public class GameBoardBuilder {
 
-    public GameBoard gb = null;
+    public GameBoard gameBoard = null;
     private final Object monitor = new Object();
 
-    public GameBoardBuilder() {
-        this.create();
+    public GameBoardBuilder(GameBoard gameBoard) {
+        this.create(gameBoard);
     }
 
-    public GameBoard getBoard() {
-        return gb;
-    }
-    private GameBoard create() {
+    public GameBoard create(GameBoard gb) {
         if (gb != null) {
+            gameBoard = gb;
             return gb;
         }
         synchronized (this.monitor) {
-            this.gb = new GameBoard();
-            set();
+            gb = new GameBoard();
+            this.set(gb);
+            gameBoard = gb;
             return gb;
         }
     }
 
+    public GameBoard getBoard() {
+        return gameBoard;
+    }
 
-    private GameBoard set() {
+
+
+    private GameBoard set(GameBoard gb) {
 
         gb.setEntity(3, 2, new Hill());
         gb.setEntity(4, 2, new Hill());

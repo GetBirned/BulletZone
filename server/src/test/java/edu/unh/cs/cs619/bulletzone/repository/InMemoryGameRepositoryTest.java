@@ -14,8 +14,15 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.GameBoard;
+import edu.unh.cs.cs619.bulletzone.model.GameBoardBuilder;
+import edu.unh.cs.cs619.bulletzone.model.GridEvent;
+import edu.unh.cs.cs619.bulletzone.model.Hill;
+import edu.unh.cs.cs619.bulletzone.model.Rocky;
+import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import edu.unh.cs.cs619.bulletzone.model.TankLocation;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class InMemoryGameRepositoryTest {
@@ -25,9 +32,12 @@ public class InMemoryGameRepositoryTest {
     @InjectMocks
     InMemoryGameRepository repo;
     Tank tank;
+    GameBoardBuilder gbb;
+    GameBoard gb;
     @Before
     public void setUp() throws Exception {
         tank = repo.join("");
+        gbb = new GameBoardBuilder(gb);
     }
 
     //Milestone 1 Tests
@@ -158,26 +168,137 @@ public class InMemoryGameRepositoryTest {
     }
 
     //Milestone 2 Tests
+
+
     @Test
-    public void testPickingUpPowerups() throws Exception {
+    public void testSinglePowerupBehaviors() throws Exception {
+        //fusion p-up test
+        Tank t2 = repo.join("tank2");
+        t2.getParent().clearField();
+        Assert.assertEquals(500, t2.getAllowedMoveInterval());
+        Assert.assertEquals(1500, t2.getAllowedFireInterval());
+        Assert.assertEquals(2, t2.getAllowedNumberOfBullets());
+        repo.setTankPowerup(t2.getId(), 2);
+        Assert.assertEquals((int) (500 * 1.25), t2.getAllowedMoveInterval());
+        Assert.assertEquals(2 * 2, t2.getAllowedNumberOfBullets());
+        Assert.assertEquals((int) (500 * 1.5), t2.getAllowedFireInterval());
+
+        //anti grav p-up test
+        Tank t3 = repo.join("tank3");
+        t3.getParent().clearField();
+        Assert.assertEquals(500, t3.getAllowedMoveInterval());
+        Assert.assertEquals(1500, t3.getAllowedFireInterval());
+        Assert.assertEquals(2, t3.getAllowedNumberOfBullets());
+        repo.setTankPowerup(t3.getId(), 3);
+        Assert.assertEquals((500 / 2), t3.getAllowedMoveInterval());
+        Assert.assertEquals((500 + 100), t3.getAllowedFireInterval());
 
     }
 
     @Test
-    public void testPowerupBehaviors() throws Exception {
+    public void testMultiplePowerupBehaviors() {
+        //fusion then anti grav
+        Tank t4 = repo.join("tank4");
+        t4.getParent().clearField();
+        Assert.assertEquals(500, t4.getAllowedMoveInterval());
+        Assert.assertEquals(1500, t4.getAllowedFireInterval());
+        Assert.assertEquals(2, t4.getAllowedNumberOfBullets());
+        repo.setTankPowerup(t4.getId(), 2);
+        Assert.assertEquals((int) (500 * 1.25), t4.getAllowedMoveInterval());
+        Assert.assertEquals(2 * 2, t4.getAllowedNumberOfBullets());
+        Assert.assertEquals((int) (500 / 2), t4.getAllowedFireInterval());
+        long t4currMoveInterval = t4.getAllowedMoveInterval();
+        long t4currFireInterval = t4.getAllowedFireInterval();
+        repo.setTankPowerup(t4.getId(), 3);
+        Assert.assertEquals((t4currMoveInterval / 2), t4.getAllowedMoveInterval());
+        Assert.assertEquals((t4currFireInterval + 100), t4.getAllowedFireInterval());
 
+        //anti grav then fusion
+        Tank t5 = repo.join("tank5");
+        t5.getParent().clearField();
+        Assert.assertEquals(500, t5.getAllowedMoveInterval());
+        Assert.assertEquals(1500, t5.getAllowedFireInterval());
+        Assert.assertEquals(2, t5.getAllowedNumberOfBullets());
+        repo.setTankPowerup(t5.getId(), 2);
+        Assert.assertEquals((int) (500 * 1.25), t5.getAllowedMoveInterval());
+        Assert.assertEquals(2 * 2, t5.getAllowedNumberOfBullets());
+        Assert.assertEquals((int) (500 / 2), t5.getAllowedFireInterval());
+        long t5currMoveInterval = t5.getAllowedMoveInterval();
+        long t5currFireInterval = t5.getAllowedFireInterval();
+        repo.setTankPowerup(t5.getId(), 3);
+        Assert.assertEquals((t5currMoveInterval / 2), t5.getAllowedMoveInterval());
+        Assert.assertEquals((t5currFireInterval + 100), t5.getAllowedFireInterval());
     }
     @Test
     public void testSinglePowerupTerrainMovement() throws Exception {
+        TankLocation t = repo.getGame().findTank(tank, tank.getId());
+        if(t == null) {
+            return;
+        }
+        tank.getParent().clearField();
+        Assert.assertEquals(500, tank.getAllowedMoveInterval());
+        Assert.assertEquals(1500, tank.getAllowedFireInterval());
+        Assert.assertEquals(2, tank.getAllowedNumberOfBullets());
 
+
+        repo.getGame().getGameBoard().setEntity(t.getColumn() + 1, t.getRow(), new Hill());
+        tank.setDirection(Direction.Right);
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
+        Assert.assertEquals(tank.getAllowedMoveInterval(), 750);
+
+        while(tank.getLastMoveTime() > System.currentTimeMillis());
+
+        repo.getGame().getGameBoard().setEntity(t.getColumn() - 1, t.getRow(), new Rocky());
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
+        Assert.assertEquals(tank.getAllowedMoveInterval(), 500);
+
+        long soldierID = repo.deploySoldier(tank.getId()).getResult();
+        Soldier soldier = repo.getGame().getSoldier(soldierID);
+        TankLocation s = repo.getGame().findSoldier(soldier, soldierID);
+
+        if(s == null) {
+            return;
+        }
+
+        repo.getGame().getGameBoard().setEntity(s.getColumn() + 1, s.getRow(), new Rocky());
+        Assert.assertTrue(repo.move(soldierID, Direction.Right));
+        Assert.assertEquals(soldier.getAllowedMoveInterval(), 750);
+        repo.getGame().getGameBoard().setEntity(s.getColumn() - 1, s.getRow(), new Hill());
+        Assert.assertTrue(repo.move(soldierID, Direction.Left));
+        Assert.assertEquals(soldier.getAllowedMoveInterval(), 500);
     }
     @Test
-    public void testRockyHillyMovement() throws Exception {
+    public void testRockyHillyTimedMovement() throws Exception {
+        TankLocation t = repo.getGame().findTank(tank, tank.getId());
+        if(t == null) {
+            return;
+        }
 
-    }
-    @Test
-    public void testNewTimedVehicleInteractions() throws Exception {
+        repo.getGame().getGameBoard().setEntity(t.getColumn() + 1, t.getRow(), new Hill());
+        tank.setDirection(Direction.Right);
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Right));
+        Assert.assertEquals(tank.getAllowedMoveInterval(), 750);
 
+        while(tank.getLastMoveTime() > System.currentTimeMillis());
+
+        repo.getGame().getGameBoard().setEntity(t.getColumn() - 1, t.getRow(), new Rocky());
+        Assert.assertTrue(repo.move(tank.getId(), Direction.Left));
+        Assert.assertEquals(tank.getAllowedMoveInterval(), 500);
+
+        long soldierID = repo.deploySoldier(tank.getId()).getResult();
+        Soldier soldier = repo.getGame().getSoldier(soldierID);
+        TankLocation s = repo.getGame().findSoldier(soldier, soldierID);
+
+        if(s == null) {
+            return;
+        }
+
+        repo.getGame().getGameBoard().setEntity(s.getColumn() + 1, s.getRow(), new Rocky());
+        Assert.assertTrue(repo.move(soldierID, Direction.Right));
+        Assert.assertEquals(soldier.getAllowedMoveInterval(), 750);
+        repo.getGame().getGameBoard().setEntity(s.getColumn() - 1, s.getRow(), new Hill());
+        Assert.assertTrue(repo.move(soldierID, Direction.Left));
+        Assert.assertEquals(soldier.getAllowedMoveInterval(), 500);
     }
     @Test
     public void testDisconnect() throws Exception {

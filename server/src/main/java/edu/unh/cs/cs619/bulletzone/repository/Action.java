@@ -7,7 +7,9 @@ import java.util.TimerTask;
 
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.FieldEntity;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
+import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
@@ -105,9 +107,10 @@ public class Action {
                 throw new TankDoesNotExistException(tankId);
             }
 
-            //if tank direction is not equal to forwards or backwards
-            //move constraint
+
             if (tank.getIsActive() == 1) {
+                //if tank direction is not equal to forwards or backwards
+                //move constraint
                 if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
                     return false;
                 }
@@ -120,12 +123,11 @@ public class Action {
                 tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());
 
                 FieldHolder parent = tank.getParent();
-
                 FieldHolder nextField = parent.getNeighbor(direction);
-                checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
+                checkNotNull(parent.getNeighbor(direction), "Neighbor is not available");
 
                 boolean isCompleted;
-                if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
+                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
                     // If the next field is empty move the user
 
                 /*try {
@@ -133,6 +135,19 @@ public class Action {
                 } catch(InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }*/
+
+                    //Constraint to allow tanks on hills and rocky terrain and to slow them on hills
+                    if (nextField.isPresent()) {
+                        if (nextField.getEntity() instanceof Hill) {
+                            if (!(parent.getEntity() instanceof Hill)) {
+                                tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
+                            }
+                        }
+                    } else {
+                        if (parent.getEntity() instanceof Hill) {
+                            tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 1.5));
+                        }
+                    }
 
                     parent.clearField();
                     nextField.setFieldEntity(tank);
@@ -161,9 +176,8 @@ public class Action {
 
                 FieldHolder nextField = parent.getNeighbor(direction);
                 checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
-
                 boolean isCompleted;
-                if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
+                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest) {
                     // If the next field is empty move the user
 
                 /*try {
@@ -172,6 +186,18 @@ public class Action {
                     Thread.currentThread().interrupt();
                 }*/
 
+                    //Constraint to allow soldiers on hills and rocky terrain and to slow them on rocky
+                    if (nextField.isPresent()) {
+                        if (nextField.getEntity() instanceof Rocky) {
+                            if (!(parent.getEntity() instanceof Rocky)) {
+                                soldier.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
+                            }
+                        }
+                    } else {
+                        if (parent.getEntity() instanceof Rocky) {
+                            soldier.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 1.5));
+                        }
+                    }
                     parent.clearField();
                     nextField.setFieldEntity(soldier);
                     soldier.setParent(nextField);
@@ -247,7 +273,8 @@ public class Action {
                 }
 
                 // Create a new bullet to fire
-                final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType - 1]);
+                //CHANGING HERE **********************************************
+                final Bullet bullet = new Bullet(tankId, direction, 30);
                 // Set the same parent for the bullet.
                 // This should be only a one way reference.
                 bullet.setParent(parent);

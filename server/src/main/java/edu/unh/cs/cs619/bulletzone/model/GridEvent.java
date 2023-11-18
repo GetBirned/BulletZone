@@ -1,4 +1,4 @@
-package edu.unh.cs.cs619.bulletzone.repository;
+package edu.unh.cs.cs619.bulletzone.model;
 
 import java.sql.Timestamp;
 
