@@ -21,7 +21,24 @@ public class GameBoard {
     }
 
     public void setEntity(int x, int y, FieldEntity f) {
+
         holderGrid.get(y * FIELD_DIM + x).setFieldEntity(f);
+        if (y > 0) {
+            holderGrid.get((y - 1) * FIELD_DIM + x).addNeighbor(Direction.Down, holderGrid.get(y * FIELD_DIM + x));
+            holderGrid.get(y * FIELD_DIM + x).addNeighbor(Direction.Up,  holderGrid.get((y - 1) * FIELD_DIM + x));
+        }
+        if (y < 15) {
+            holderGrid.get((y + 1) * FIELD_DIM + x).addNeighbor(Direction.Up, holderGrid.get(y * FIELD_DIM + x));
+            holderGrid.get(y * FIELD_DIM + x).addNeighbor(Direction.Down,  holderGrid.get((y + 1) * FIELD_DIM + x));
+        }
+        if (x > 0) {
+            holderGrid.get(y * FIELD_DIM + x - 1).addNeighbor(Direction.Right, holderGrid.get(y * FIELD_DIM + x));
+            holderGrid.get(y * FIELD_DIM + x).addNeighbor(Direction.Left,  holderGrid.get(y * FIELD_DIM + x - 1));
+        }
+        if (x < 15) {
+            holderGrid.get(y * FIELD_DIM + x + 1).addNeighbor(Direction.Left, holderGrid.get(y * FIELD_DIM + x));
+            holderGrid.get(y * FIELD_DIM + x).addNeighbor(Direction.Right,  holderGrid.get(y * FIELD_DIM + x + 1));
+        }
     }
     public ArrayList<FieldHolder> getHolderGrid() {
         return holderGrid;

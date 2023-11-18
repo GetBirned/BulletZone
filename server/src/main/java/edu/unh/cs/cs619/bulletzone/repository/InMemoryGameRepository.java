@@ -9,8 +9,10 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.FieldEntities;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
+import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
@@ -154,6 +156,9 @@ public class InMemoryGameRepository implements GameRepository {
         return aci.getHistory(timestamp);
     }
 
+    public Game getGame() {
+        return this.game;
+    }
     @Override
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         Command updateLifeCommand = new ConcreteUpdateLifeCommand(action, tankId, newLife);
@@ -181,13 +186,11 @@ public class InMemoryGameRepository implements GameRepository {
 
     @Override
     public void setTankPowerup(long tankId, int powerupValue) {
-
         game.setTankPowerup(tankId,powerupValue);
     }
 
     @Override
     public void setSoldierPowerup(long tankId, int powerupValue) {
-
         game.setSoldierPowerup(tankId,powerupValue);
     }
 

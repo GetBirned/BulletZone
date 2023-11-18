@@ -21,6 +21,7 @@ public final class Game {
     private final ConcurrentMap<String, Long> playersIP = new ConcurrentHashMap<>();
     private final Object monitor = new Object();
     private GameBoardBuilder gbb = null;
+    private GameBoard gb = null;
 
     public Game() {
         this.id = 0;
@@ -31,7 +32,7 @@ public final class Game {
         if (gbb != null) {
             return;
         }
-        gbb = new GameBoardBuilder();
+        gbb = new GameBoardBuilder(gb);
     }
 
     @JsonIgnore
@@ -114,11 +115,11 @@ public final class Game {
         return grid;
     }
     public TankLocation findTank(Tank tank, long tankID) {
-        synchronized (gbb.gb.holderGrid) {
+        synchronized (gbb.getBoard().getHolderGrid()) {
             FieldHolder holder;
             for (int i = 0; i < FIELD_DIM; i++) {
                 for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.gb.holderGrid.get(i * FIELD_DIM + j);
+                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
                     if (holder.isPresent() && holder.getEntity() instanceof Tank) {
                         Tank currentTank = (Tank) holder.getEntity();
                         if (currentTank.getId() == tankID) {
@@ -133,7 +134,29 @@ public final class Game {
         // Tank not found, return null or handle accordingly
         return null;
     }
+    public TankLocation findSoldier(Soldier soldier, long SoldierID) {
+        synchronized (gbb.getBoard().getHolderGrid()) {
+            FieldHolder holder;
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
+                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
+                        Soldier currentSoldier = (Soldier) holder.getEntity();
+                        if (currentSoldier.getId() == SoldierID) {
+                            return new TankLocation(i, j);
+                        }
+                    }
+                }
+            }
+        }
+        // When the first grid is created, have each fieldentity know which coordinate it has in the grid, and then the tank will know who its parent is, then can ask the field entity for its coordinate.
 
+        // Tank not found, return null or handle accordingly
+        return null;
+    }
+    public GameBoard getGameBoard() {
+        return this.gbb.getBoard();
+    }
 
     public void startEjectionCooldown() {
         lastEjectionTime = System.currentTimeMillis();
@@ -228,7 +251,7 @@ public final class Game {
         return null;
     }
 
-    public Soldier getSoldier(int soldierID) {
+    public Soldier getSoldier(long soldierID) {
         return soldiers.get((long) soldierID);
     }
 
