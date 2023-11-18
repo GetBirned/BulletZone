@@ -448,4 +448,14 @@ public class Action {
         }
         return 0;
     }
+
+    public int getSoldierHealth(long soldierId) {
+        Soldier soldier = game.getSoldier((int)soldierId);
+        if(soldier != null) {
+            return soldier.getLife();
+        }
+        System.out.println("soldier is null");
+        return 0;
+    }
+
 }

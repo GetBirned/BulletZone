@@ -170,6 +170,16 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     @Override
+    public int getSoldierHealth(long soldierId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+        Command getSoldierHealth = new ConcreteGetSoldierHealthCommand(action, soldierId);
+
+        int res = getSoldierHealth.execute1();
+
+        return res;
+    }
+
+
+    @Override
     public void setTankPowerup(long tankId, int powerupValue) {
 
         game.setTankPowerup(tankId,powerupValue);
