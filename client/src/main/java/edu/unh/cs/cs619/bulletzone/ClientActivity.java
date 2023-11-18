@@ -43,6 +43,8 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -125,8 +127,34 @@ public class ClientActivity extends Activity {
                 onButtonFire();
             }
         });
+
+        // file gets way way way way too large too quickly
+        // Delete the file
+        boolean deleted = this.deleteFile("replay_file.txt");
+        // sending context over
+        mGridAdapter.getContext(this);
+
+        if (deleted) {
+            Log.d("FileDeleted", "File deleted successfully");
+        } else {
+            Log.d("FileDeleted", "Failed to delete file");
+        }
+
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
+
+    private void newFileOverwrite() {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput("replay_file.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write("");
+            outputStreamWriter.close();
+            Log.d("FILE", "wrote to new file");
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
 
 
     @Override

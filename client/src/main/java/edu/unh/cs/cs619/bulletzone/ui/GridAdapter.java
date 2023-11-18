@@ -1,5 +1,6 @@
 package edu.unh.cs.cs619.bulletzone.ui;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Random;
 
 import org.androidannotations.annotations.EBean;
@@ -25,6 +29,8 @@ public class GridAdapter extends BaseAdapter {
     @SystemService
     protected LayoutInflater inflater;
     private int[][] mEntities = new int[16][16];
+    private int[][] oldMEntities = new int[16][16];
+    Context context;
     Random random = new Random();
 
     @RestService
@@ -107,6 +113,47 @@ public class GridAdapter extends BaseAdapter {
         mEntities[tankRow + 1][tankCol] = (int) soldierId;
         notifyDataSetChanged();
     }
+
+    public void getContext(Context context) {
+        this.context = context;
+    }
+
+    private boolean isChanged(int[][] grid) {
+        for (int i = 0; i < 16; i++) {
+            for (int k = 0; k < 16; k++) {
+                if (mEntities[i][k] != oldMEntities[i][k]) {
+                    //Log.d("STATE CHANGE", "yes");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private void writeToFile() {
+        // NEED TO ADD CHECK to see if mendities has changed
+
+        if (isChanged(mEntities)) {
+            oldMEntities = mEntities;
+            try {
+                String grid_string = "";
+                for (int[] nested_arr : mEntities) {
+                    for (int val : nested_arr) {
+                        grid_string += String.valueOf(val) + " ";
+                    }
+                }
+                //String result = ts + " " + grid_string;
+                String result = grid_string;
+                //Log.d("GRID STRING", grid_string);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("replay_file.txt", Context.MODE_APPEND));
+                outputStreamWriter.write(result);
+                outputStreamWriter.close();
+                //Log.d("FILE APPEND", result);
+            } catch (IOException e) {
+                Log.e("Exception", "File write failed: " + e.toString());
+            }
+        }
+    }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -243,6 +290,7 @@ public class GridAdapter extends BaseAdapter {
             }
 
         }
+        writeToFile();
 
         return imageView;
     }
