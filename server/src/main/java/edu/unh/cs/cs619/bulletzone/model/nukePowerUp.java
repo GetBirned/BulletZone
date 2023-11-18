@@ -1,5 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.model;
-
+//FUSION POWERUP
 public class nukePowerUp extends FieldEntity{
     int pos;
     int destructValue;
