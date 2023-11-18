@@ -43,10 +43,15 @@ public class DataRepository {
         String url = "jdbc:mysql://stman1.cs.unh.edu:3306/cs61907";
         String username = "rhea";
         String password = "Dgebr3Vern6f";
+        int balance;
 //
 //        bzdata = new BulletZoneData(url, username, password);
         bzdata = new BulletZoneData(); //just use in-memory database
     }
+
+//    public void setBalanace(int newBal){
+//        bzdata.
+//    }
 
     /**
      * Stub for a method that would create a user or validate the user. [You don't have

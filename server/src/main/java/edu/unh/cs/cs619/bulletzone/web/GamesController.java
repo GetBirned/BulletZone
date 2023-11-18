@@ -171,7 +171,6 @@ class GamesController {
             e.printStackTrace();
         }
     }
-
     @RequestMapping(method = RequestMethod.POST, value = "{tankId}/updateLife", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void updateLife(@PathVariable long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {

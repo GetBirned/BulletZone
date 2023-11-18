@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -79,6 +80,8 @@ public class AccountController {
         GameUser user = data.validateUser(name, password, true);
 
 
+
+
         if (user != null) {
             // Return the response with the user's ID if login is valid
             return new ResponseEntity<>(new LongWrapper(user.getId()), HttpStatus.OK);
@@ -87,6 +90,22 @@ public class AccountController {
             return null;
         }
 
+    }
+
+    @PostMapping(value = "/updateBankAccount/{accountId}/{powerupValue}/{numCoins}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    void updateBankAccount (@PathVariable long accountId, @PathVariable int numCoins) {
+        try {
+            //log.debug("setTankPowerup called with tankId: {} and powerupType: {}", tankId, powerupValue);
+
+            // Call the method to set the tank's powerup
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

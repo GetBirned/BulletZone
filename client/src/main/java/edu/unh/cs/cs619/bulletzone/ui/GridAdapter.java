@@ -192,6 +192,7 @@ public class GridAdapter extends BaseAdapter {
                             int rand = random.nextInt(196) + 5;
                             numCoins += rand;
                             Log.d("NUMCOINS:", this.numCoins+"");
+                            ///////////CALL THE METHODDDDDDDDDDDDDDDDD
                         }
                         else if(hasPowerUp[row][col] != 1){
                             int finalType = hasPowerUp[row][col];

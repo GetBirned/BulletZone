@@ -59,8 +59,8 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Post("/soldier/{tankId}")
     LongWrapper deploySoldier(@Path long tankId);
 
-    @Put("/{tankId}/updateLife/{newLife}")
-    BooleanWrapper updateLife(@Path long tankId, @Path int newLife);
+    @Put("/{accountId}/updateBankAccount/{numCoins}")
+    BooleanWrapper updateBankAccount(@Path long accountId, @Path int numCoins);
 
     @Get("/{tankId}/getHealth")
     LongWrapper getHealth(@Path long tankId);
