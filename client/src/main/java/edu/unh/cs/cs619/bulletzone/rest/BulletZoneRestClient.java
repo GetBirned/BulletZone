@@ -21,8 +21,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //http://stman1.cs.unh.edu:61907/games
-    // 10.21.174.155
-@Rest(rootUrl = "http://10.21.174.155:6197/games",
+@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
         // TODO: disable intercepting and logging
         // , interceptors = { HttpLoggerInterceptor.class }
