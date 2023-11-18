@@ -11,6 +11,9 @@ public class FieldHolder {
     private final Map<Direction, FieldHolder> neighbors = new HashMap<Direction, FieldHolder>();
     private Optional<FieldEntity> entityHolder = Optional.empty();
 
+    private FieldEntity entity;
+    private FieldEntity originalEntity;
+
     public void addNeighbor(Direction direction, FieldHolder fieldHolder) {
         neighbors.put(checkNotNull(direction), checkNotNull(fieldHolder));
     }
@@ -29,8 +32,18 @@ public class FieldHolder {
     }
 
     public void setFieldEntity(FieldEntity entity) {
+
+        this.entity = entity;
+        if (originalEntity == null) {
+            this.originalEntity = entity;  // Set the original entity only if it's not set already
+        }
         entityHolder = Optional.of(checkNotNull(entity,
                 "FieldEntity cannot be null."));
+    }
+
+
+    public FieldEntity getOriginalEntity() {
+        return originalEntity;
     }
 
     public void clearField() {

@@ -18,7 +18,10 @@ import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import edu.unh.cs.cs619.bulletzone.model.Thingamajig;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
+import edu.unh.cs.cs619.bulletzone.model.applePowerUp;
+import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
 import jdk.internal.org.jline.utils.Log;
 
 /*
@@ -37,6 +40,8 @@ public class Action {
      * Bullet step time in milliseconds
      */
     private static final int BULLET_PERIOD = 200;
+
+
 
     public Action(Object monitor, Game game) {
         this.monitor = monitor;
@@ -127,14 +132,11 @@ public class Action {
                 checkNotNull(parent.getNeighbor(direction), "Neighbor is not available");
 
                 boolean isCompleted;
-                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
+                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky
+                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
                     // If the next field is empty move the user
 
-                /*try {
-                    Thread.sleep(500);
-                } catch(InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }*/
+
 
                     //Constraint to allow tanks on hills and rocky terrain and to slow them on hills
                     if (nextField.isPresent()) {
@@ -149,7 +151,16 @@ public class Action {
                         }
                     }
 
+
                     parent.clearField();
+
+                    if(tank.getPowerUpType() == 4) {
+                        System.out.println("Restoring terrain. Current entity type: hill");
+                        parent.setFieldEntity(new Hill());
+                    } else if(tank.getPowerUpType() == 5) {
+                        System.out.println("Restoring terrain. Current entity type: rock");
+                        parent.setFieldEntity(new Rocky());
+                    }
                     nextField.setFieldEntity(tank);
                     tank.setParent(nextField);
 
@@ -177,14 +188,9 @@ public class Action {
                 FieldHolder nextField = parent.getNeighbor(direction);
                 checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
                 boolean isCompleted;
-                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest) {
+                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest
+                 || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
                     // If the next field is empty move the user
-
-                /*try {
-                    Thread.sleep(500);
-                } catch(InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }*/
 
                     //Constraint to allow soldiers on hills and rocky terrain and to slow them on rocky
                     if (nextField.isPresent()) {
@@ -198,7 +204,22 @@ public class Action {
                             soldier.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 1.5));
                         }
                     }
+
+
                     parent.clearField();
+
+                    if(soldier.getPowerUpType() == 4) {
+                        System.out.println("Restoring terrain. Current entity type: hill");
+                        parent.setFieldEntity(new Hill());
+                    } else if(soldier.getPowerUpType() == 5) {
+                        System.out.println("Restoring terrain. Current entity type: rock");
+                        parent.setFieldEntity(new Rocky());
+                    } else if(soldier.getPowerUpType() == 6) {
+                        System.out.println("Restoring terrain. Current entity type: forest");
+                        parent.setFieldEntity(new Forest());
+                    }
+
+
                     nextField.setFieldEntity(soldier);
                     soldier.setParent(nextField);
 

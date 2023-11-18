@@ -40,6 +40,10 @@ public class Soldier extends FieldEntity {
         this.powerUpType = powerupValue;
     }
 
+    public int getPowerUpType(){
+        return this.powerUpType;
+    }
+
     public long getId() {
         return id;
     }

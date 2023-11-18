@@ -170,10 +170,22 @@ public class GridAdapter extends BaseAdapter {
         int val = mEntities[row][col];
 
         synchronized (monitor) {
+            if (hasPowerUp[row][col] == 4) {
+                mEntities[row][col] = 2;
+            } else if (hasPowerUp[row][col] == 5) {
+                mEntities[row][col] = 1;
+            } else if (hasPowerUp[row][col] == 6) {
+                mEntities[row][col] = 3;
+            }
             if(hasPowerUp[row][col] == 4) {
                 imageView.setImageResource(R.drawable.hillyterrain);
+
             } else if(hasPowerUp[row][col] == 5) {
                 imageView.setImageResource(R.drawable.rockyterrain);
+
+            } else if (hasPowerUp[row][col] == 6) {
+                imageView.setImageResource(R.drawable.forestterrain);
+
             }
             if (val > 0) {
 
@@ -195,11 +207,12 @@ public class GridAdapter extends BaseAdapter {
                         }
                         else if(hasPowerUp[row][col] != 1){
                             int finalType = hasPowerUp[row][col];
+                            int finalVal = val;
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(val), finalType, true);
-                                    Log.e("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + finalType);
+                                    restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                    Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
 
                                     return null;
                                 }
@@ -207,6 +220,18 @@ public class GridAdapter extends BaseAdapter {
                         }
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
+
+                                return null;
+                            }
+                        }.execute();
                     }
                     numPlayers++;
                     if (friendlyTank(val) == 0) {
@@ -226,11 +251,12 @@ public class GridAdapter extends BaseAdapter {
                         }
                         else if(hasPowerUp[row][col] != 1){
                             int finalType = hasPowerUp[row][col];
+                            int finalVal1 = val;
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(val), finalType, false);
-                                    Log.e("Solder #: " + friendlyTank(val) +  "toRestClient", "withVal: " + finalType);
+                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                    Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
 
                                     return null;
                                 }
@@ -238,6 +264,18 @@ public class GridAdapter extends BaseAdapter {
                         }
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal1 = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                Log.e("soldier", "Solder #: " + friendlyTank(finalVal1) +  "toRestClient withVal:"  + finalType);
+
+                                return null;
+                            }
+                        }.execute();
                     }
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
@@ -293,6 +331,16 @@ public class GridAdapter extends BaseAdapter {
                 }
             }
 
+            if(hasPowerUp[row][col] == 4) {
+                mEntities[row][col] = 2;
+
+            } else if(hasPowerUp[row][col] == 5) {
+                mEntities[row][col] = 1;
+
+            } else if (hasPowerUp[row][col] == 6) {
+                mEntities[row][col] = 3;
+
+            }
         }
         writeToFile();
 
