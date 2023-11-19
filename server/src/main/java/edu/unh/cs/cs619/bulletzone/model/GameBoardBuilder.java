@@ -46,8 +46,6 @@ public class GameBoardBuilder {
         gb.setEntity(11, 4, new Wall());
 
         gb.setEntity(7, 5, new Wall());
-        gb.setEntity(3, 7, new Wall(200, 98));
-        gb.setEntity(4, 7, new Wall(200, 99));
 
         gb.setEntity(3, 7, new Wall(200, 98));
         gb.setEntity(4, 7, new Wall(200, 99));
@@ -81,6 +79,7 @@ public class GameBoardBuilder {
         gb.setEntity(4, 11, new Forest());
         gb.setEntity(5, 11, new Forest());
         gb.setEntity(6, 11, new Forest());
+
 
         gb.setEntity(6, 9, new nukePowerUp());
         gb.setEntity(13, 11, new applePowerUp());

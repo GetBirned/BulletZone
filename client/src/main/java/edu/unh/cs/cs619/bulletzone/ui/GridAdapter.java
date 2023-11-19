@@ -188,8 +188,11 @@ public class GridAdapter extends BaseAdapter {
 
             }
             if (val > 0) {
-
                 int direction = (val % 10);
+                if(val == 200){
+                    imageView.setImageResource(R.drawable.woodwall); // Set the appropriate image resource for walls
+
+                }
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {

@@ -11,9 +11,11 @@ import edu.unh.cs.cs619.bulletzone.model.FieldEntity;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
+import edu.unh.cs.cs619.bulletzone.model.GameBoard;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
+import edu.unh.cs.cs619.bulletzone.model.Meadow;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
@@ -134,7 +136,8 @@ public class Action {
 
                 boolean isCompleted;
                 if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky
-                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
+                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp ||
+                        nextField.getEntity() instanceof nukePowerUp|| nextField.getEntity() instanceof Meadow) {
                     // If the next field is empty move the user
 
 
@@ -152,7 +155,6 @@ public class Action {
                         }
                     }
 
-
                     parent.clearField();
 
                     if(tank.getPowerUpType() == 4) {
@@ -161,12 +163,29 @@ public class Action {
                     } else if(tank.getPowerUpType() == 5) {
                         System.out.println("Restoring terrain. Current entity type: rock");
                         parent.setFieldEntity(new Rocky());
+                    } else if(tank.getPowerUpType() == 0) {
+                        System.out.println("Restoring terrain. Current entity type: meadow");
+                        parent.setFieldEntity(new Meadow());
                     }
                     nextField.setFieldEntity(tank);
                     tank.setParent(nextField);
 
                     isCompleted = true;
                 } else {
+                    if (nextField.getEntity() instanceof Wall) {
+                        if(((Wall) nextField.getEntity()).destructValue == 1000){
+                            tank.takeDamage(100);
+                            ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
+                        }
+                        else {
+                            tank.takeDamage(((Wall) nextField.getEntity()).destructValue);
+                            ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
+                        }
+                    }
+                    if (nextField.getEntity() instanceof Tank) {
+                        tank.takeDamage(((Tank) nextField.getEntity()).getLife());
+                        ((Tank) nextField.getEntity()).takeDamage(tank.getLife());
+                    }
                     isCompleted = false;
                 }
 
@@ -176,8 +195,6 @@ public class Action {
                 if (Direction.toByte(direction) != Direction.toByte(soldier.getDirection()) && Direction.toByte(direction) != Direction.opposite(soldier.getDirection())) {
                     return false;
                 }
-
-
                 long millis = System.currentTimeMillis();
                 if(millis < soldier.getLastMoveTime())
                     return false;
@@ -187,7 +204,7 @@ public class Action {
                 FieldHolder parent = soldier.getParent();
 
                 FieldHolder nextField = parent.getNeighbor(direction);
-                checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
+                checkNotNull(parent.getNeighbor(direction), "Neighbor is not available");
 
                 boolean isCompleted;
                 if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest
@@ -245,6 +262,13 @@ public class Action {
                     }
                     return true;
                 } else {
+                    if (nextField.getEntity() instanceof Wall) {
+                       ((Wall) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    }
+                    else if (nextField.getEntity() instanceof Tank) {
+                        ((Tank) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    }
+
                     isCompleted = false;
                 }
 
@@ -320,7 +344,7 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent() && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)) {
+                            if (nextField.isPresent() && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) && !(nextField.getEntity() instanceof Meadow)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -348,7 +372,7 @@ public class Action {
                                     Wall w = (Wall) nextField.getEntity();
                                     if (w.destructValue <= 0) {
                                         System.out.println("MAKING IT HERE ********************");
-                                        game.getHolderGrid().get(w.getPos()).clearField();
+                                        w.getParent().clearField();
                                     } else {
                                         System.out.println("Destruct Value before: " + w.destructValue);
                                         w.destructValue -= bullet.getDamage();
@@ -494,6 +518,67 @@ public class Action {
             tank.setLife(newLife);
             // Add any additional logic needed, e.g., notifying other players
         }
+    }
+
+    public GameBoard getNewBoard(){
+        GameBoard gb = new GameBoard();
+        gb.setEntity(3, 2, new Hill());
+        gb.setEntity(4, 2, new Hill());
+        gb.setEntity(5, 2, new Hill());
+        gb.setEntity(6, 2, new Hill());
+
+        gb.setEntity(3, 3, new Hill());
+        gb.setEntity(4, 3, new Hill());
+        gb.setEntity(5, 3, new Hill());
+        gb.setEntity(6, 3, new Hill());
+
+        gb.setEntity(7, 4, new Wall());
+        gb.setEntity(8, 4, new Wall());
+        gb.setEntity(9, 4, new Wall());
+        gb.setEntity(10, 4, new Wall());
+        gb.setEntity(11, 4, new Wall());
+
+        gb.setEntity(7, 5, new Wall());
+
+        gb.setEntity(3, 7, new Meadow( 98));
+       gb.setEntity(4, 7, new Meadow(99));
+
+        gb.setEntity(9, 5, new Rocky());
+        gb.setEntity(10, 5, new Rocky());
+        gb.setEntity(11, 5, new Rocky());
+        gb.setEntity(12, 5, new Rocky());
+
+        gb.setEntity(9, 6, new Rocky());
+        gb.setEntity(10, 6, new Rocky());
+        gb.setEntity(11, 6, new Rocky());
+        gb.setEntity(12, 6, new Rocky());
+
+        gb.setEntity(10, 9, new Wall());
+        gb.setEntity(10, 10, new Wall());
+        gb.setEntity(10, 11, new Wall());
+        gb.setEntity(10, 12, new Wall());
+
+        gb.setEntity(12, 10, new Hill());
+        gb.setEntity(13, 10, new Hill());
+        gb.setEntity(12, 11, new Hill());
+        gb.setEntity(13, 11, new Hill());
+
+        gb.setEntity(3, 10, new Forest());
+        gb.setEntity(4, 10, new Forest());
+        gb.setEntity(5, 10, new Forest());
+        gb.setEntity(6, 10, new Forest());
+
+        gb.setEntity(3, 11, new Forest());
+        gb.setEntity(4, 11, new Forest());
+        gb.setEntity(5, 11, new Forest());
+        gb.setEntity(6, 11, new Forest());
+
+
+        gb.setEntity(6, 9, new nukePowerUp());
+        gb.setEntity(13, 11, new applePowerUp());
+        gb.setEntity(3, 8, new Thingamajig());
+        return gb;
+
     }
 
     public int getHealth(long tankId) {

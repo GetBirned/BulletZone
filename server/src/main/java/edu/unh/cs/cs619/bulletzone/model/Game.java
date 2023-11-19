@@ -158,6 +158,7 @@ public final class Game {
         return this.gbb.getBoard();
     }
 
+
     public void startEjectionCooldown() {
         lastEjectionTime = System.currentTimeMillis();
     }

@@ -50,10 +50,13 @@ public class Tank extends FieldEntity {
         this.powerUpType = powerupValue;
     }
 
-    public void takeDamage(int damage) {
-        int armor = getLife();
-        int damageTaken = Math.min(damage, armor); // Take the minimum of damage and remaining armor
+    public void takeDamage(int othersArmor) {
+        int damageTaken = (int) Math.floor(othersArmor * .1);
         this.setLife(this.getLife() - damageTaken);
+    }
+    public void takeDamagefromSoldier(int othersArmor) {
+        int damage = (int) Math.ceil(othersArmor * .4);
+        this.life = this.life - damage;
     }
 
     public int calculateDamageToOther(Wall other) {
