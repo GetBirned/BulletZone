@@ -320,7 +320,7 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent() && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -432,7 +432,7 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
