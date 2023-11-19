@@ -107,6 +107,7 @@ public class ClientActivity extends Activity {
     @ViewById(R.id.bank_balance)
     TextView bankBalanceTextView;
     private int tankIsActive;
+    String file_timestamp;
 
 
     @Override
@@ -127,25 +128,25 @@ public class ClientActivity extends Activity {
 
         // file gets way way way way too large too quickly
         // Delete the file
-        boolean deleted = this.deleteFile("replay_file.txt");
+        //boolean deleted = this.deleteFile("replay_file.txt");
         // sending context over
         mGridAdapter.getContext(this);
 
-        if (deleted) {
-            Log.d("FileDeleted", "File deleted successfully");
-        } else {
-            Log.d("FileDeleted", "Failed to delete file");
-        }
+        createNewFile();
 
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
-    private void newFileOverwrite() {
+    private void createNewFile() {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput("replay_file.txt", Context.MODE_PRIVATE));
+            Long tsLong = System.currentTimeMillis()/1000;
+            String ts = tsLong.toString();
+
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput(ts + ".txt", Context.MODE_PRIVATE));
             outputStreamWriter.write("");
             outputStreamWriter.close();
-            Log.d("FILE", "wrote to new file");
+            Log.d("FILE", "created new file with ts " + ts);
+            file_timestamp = ts;
         }
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());

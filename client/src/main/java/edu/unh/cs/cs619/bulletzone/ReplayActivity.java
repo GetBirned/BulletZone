@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -76,11 +78,23 @@ public class ReplayActivity extends AppCompatActivity {
         replay_gv = (GridView) findViewById(R.id.replayGV);
         replay_gv.setAdapter(replayAdapter);
 
-        context = this;
-        getReplayStates();
-
+        // set speed_text view
         speed_text = (TextView) findViewById(R.id.speed_text);
-        speed_text.setText("CURR SPEED 1x");
+
+        context = this;
+        String filename = getReplayFile();
+        if (filename == "BAD") {
+            int[][] blank_board = new int[16][16];
+            for (int i = 0; i < 16; i++) {
+                for (int k = 0; k < 16; k++) {
+                    blank_board[i][k] = 0;
+                }
+            }
+            board_states.add(new int[16][16]);
+        } else {
+            speed_text.setText("CURR SPEED 1x");
+            getReplayStates(filename);
+        }
 
         play = (Button) findViewById(R.id.play);
         play.setOnClickListener(new View.OnClickListener() {
@@ -132,12 +146,67 @@ public class ReplayActivity extends AppCompatActivity {
         });
     }
 
-    private void getReplayStates() {
+    private Integer getMaxArrayList(ArrayList<Integer> nums) {
+        Integer max_val = 0;
+        for (Integer int_t : nums) {
+            if (int_t > max_val) {
+                max_val = int_t;
+            }
+        }
+        return max_val;
+    }
+
+    private String getReplayFile() {
+        String path = Environment.getExternalStorageDirectory().toString();
+        Log.d("Files", "Path: " + path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
+
+        /*
+        if file size is 0 -> error in ClientActivity onCreate
+        if file size is 1 -> display only file
+        if file size is 2-n -> display 2nd file (n-1)
+         */
+
+        if (files.length == 0) {
+            // we have an error
+            Log.d("Files", "no files found (error)");
+            speed_text.setText("NO REPLAY FILE FOUND");
+            return "BAD";
+        } else if (files.length == 1) {
+            Log.d("Files", "this is the first and only replay file found");
+            return files[0].getName();
+        } else {
+            Log.d("Files", "multiple replay files found (good!)");
+        }
+
+        ArrayList<Integer> nums = new ArrayList<>();
+        for (int i = 0; i < files.length; i++) {
+            Log.d("Files", "FileName:" + files[i].getName());
+            try {
+                Integer val = Integer.parseInt(files[i].getName());
+                nums.add(val);
+            } catch (NumberFormatException e) {
+                System.out.println("Input String cannot be parsed to Integer.");
+            }
+        }
+
+        // max val in arraylist
+        Integer getMaxedValArrayList = getMaxArrayList(nums);
+        nums.remove(getMaxedValArrayList);
+        Integer second_max = getMaxArrayList(nums);
+        String second_filename = second_max.toString();
+        return second_filename;
+    }
+
+    private void getReplayStates(String filename) {
+        getReplayFile();
         //String data = readFromFile(this);
         String ret = "";
 
         try {
-            InputStream inputStream = context.openFileInput("replay_file.txt");
+            InputStream inputStream = context.openFileInput(filename + ".txt");
 
             if ( inputStream != null ) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
