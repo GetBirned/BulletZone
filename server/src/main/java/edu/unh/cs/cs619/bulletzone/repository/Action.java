@@ -318,7 +318,7 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent() && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -344,8 +344,13 @@ public class Action {
                                     }
                                 } else if (nextField.getEntity() instanceof Wall) {
                                     Wall w = (Wall) nextField.getEntity();
-                                    if (w.getIntValue() > 1000 && w.getIntValue() <= 2000) {
+                                    if (w.destructValue <= 0) {
+                                        System.out.println("MAKING IT HERE ********************");
                                         game.getHolderGrid().get(w.getPos()).clearField();
+                                    } else {
+                                        System.out.println("Destruct Value before: " + w.destructValue);
+                                        w.destructValue -= bullet.getDamage();
+                                        System.out.println("Destruct Value after: " + w.destructValue);
                                     }
                                 }
                                 if (isVisible) {
@@ -425,7 +430,7 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
