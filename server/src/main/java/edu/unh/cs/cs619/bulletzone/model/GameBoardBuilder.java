@@ -46,6 +46,8 @@ public class GameBoardBuilder {
         gb.setEntity(11, 4, new Wall());
 
         gb.setEntity(7, 5, new Wall());
+        gb.setEntity(3, 7, new Wall(200, 98));
+        gb.setEntity(4, 7, new Wall(200, 99));
 
         gb.setEntity(3, 7, new Wall());
         gb.setEntity(4, 7, new Wall());

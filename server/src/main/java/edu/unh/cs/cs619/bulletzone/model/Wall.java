@@ -1,7 +1,8 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
 public class Wall extends FieldEntity {
-    int destructValue, pos;
+    public int destructValue;
+    int pos;
 
     public Wall(){
         this.destructValue = 1000;

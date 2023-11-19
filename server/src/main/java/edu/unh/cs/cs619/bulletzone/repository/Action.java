@@ -131,6 +131,7 @@ public class Action {
                 FieldHolder nextField = parent.getNeighbor(direction);
                 checkNotNull(parent.getNeighbor(direction), "Neighbor is not available");
 
+
                 boolean isCompleted;
                 if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky
                         || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
@@ -187,6 +188,7 @@ public class Action {
 
                 FieldHolder nextField = parent.getNeighbor(direction);
                 checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
+
                 boolean isCompleted;
                 if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest
                  || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
@@ -344,8 +346,13 @@ public class Action {
                                     }
                                 } else if (nextField.getEntity() instanceof Wall) {
                                     Wall w = (Wall) nextField.getEntity();
-                                    if (w.getIntValue() > 1000 && w.getIntValue() <= 2000) {
+                                    if (w.destructValue <= 0) {
+                                        System.out.println("MAKING IT HERE ********************");
                                         game.getHolderGrid().get(w.getPos()).clearField();
+                                    } else {
+                                        System.out.println("Destruct Value before: " + w.destructValue);
+                                        w.destructValue -= bullet.getDamage();
+                                        System.out.println("Destruct Value after: " + w.destructValue);
                                     }
                                 }
                                 if (isVisible) {
