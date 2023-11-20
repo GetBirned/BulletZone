@@ -387,6 +387,9 @@ public class Action {
                                     if (w.destructValue <= 0) {
                                         System.out.println("MAKING IT HERE ********************");
                                         w.getParent().clearField();
+                                        w.setParent(null);
+                                        currentField.clearField();
+
                                     } else {
                                         System.out.println("Destruct Value before: " + w.destructValue);
                                         w.destructValue -= bullet.getDamage();
