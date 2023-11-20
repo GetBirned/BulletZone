@@ -80,6 +80,15 @@ public class Tank extends FieldEntity {
     }
 
 
+    public void takeDamage(int othersArmor) {
+        int damageTaken = (int) Math.floor(othersArmor * .1);
+        this.setLife(this.getLife() - damageTaken);
+    }
+    public void takeDamagefromSoldier(int othersArmor) {
+        int damage = (int) Math.ceil(othersArmor * .4);
+        this.life = this.life - damage;
+    }
+
     public long getLastMoveTime() {
         return lastMoveTime;
     }

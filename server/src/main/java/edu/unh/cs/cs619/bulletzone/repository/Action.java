@@ -166,6 +166,20 @@ public class Action {
 
                     isCompleted = true;
                 } else {
+                    if (nextField.getEntity() instanceof Wall) {
+                        if(((Wall) nextField.getEntity()).destructValue == 1000){
+                            tank.takeDamage(10);
+                            ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
+                        }
+                        else {
+                            tank.takeDamage(10);
+                            ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
+                        }
+                    }
+                    if (nextField.getEntity() instanceof Tank) {
+                        tank.takeDamage(((Tank) nextField.getEntity()).getLife());
+                        ((Tank) nextField.getEntity()).takeDamage(tank.getLife());
+                    }
                     isCompleted = false;
                 }
 
@@ -243,6 +257,12 @@ public class Action {
                     }
                     return true;
                 } else {
+                    if (nextField.getEntity() instanceof Wall) {
+                        ((Wall) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    }
+                    else if (nextField.getEntity() instanceof Tank) {
+                        ((Tank) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    }
                     isCompleted = false;
                 }
 
@@ -318,7 +338,9 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
+                            !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
+                                    && !(nextField.getEntity() instanceof nukePowerUp)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -425,7 +447,9 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
+                                    !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
+                                    && !(nextField.getEntity() instanceof nukePowerUp)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
