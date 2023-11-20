@@ -63,7 +63,7 @@ public class BulletZoneData {
      * @param username  Username with appropriate access to the database specified by url
      * @param password  Password for the user specified by username
      */
-    public BulletZoneData(String url, String username, String password)
+    public BulletZoneData(String url, String username, String password, int bankBalance)
     {
         _url = url;
         _username = username;

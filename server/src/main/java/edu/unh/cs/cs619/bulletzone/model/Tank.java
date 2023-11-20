@@ -2,7 +2,6 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import edu.unh.cs.cs619.bulletzone.datalayer.core.Entity;
 
 
 public class Tank extends FieldEntity {
@@ -48,20 +47,6 @@ public class Tank extends FieldEntity {
     }
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
-    }
-
-    public void takeDamage(int othersArmor) {
-        int damageTaken = (int) Math.floor(othersArmor * .1);
-        this.setLife(this.getLife() - damageTaken);
-    }
-    public void takeDamagefromSoldier(int othersArmor) {
-        int damage = (int) Math.ceil(othersArmor * .4);
-        this.life = this.life - damage;
-    }
-
-    public int calculateDamageToOther(Wall other) {
-        int armor = other.destructValue;
-        return (int) Math.ceil(0.1 * armor);
     }
 
     @Override

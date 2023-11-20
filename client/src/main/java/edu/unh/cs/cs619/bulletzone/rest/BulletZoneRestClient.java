@@ -20,8 +20,8 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * http://10.0.2.2:8080/
  * Created by simon on 10/1/14.
  */
-//http://stman1.cs.unh.edu:61907/games
-@Rest(rootUrl = "http://10.0.0.190:61907/games",
+//
+@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 
