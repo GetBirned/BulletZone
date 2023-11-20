@@ -375,7 +375,7 @@ public class Action {
                                         w.getParent().clearField();
                                     } else {
                                         System.out.println("Destruct Value before: " + w.destructValue);
-                                        w.destructValue -= bullet.getDamage();
+                                       // w.destructValue -= bullet.getDamage();
                                         System.out.println("Destruct Value after: " + w.destructValue);
                                     }
                                 }
