@@ -122,6 +122,7 @@ public class Action {
                     return false;
                 }
 
+
                 long millis = System.currentTimeMillis();
                 if(millis < tank.getLastMoveTime())
                     return false;
@@ -174,30 +175,15 @@ public class Action {
                     if (nextField.getEntity() instanceof Wall) {
                         if(((Wall) nextField.getEntity()).destructValue == 1000){
                             tank.takeDamage(100);
-                            if(tank.getLife() <= 0){
-                                tank.getParent().clearField();
-                                tank.setParent(null);
-                                game.removeTank(tank.getId());
-                            }
                             ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
                         }
                         else {
                             tank.takeDamage(((Wall) nextField.getEntity()).destructValue);
-                            if(tank.getLife() <= 0){
-                                tank.getParent().clearField();
-                                tank.setParent(null);
-                                game.removeTank(tank.getId());
-                            }
                             ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
                         }
                     }
                     if (nextField.getEntity() instanceof Tank) {
                         tank.takeDamage(((Tank) nextField.getEntity()).getLife());
-                        if(tank.getLife() <= 0){
-                            tank.getParent().clearField();
-                            tank.setParent(null);
-                            game.removeTank(tank.getId());
-                        }
                         ((Tank) nextField.getEntity()).takeDamage(tank.getLife());
                     }
                     isCompleted = false;
@@ -533,6 +519,68 @@ public class Action {
             // Add any additional logic needed, e.g., notifying other players
         }
     }
+
+    public GameBoard getNewBoard(){
+        GameBoard gb = new GameBoard();
+        gb.setEntity(3, 2, new Hill());
+        gb.setEntity(4, 2, new Hill());
+        gb.setEntity(5, 2, new Hill());
+        gb.setEntity(6, 2, new Hill());
+
+        gb.setEntity(3, 3, new Hill());
+        gb.setEntity(4, 3, new Hill());
+        gb.setEntity(5, 3, new Hill());
+        gb.setEntity(6, 3, new Hill());
+
+        gb.setEntity(7, 4, new Wall());
+        gb.setEntity(8, 4, new Wall());
+        gb.setEntity(9, 4, new Wall());
+        gb.setEntity(10, 4, new Wall());
+        gb.setEntity(11, 4, new Wall());
+
+        gb.setEntity(7, 5, new Wall());
+
+        gb.setEntity(3, 7, new Meadow( 98));
+       gb.setEntity(4, 7, new Meadow(99));
+
+        gb.setEntity(9, 5, new Rocky());
+        gb.setEntity(10, 5, new Rocky());
+        gb.setEntity(11, 5, new Rocky());
+        gb.setEntity(12, 5, new Rocky());
+
+        gb.setEntity(9, 6, new Rocky());
+        gb.setEntity(10, 6, new Rocky());
+        gb.setEntity(11, 6, new Rocky());
+        gb.setEntity(12, 6, new Rocky());
+
+        gb.setEntity(10, 9, new Wall());
+        gb.setEntity(10, 10, new Wall());
+        gb.setEntity(10, 11, new Wall());
+        gb.setEntity(10, 12, new Wall());
+
+        gb.setEntity(12, 10, new Hill());
+        gb.setEntity(13, 10, new Hill());
+        gb.setEntity(12, 11, new Hill());
+        gb.setEntity(13, 11, new Hill());
+
+        gb.setEntity(3, 10, new Forest());
+        gb.setEntity(4, 10, new Forest());
+        gb.setEntity(5, 10, new Forest());
+        gb.setEntity(6, 10, new Forest());
+
+        gb.setEntity(3, 11, new Forest());
+        gb.setEntity(4, 11, new Forest());
+        gb.setEntity(5, 11, new Forest());
+        gb.setEntity(6, 11, new Forest());
+
+
+        gb.setEntity(6, 9, new nukePowerUp());
+        gb.setEntity(13, 11, new applePowerUp());
+        gb.setEntity(3, 8, new Thingamajig());
+        return gb;
+
+    }
+
     public int getHealth(long tankId) {
         Tank tank = game.getTanks().get(tankId);
         if(tank != null) {
