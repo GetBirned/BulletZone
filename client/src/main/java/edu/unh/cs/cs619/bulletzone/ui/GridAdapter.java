@@ -31,7 +31,6 @@ public class GridAdapter extends BaseAdapter {
     private int[][] mEntities = new int[16][16];
     private int[][] oldMEntities = new int[16][16];
     Context context;
-    String ts;
     Random random = new Random();
 
     @RestService
@@ -119,10 +118,6 @@ public class GridAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    public void setTs(String ts) {
-        this.ts = ts;
-    }
-
     private boolean isChanged(int[][] grid) {
         for (int i = 0; i < 16; i++) {
             for (int k = 0; k < 16; k++) {
@@ -149,7 +144,7 @@ public class GridAdapter extends BaseAdapter {
                 //String result = ts + " " + grid_string;
                 String result = grid_string;
                 //Log.d("GRID STRING", grid_string);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(ts + ".txt", Context.MODE_APPEND));
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("replay_file.txt", Context.MODE_APPEND));
                 outputStreamWriter.write(result);
                 outputStreamWriter.close();
                 //Log.d("FILE APPEND", result);
