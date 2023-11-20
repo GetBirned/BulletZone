@@ -131,16 +131,16 @@ public class ClientActivity extends Activity {
         //boolean deleted = this.deleteFile("replay_file.txt");
         // sending context over
         mGridAdapter.getContext(this);
-
-        createNewFile();
+        String filename_ts = createNewFile();
+        mGridAdapter.setTs(filename_ts);
 
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
-    private void createNewFile() {
+    private String createNewFile() {
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
         try {
-            Long tsLong = System.currentTimeMillis()/1000;
-            String ts = tsLong.toString();
 
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput(ts + ".txt", Context.MODE_PRIVATE));
             outputStreamWriter.write("");
@@ -151,6 +151,7 @@ public class ClientActivity extends Activity {
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }
+        return ts;
     }
 
 
