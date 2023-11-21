@@ -1,5 +1,6 @@
 package edu.unh.cs.cs619.bulletzone.ui;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Random;
 
 import org.androidannotations.annotations.EBean;
@@ -25,6 +29,8 @@ public class GridAdapter extends BaseAdapter {
     @SystemService
     protected LayoutInflater inflater;
     private int[][] mEntities = new int[16][16];
+    private int[][] oldMEntities = new int[16][16];
+    Context context;
     Random random = new Random();
 
     @RestService
@@ -108,6 +114,47 @@ public class GridAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void getContext(Context context) {
+        this.context = context;
+    }
+
+    private boolean isChanged(int[][] grid) {
+        for (int i = 0; i < 16; i++) {
+            for (int k = 0; k < 16; k++) {
+                if (mEntities[i][k] != oldMEntities[i][k]) {
+                    //Log.d("STATE CHANGE", "yes");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private void writeToFile() {
+        // NEED TO ADD CHECK to see if mendities has changed
+
+        if (isChanged(mEntities)) {
+            oldMEntities = mEntities;
+            try {
+                String grid_string = "";
+                for (int[] nested_arr : mEntities) {
+                    for (int val : nested_arr) {
+                        grid_string += String.valueOf(val) + " ";
+                    }
+                }
+                //String result = ts + " " + grid_string;
+                String result = grid_string;
+                //Log.d("GRID STRING", grid_string);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("replay_file.txt", Context.MODE_APPEND));
+                outputStreamWriter.write(result);
+                outputStreamWriter.close();
+                //Log.d("FILE APPEND", result);
+            } catch (IOException e) {
+                Log.e("Exception", "File write failed: " + e.toString());
+            }
+        }
+    }
+
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         flag = 0;
@@ -123,10 +170,22 @@ public class GridAdapter extends BaseAdapter {
         int val = mEntities[row][col];
 
         synchronized (monitor) {
+            if (hasPowerUp[row][col] == 4) {
+                mEntities[row][col] = 2;
+            } else if (hasPowerUp[row][col] == 5) {
+                mEntities[row][col] = 1;
+            } else if (hasPowerUp[row][col] == 6) {
+                mEntities[row][col] = 3;
+            }
             if(hasPowerUp[row][col] == 4) {
                 imageView.setImageResource(R.drawable.hillyterrain);
+
             } else if(hasPowerUp[row][col] == 5) {
                 imageView.setImageResource(R.drawable.rockyterrain);
+
+            } else if (hasPowerUp[row][col] == 6) {
+                imageView.setImageResource(R.drawable.forestterrain);
+
             }
             if (val > 0) {
 
@@ -134,6 +193,10 @@ public class GridAdapter extends BaseAdapter {
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                        hasPowerUp[row][col] = 0;
+                        numItems--;
+                    }
                     imageView.setImageResource(R.drawable.bulletgrass);
                 } else if (val >= 10000000 && val <= 20000000) {
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
@@ -144,11 +207,12 @@ public class GridAdapter extends BaseAdapter {
                         }
                         else if(hasPowerUp[row][col] != 1){
                             int finalType = hasPowerUp[row][col];
+                            int finalVal = val;
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(val), finalType, true);
-                                    Log.e("Sending " + friendlyTank(val) + " toRestClient", "withVal: " + finalType);
+                                    restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                    Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
 
                                     return null;
                                 }
@@ -156,6 +220,18 @@ public class GridAdapter extends BaseAdapter {
                         }
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
+
+                                return null;
+                            }
+                        }.execute();
                     }
                     numPlayers++;
                     if (friendlyTank(val) == 0) {
@@ -175,11 +251,12 @@ public class GridAdapter extends BaseAdapter {
                         }
                         else if(hasPowerUp[row][col] != 1){
                             int finalType = hasPowerUp[row][col];
+                            int finalVal1 = val;
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(val), finalType, false);
-                                    Log.e("Sending " + friendlyTank(val) +  "toRestClient", "withVal: " + finalType);
+                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                    Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
 
                                     return null;
                                 }
@@ -187,6 +264,18 @@ public class GridAdapter extends BaseAdapter {
                         }
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal1 = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                Log.e("soldier", "Solder #: " + friendlyTank(finalVal1) +  "toRestClient withVal:"  + finalType);
+
+                                return null;
+                            }
+                        }.execute();
                     }
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
@@ -242,7 +331,18 @@ public class GridAdapter extends BaseAdapter {
                 }
             }
 
+            if(hasPowerUp[row][col] == 4) {
+                mEntities[row][col] = 2;
+
+            } else if(hasPowerUp[row][col] == 5) {
+                mEntities[row][col] = 1;
+
+            } else if (hasPowerUp[row][col] == 6) {
+                mEntities[row][col] = 3;
+
+            }
         }
+        writeToFile();
 
         return imageView;
     }

@@ -1,5 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.model;
-
+//ANTI-GRAV POWERUP
 public class applePowerUp extends FieldEntity {
 
     int pos;

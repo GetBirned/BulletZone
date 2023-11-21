@@ -9,15 +9,15 @@ public class Soldier extends FieldEntity {
     private String ip;
 
     private long lastMoveTime;
-    public int allowedMoveInterval;
+    private int allowedMoveInterval;
 
     private boolean isInTank;
     private long lastEjectionTime;
 
     private long lastFireTime;
-    public int allowedFireInterval;
+    private int allowedFireInterval;
 
-    public int numberOfBullets;
+    private int numberOfBullets;
     private int allowedNumberOfBullets;
 
     private int life;
@@ -38,6 +38,10 @@ public class Soldier extends FieldEntity {
     }
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
+    }
+
+    public int getPowerUpType(){
+        return this.powerUpType;
     }
 
     public long getId() {

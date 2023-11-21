@@ -2,7 +2,6 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Optional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +21,7 @@ public final class Game {
     private final ConcurrentMap<String, Long> playersIP = new ConcurrentHashMap<>();
     private final Object monitor = new Object();
     private GameBoardBuilder gbb = null;
+    private GameBoard gb = null;
 
     public Game() {
         this.id = 0;
@@ -32,7 +32,7 @@ public final class Game {
         if (gbb != null) {
             return;
         }
-        gbb = new GameBoardBuilder();
+        gbb = new GameBoardBuilder(gb);
     }
 
     @JsonIgnore
@@ -115,11 +115,11 @@ public final class Game {
         return grid;
     }
     public TankLocation findTank(Tank tank, long tankID) {
-        synchronized (gbb.gb.holderGrid) {
+        synchronized (gbb.getBoard().getHolderGrid()) {
             FieldHolder holder;
             for (int i = 0; i < FIELD_DIM; i++) {
                 for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.gb.holderGrid.get(i * FIELD_DIM + j);
+                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
                     if (holder.isPresent() && holder.getEntity() instanceof Tank) {
                         Tank currentTank = (Tank) holder.getEntity();
                         if (currentTank.getId() == tankID) {
@@ -134,7 +134,29 @@ public final class Game {
         // Tank not found, return null or handle accordingly
         return null;
     }
+    public TankLocation findSoldier(Soldier soldier, long SoldierID) {
+        synchronized (gbb.getBoard().getHolderGrid()) {
+            FieldHolder holder;
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
+                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
+                        Soldier currentSoldier = (Soldier) holder.getEntity();
+                        if (currentSoldier.getId() == SoldierID) {
+                            return new TankLocation(i, j);
+                        }
+                    }
+                }
+            }
+        }
+        // When the first grid is created, have each fieldentity know which coordinate it has in the grid, and then the tank will know who its parent is, then can ask the field entity for its coordinate.
 
+        // Tank not found, return null or handle accordingly
+        return null;
+    }
+    public GameBoard getGameBoard() {
+        return this.gbb.getBoard();
+    }
 
     public void startEjectionCooldown() {
         lastEjectionTime = System.currentTimeMillis();
@@ -229,8 +251,8 @@ public final class Game {
         return null;
     }
 
-    public Soldier getSoldier(int soldierID) {
-        return soldiers.get(soldierID);
+    public Soldier getSoldier(long soldierID) {
+        return soldiers.get((long) soldierID);
     }
 
     public ConcurrentMap<Long, Soldier> getSoldiers() {
@@ -247,13 +269,28 @@ public final class Game {
             }
         }
     }
-    public void setTankPowerup(long tankId, int powerupValue, boolean isTank) {
-        if (isTank) {
+    public void setSoldierPowerup(long tankId, int powerupValue){
+        getSoldier((int) tankId).setPowerUpType(powerupValue);
+        Soldier curr = getSoldier((int) tankId);
+        if (powerupValue == 2) {
+            curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
+            curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
+        }
+        //ANTIGRAV
+        if (powerupValue == 3) {
+            curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
+            curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        }
+
+    }
+    public void setTankPowerup(long tankId, int powerupValue) {
             getTank(tankId).setPowerUpType(powerupValue);
             Tank curr = getTank(tankId);
+            //FUSION
             if (powerupValue == 2) {
                 curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
                 curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
+                curr.setAllowedFireInterval((int)curr.getAllowedFireInterval() / 2);
             }
             //ANTIGRAV
             if (powerupValue == 3) {
@@ -261,129 +298,8 @@ public final class Game {
                 curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
             }
 
-        } else {
-            getSoldier((int) tankId).setPowerUpType(powerupValue);
-            Soldier curr = getSoldier((int) tankId);
-            if (powerupValue == 2) {
-                curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
-                curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
-            }
-            //ANTIGRAV
-            if (powerupValue == 3) {
-                curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
-                curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
-            }
-
-        }
     }
 
-}
 
-//
-//package edu.unh.cs.cs619.bulletzone.model;
-//
-//import com.fasterxml.jackson.annotation.JsonIgnore;
-//import java.util.Optional;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.concurrent.ConcurrentHashMap;
-//import java.util.concurrent.ConcurrentMap;
-//
-//public final class Game {
-//    /**
-//     * Field dimensions
-//     */
-//    private static final int FIELD_DIM = 16;
-//    private final long id;
-//    private final ArrayList<FieldHolder> holderGrid = new ArrayList<>();
-//
-//    private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
-//    private final ConcurrentMap<String, Long> playersIP = new ConcurrentHashMap<>();
-//
-//    private final Object monitor = new Object();
-//
-//    public Game() {
-//        this.id = 0;
-//    }
-//
-//    @JsonIgnore
-//    public long getId() {
-//        return id;
-//    }
-//
-//    @JsonIgnore
-//    public ArrayList<FieldHolder> getHolderGrid() {
-//        return holderGrid;
-//    }
-//
-//    public void addTank(String ip, Tank tank) {
-//        synchronized (tanks) {
-//            tanks.put(tank.getId(), tank);
-//            playersIP.put(ip, tank.getId());
-//        }
-//    }
-//
-//    public Tank getTank(int tankId) {
-//        return tanks.get(tankId);
-//    }
-//
-//    public ConcurrentMap<Long, Tank> getTanks() {
-//        return tanks;
-//    }
-//
-//    public List<Optional<FieldEntity>> getGrid() {
-//        synchronized (holderGrid) {
-//            List<Optional<FieldEntity>> entities = new ArrayList<Optional<FieldEntity>>();
-//
-//            FieldEntity entity;
-//            for (FieldHolder holder : holderGrid) {
-//                if (holder.isPresent()) {
-//                    entity = holder.getEntity();
-//                    entity = entity.copy();
-//
-//                    entities.add(Optional.<FieldEntity>of(entity));
-//                } else {
-//                    entities.add(Optional.<FieldEntity>empty());
-//                }
-//            }
-//            return entities;
-//        }
-//    }
-//
-//    public Tank getTank(String ip){
-//        if (playersIP.containsKey(ip)){
-//            return tanks.get(playersIP.get(ip));
-//        }
-//        return null;
-//    }
-//
-//    public void removeTank(long tankId){
-//        synchronized (tanks) {
-//            Tank t = tanks.remove(tankId);
-//            if (t != null) {
-//                playersIP.remove(t.getIp());
-//            }
-//        }
-//    }
-//
-//    public int[][] getGrid2D() {
-//        int[][] grid = new int[FIELD_DIM][FIELD_DIM];
-//
-//        synchronized (holderGrid) {
-//            FieldHolder holder;
-//            for (int i = 0; i < FIELD_DIM; i++) {
-//                for (int j = 0; j < FIELD_DIM; j++) {
-//                    holder = holderGrid.get(i * FIELD_DIM + j);
-//                    if (holder.isPresent()) {
-//                        grid[i][j] = holder.getEntity().getIntValue();
-//                    } else {
-//                        grid[i][j] = 0;
-//                    }
-//                }
-//            }
-//        }
-//
-//        return grid;
-//    }
-//}
+
+}

@@ -7,7 +7,9 @@ import java.util.TimerTask;
 
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.FieldEntity;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
+import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
@@ -16,7 +18,10 @@ import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import edu.unh.cs.cs619.bulletzone.model.Thingamajig;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
+import edu.unh.cs.cs619.bulletzone.model.applePowerUp;
+import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
 import jdk.internal.org.jline.utils.Log;
 
 /*
@@ -35,6 +40,8 @@ public class Action {
      * Bullet step time in milliseconds
      */
     private static final int BULLET_PERIOD = 200;
+
+
 
     public Action(Object monitor, Game game) {
         this.monitor = monitor;
@@ -105,9 +112,10 @@ public class Action {
                 throw new TankDoesNotExistException(tankId);
             }
 
-            //if tank direction is not equal to forwards or backwards
-            //move constraint
+
             if (tank.getIsActive() == 1) {
+                //if tank direction is not equal to forwards or backwards
+                //move constraint
                 if (Direction.toByte(direction) != Direction.toByte(tank.getDirection()) && Direction.toByte(direction) != Direction.opposite(tank.getDirection())) {
                     return false;
                 }
@@ -120,26 +128,58 @@ public class Action {
                 tank.setLastMoveTime(millis + tank.getAllowedMoveInterval());
 
                 FieldHolder parent = tank.getParent();
-
                 FieldHolder nextField = parent.getNeighbor(direction);
-                checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
+                checkNotNull(parent.getNeighbor(direction), "Neighbor is not available");
 
                 boolean isCompleted;
-                if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
+                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky
+                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
                     // If the next field is empty move the user
 
-                /*try {
-                    Thread.sleep(500);
-                } catch(InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }*/
+
+
+                    //Constraint to allow tanks on hills and rocky terrain and to slow them on hills
+                    if (nextField.isPresent()) {
+                        if (nextField.getEntity() instanceof Hill) {
+                            if (!(parent.getEntity() instanceof Hill)) {
+                                tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
+                            }
+                        }
+                    } else {
+                        if (parent.getEntity() instanceof Hill) {
+                            tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 1.5));
+                        }
+                    }
+
 
                     parent.clearField();
+
+                    if(tank.getPowerUpType() == 4) {
+                        System.out.println("Restoring terrain. Current entity type: hill");
+                        parent.setFieldEntity(new Hill());
+                    } else if(tank.getPowerUpType() == 5) {
+                        System.out.println("Restoring terrain. Current entity type: rock");
+                        parent.setFieldEntity(new Rocky());
+                    }
                     nextField.setFieldEntity(tank);
                     tank.setParent(nextField);
 
                     isCompleted = true;
                 } else {
+                    if (nextField.getEntity() instanceof Wall) {
+                        if(((Wall) nextField.getEntity()).destructValue == 1000){
+                            tank.takeDamage(10);
+                            ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
+                        }
+                        else {
+                            tank.takeDamage(10);
+                            ((Wall) nextField.getEntity()).takeDamage(tank.getLife());
+                        }
+                    }
+                    if (nextField.getEntity() instanceof Tank) {
+                        tank.takeDamage(((Tank) nextField.getEntity()).getLife());
+                        ((Tank) nextField.getEntity()).takeDamage(tank.getLife());
+                    }
                     isCompleted = false;
                 }
 
@@ -161,18 +201,39 @@ public class Action {
 
                 FieldHolder nextField = parent.getNeighbor(direction);
                 checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
-
                 boolean isCompleted;
-                if (!nextField.isPresent()|| nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky) {
+                if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest
+                 || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
                     // If the next field is empty move the user
 
-                /*try {
-                    Thread.sleep(500);
-                } catch(InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }*/
+                    //Constraint to allow soldiers on hills and rocky terrain and to slow them on rocky
+                    if (nextField.isPresent()) {
+                        if (nextField.getEntity() instanceof Rocky) {
+                            if (!(parent.getEntity() instanceof Rocky)) {
+                                soldier.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
+                            }
+                        }
+                    } else {
+                        if (parent.getEntity() instanceof Rocky) {
+                            soldier.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 1.5));
+                        }
+                    }
+
 
                     parent.clearField();
+
+                    if(soldier.getPowerUpType() == 4) {
+                        System.out.println("Restoring terrain. Current entity type: hill");
+                        parent.setFieldEntity(new Hill());
+                    } else if(soldier.getPowerUpType() == 5) {
+                        System.out.println("Restoring terrain. Current entity type: rock");
+                        parent.setFieldEntity(new Rocky());
+                    } else if(soldier.getPowerUpType() == 6) {
+                        System.out.println("Restoring terrain. Current entity type: forest");
+                        parent.setFieldEntity(new Forest());
+                    }
+
+
                     nextField.setFieldEntity(soldier);
                     soldier.setParent(nextField);
 
@@ -196,6 +257,12 @@ public class Action {
                     }
                     return true;
                 } else {
+                    if (nextField.getEntity() instanceof Wall) {
+                        ((Wall) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    }
+                    else if (nextField.getEntity() instanceof Tank) {
+                        ((Tank) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    }
                     isCompleted = false;
                 }
 
@@ -247,7 +314,8 @@ public class Action {
                 }
 
                 // Create a new bullet to fire
-                final Bullet bullet = new Bullet(tankId, direction, bulletDamage[bulletType - 1]);
+                //CHANGING HERE **********************************************
+                final Bullet bullet = new Bullet(tankId, direction, 30);
                 // Set the same parent for the bullet.
                 // This should be only a one way reference.
                 bullet.setParent(parent);
@@ -270,7 +338,9 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
+                            !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
+                                    && !(nextField.getEntity() instanceof nukePowerUp)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -377,7 +447,9 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()) {
+                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
+                                    !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
+                                    && !(nextField.getEntity() instanceof nukePowerUp)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -448,4 +520,14 @@ public class Action {
         }
         return 0;
     }
+
+    public int getSoldierHealth(long soldierId) {
+        Soldier soldier = game.getSoldier((int)soldierId);
+        if(soldier != null) {
+            return soldier.getLife();
+        }
+        System.out.println("soldier is null");
+        return 0;
+    }
+
 }

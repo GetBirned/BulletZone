@@ -9,8 +9,10 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
+import edu.unh.cs.cs619.bulletzone.model.FieldEntities;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
+import edu.unh.cs.cs619.bulletzone.model.GridEvent;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
@@ -91,6 +93,12 @@ public class InMemoryGameRepository implements GameRepository {
             return tank;
         }
     }
+
+    @Override
+    public void setTankPowerup(long tankId, int powerupValue, boolean isTank) {
+
+    }
+
     @Override
     public int[][] getGrid() {
         synchronized (this.monitor) {
@@ -119,9 +127,6 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
 
-
-
-
     @Override
     public boolean fire(long tankId, int bulletType)
             throws TankDoesNotExistException, LimitExceededException, IllegalTransitionException {
@@ -147,63 +152,13 @@ public class InMemoryGameRepository implements GameRepository {
         }
     }
 
-
-
-//    public void create() {
-//        if (game != null) {
-//            return;
-//        }
-//        synchronized (this.monitor) {
-//
-//            this.game = new Game();
-//
-//            createFieldHolderGrid(game);
-//            FieldEntities f = new FieldEntities();
-//            game = f.set(game);
-//
-//        }
-//    }
-
-//    private void createFieldHolderGrid(Game game) {
-//        synchronized (this.monitor) {
-//            game.getHolderGrid().clear();
-//            for (int i = 0; i < FIELD_DIM * FIELD_DIM; i++) {
-//                game.getHolderGrid().add(new FieldHolder());
-//            }
-//
-//            FieldHolder targetHolder;
-//            FieldHolder rightHolder;
-//            FieldHolder downHolder;
-//
-//            // Build connections
-//            for (int i = 0; i < FIELD_DIM; i++) {
-//                for (int j = 0; j < FIELD_DIM; j++) {
-//                    targetHolder = game.getHolderGrid().get(i * FIELD_DIM + j);
-//                    rightHolder = game.getHolderGrid().get(i * FIELD_DIM
-//                            + ((j + 1) % FIELD_DIM));
-//                    downHolder = game.getHolderGrid().get(((i + 1) % FIELD_DIM)
-//                            * FIELD_DIM + j);
-//
-//                    targetHolder.addNeighbor(Direction.Right, rightHolder);
-//                    rightHolder.addNeighbor(Direction.Left, targetHolder);
-//
-//                    targetHolder.addNeighbor(Direction.Down, downHolder);
-//                    downHolder.addNeighbor(Direction.Up, targetHolder);
-//                }
-//            }
-//        }
-//    }
-    //TODO: not initializing correctly?
-//    public void create() {
-//        Board brd = new Board(this.game, this.monitor);
-//        brd.create();
-//        this.game = brd.getGame();
-//    }
-
     public LinkedList<GridEvent> getHistory(Timestamp timestamp) {
         return aci.getHistory(timestamp);
     }
 
+    public Game getGame() {
+        return this.game;
+    }
     @Override
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
         Command updateLifeCommand = new ConcreteUpdateLifeCommand(action, tankId, newLife);
@@ -220,10 +175,24 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     @Override
-    public void setTankPowerup(long tankId, int powerupValue, boolean isTank) {
-        game.setTankPowerup(tankId,powerupValue,isTank);
+    public int getSoldierHealth(long soldierId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+        Command getSoldierHealth = new ConcreteGetSoldierHealthCommand(action, soldierId);
+
+        int res = getSoldierHealth.execute1();
+
+        return res;
     }
 
+
+    @Override
+    public void setTankPowerup(long tankId, int powerupValue) {
+        game.setTankPowerup(tankId,powerupValue);
+    }
+
+    @Override
+    public void setSoldierPowerup(long tankId, int powerupValue) {
+        game.setSoldierPowerup(tankId,powerupValue);
+    }
 
     public Stack<GridEvent> getCommandHistory() {
         return aci.getCommandHistory();

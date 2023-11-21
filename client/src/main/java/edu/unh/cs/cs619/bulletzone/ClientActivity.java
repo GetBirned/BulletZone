@@ -43,6 +43,8 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -71,11 +73,8 @@ public class ClientActivity extends Activity {
 
     @ViewById
     protected GridView gridView;
-    @ViewById(R.id.radioGroup)
-    RadioGroup radioGroup;
 
-    @ViewById(R.id.submitButton)
-    Button submitButton;
+
 
     @Bean
     BusProvider busProvider;
@@ -125,8 +124,34 @@ public class ClientActivity extends Activity {
                 onButtonFire();
             }
         });
+
+        // file gets way way way way too large too quickly
+        // Delete the file
+        boolean deleted = this.deleteFile("replay_file.txt");
+        // sending context over
+        mGridAdapter.getContext(this);
+
+        if (deleted) {
+            Log.d("FileDeleted", "File deleted successfully");
+        } else {
+            Log.d("FileDeleted", "Failed to delete file");
+        }
+
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
+
+    private void newFileOverwrite() {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput("replay_file.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write("");
+            outputStreamWriter.close();
+            Log.d("FILE", "wrote to new file");
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
 
 
     @Override
@@ -171,25 +196,10 @@ public class ClientActivity extends Activity {
         gridView.setAdapter(mGridAdapter);
         mGridAdapter.setRestClient(restClient);
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
 
-                if (selectedRadioButtonId != -1) {
-                    RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
-                    String selectedOption = selectedRadioButton.getText().toString();
-
-                    // Now you can do something with the selected option
-                    // For example, you can pass it to another activity or perform some action
-                    // You may use Intent to pass data to another activity, or call a method, etc.
-                } else {
-                    // No option selected, handle this case if needed
-                }
-            }
-        });
     }
 
+    private Timer soldierHealthUpdateTimer;
     @AfterInject
     void afterInject() {
         restClient.setRestErrorHandler(bzRestErrorhandler);
@@ -206,12 +216,26 @@ public class ClientActivity extends Activity {
                 updateHealthAsync(tankId);
             }
         }, 0, 1000); // Update health every 5 seconds (adjust the interval as needed)
+        soldierHealthUpdateTimer = new Timer();
+        soldierHealthUpdateTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                // Call the method to update soldier's health information
+                if (isSoldierDeployed) {
+                    updateSoldierHealthAsync(soldierId);
+                }
+            }
+        }, 0, 1000);
     }
 
     private void stopHealthUpdateTimer() {
         if (healthUpdateTimer != null) {
             healthUpdateTimer.cancel();
             healthUpdateTimer = null;
+        }
+        if (soldierHealthUpdateTimer != null) {
+            soldierHealthUpdateTimer.cancel();
+            soldierHealthUpdateTimer = null;
         }
     }
     @Background
@@ -348,7 +372,9 @@ public class ClientActivity extends Activity {
                 isSoldierDeployed = true;
 
                 Log.d(TAG, "SoldierID is " + soldierId);
-                // Other deployment-related logic...
+
+                updateSoldierHealthAsync(soldierId);
+
             } else {
                 Log.d(TAG, "SoldierID is NULL.\n");
                 // Handle other HTTP status codes if needed
@@ -361,6 +387,36 @@ public class ClientActivity extends Activity {
              */
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Background
+    void updateSoldierHealthAsync(long soldierId) {
+        try {
+            // Call your restClient method to get the soldier's health
+            LongWrapper healthWrapper = restClient.getSoldierHealth(soldierId);
+
+            if (healthWrapper != null) {
+                // Only update the health if it's not null
+                long health = healthWrapper.getResult();
+                updateSoldierHealth((int) health);
+                Log.e(TAG, "Received health from restClient.getSoldierHealth: " + health);
+            } else {
+                Log.e(TAG, "Received null health from restClient.getSoldierHealth for soldierId: " + soldierId);
+            }
+        } catch (Exception e) {
+            // Handle the exception
+            Log.e(TAG, "Error updating soldier health", e);
+        }
+    }
+
+    @UiThread
+    public void updateSoldierHealth(int health) {
+        TextView soldierHealthTextView = findViewById(R.id.soldierHealth);
+        if (health != 0) {
+            soldierHealthTextView.setText("" + health);
+        } else {
+            soldierHealthTextView.setText("N/A"); // or any default value
         }
     }
 
@@ -411,35 +467,6 @@ public class ClientActivity extends Activity {
     }
 
 
-    @Click(R.id.buttonMoveCustom)
-    protected void onSelectCellClick() {
-        // Display a message or perform any other actions to indicate
-        // that the user should now select a cell on the grid.
-        Toast.makeText(this, "Select a cell on the grid", Toast.LENGTH_SHORT).show();
-
-        // Enable the grid or provide visual cues to indicate that cell selection is active.
-        // For example, change the background color of the selected cell when clicked.
-
-        // Add a click listener to the grid cells to handle the cell selection.
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Handle the selected cell position
-                handleCellSelection(position);
-
-                // Optionally, reset the grid item click listener after a cell is selected.
-                gridView.setOnItemClickListener(null);
-            }
-        });
-    }
-    private void handleCellSelection(int selectedPosition) {
-        // Perform actions based on the selected cell position.
-        // For example, move the tank to the selected cell.
-        //moveAsync(tankId, (byte) selectedPosition);
-
-        // Inform the user or update UI as needed.
-        Toast.makeText(this, "Moving to cell: " + selectedPosition, Toast.LENGTH_SHORT).show();
-    }
 
     @UiThread
     public void updateTankHealth(int health) {
@@ -447,10 +474,6 @@ public class ClientActivity extends Activity {
         tankHealthTextView.setText("" + health);
     }
 
-//    @Subscribe
-//    public void onUpdateHealth(GridUpdateEvent event) {
-//        updateTankHealth(event.getHealth());
-//    }
 
     @Background
     void updateHealthAsync(long tankId) {
@@ -463,7 +486,7 @@ public class ClientActivity extends Activity {
                 Log.e(TAG, "HealthWrapper value: " + healthWrapper.getResult());
                 long health = healthWrapper.getResult();
                 updateTankHealth((int) health);
-                Log.e(TAG, "Received health from restClient.getHealth: " + health);
+                Log.e(TAG, "Received health from restClient.getHealth: " + health + "for tank id: " + tankId);
             } else {
                 Log.e(TAG, "Received null health from restClient.getHealth for tankId: " + tankId);
             }

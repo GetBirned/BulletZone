@@ -73,8 +73,15 @@ public class TerrainUI {
                 imageView.setImageResource(R.drawable.rockysoldierleft);
             }
         } else if (val == 6) {
-            //NEED TO DO THIS!!!!!!!!!!!!!!!!!
-            ;
+            if (direction == 0) {
+                imageView.setImageResource(R.drawable.soldierforestup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.soldierforestright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.soldierforestdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.soldierforestleft);
+            }
         } else {
             if (direction == 0) {
                 imageView.setImageResource(R.drawable.soldiergrassup);

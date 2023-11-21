@@ -43,10 +43,15 @@ public class DataRepository {
         String url = "jdbc:mysql://stman1.cs.unh.edu:3306/cs61907";
         String username = "rhea";
         String password = "Dgebr3Vern6f";
+
 //
 //        bzdata = new BulletZoneData(url, username, password);
         bzdata = new BulletZoneData(); //just use in-memory database
     }
+
+//    public void setBalanace(int newBal){
+//        bzdata.
+//    }
 
     /**
      * Stub for a method that would create a user or validate the user. [You don't have
@@ -61,6 +66,7 @@ public class DataRepository {
         //      users.validateLogin(name, password) as appropriate, maybe does other bookkeeping
 
         GameUser x = bzdata.users.createUser(username, username, password);
+
 
         if(x == null) {
             x = bzdata.users.validateLogin(username,password);

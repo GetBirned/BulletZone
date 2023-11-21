@@ -67,11 +67,32 @@
 
         <ImageView
             android:id="@+id/tankHealthDesc"
-            android:layout_width="100dp"
+            android:layout_width="90dp"
             android:layout_height="30dp"
             android:layout_marginBottom="650dp"
             android:layout_marginTop="100dp"
             android:src="@drawable/health" />
+
+        <TextView
+            android:id="@+id/soldierHealth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="130dp"
+            android:layout_marginLeft="130dp"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/soldierHealthDesc"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="650dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="100dp"
+            android:src="@drawable/soldierhealth" />
     </RelativeLayout>
 
     <LinearLayout
@@ -194,88 +215,7 @@
                 android:src="@drawable/replay" />
 
 
-            <Button
-                android:id="@+id/buttonMoveCustom"
-                android:layout_width="240dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginTop="150dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="100dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="-95dp"
-                android:layout_centerHorizontal="true"
-                android:text="Move to a specific cell"
-                android:textSize="17sp"/>
 
-            <SeekBar
-                android:id="@+id/seekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="32"
-                android:progress="16"
-                android:layout_marginTop="270dp"
-                android:layout_marginBottom="16dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
-
-            <TextView
-                android:id="@+id/movingText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Enter how many cells you would like to move"
-                android:layout_marginTop="220dp"
-                android:textSize="12sp"/>
-
-
-
-            <TextView
-                android:id="@+id/turningText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Enter how many cells you would like to turn"
-                android:layout_marginTop="340dp"
-                android:textSize="12sp"/>
-
-            <RadioGroup
-                android:id="@+id/radioGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="360dp">
-
-                <RadioButton
-                    android:id="@+id/optionMinus2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-2"/>
-
-                <RadioButton
-                    android:id="@+id/optionMinus1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-1"/>
-
-                <RadioButton
-                    android:id="@+id/option1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1"/>
-
-                <RadioButton
-                    android:id="@+id/option2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2"/>
-            </RadioGroup>
-            <Button
-                android:id="@+id/submitButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Submit"
-                android:layout_marginTop="400dp"/>
 
 
         </RelativeLayout>

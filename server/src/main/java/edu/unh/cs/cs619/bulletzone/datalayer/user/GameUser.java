@@ -18,6 +18,7 @@ public class GameUser extends Entity {
 
     public String getName() { return name; }
 
+
     public String getUsername() { return username; }
 
     public Collection<GameItemContainer> getOwnedContainerItems() {
