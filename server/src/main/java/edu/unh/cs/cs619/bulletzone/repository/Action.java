@@ -20,6 +20,7 @@ import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.model.Thingamajig;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
+import edu.unh.cs.cs619.bulletzone.model.Water;
 import edu.unh.cs.cs619.bulletzone.model.applePowerUp;
 import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
 import jdk.internal.org.jline.utils.Log;
@@ -340,7 +341,7 @@ public class Action {
 
                             if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
                             !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
-                                    && !(nextField.getEntity() instanceof nukePowerUp)) {
+                                    && !(nextField.getEntity() instanceof nukePowerUp) && !(nextField.getEntity() instanceof Water)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -449,7 +450,7 @@ public class Action {
 
                             if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
                                     !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
-                                    && !(nextField.getEntity() instanceof nukePowerUp)) {
+                                    && !(nextField.getEntity() instanceof nukePowerUp) && !(nextField.getEntity() instanceof Water)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 

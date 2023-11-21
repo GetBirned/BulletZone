@@ -89,7 +89,7 @@ public class GridAdapter extends BaseAdapter {
 
     private int[][] hasPowerUp = new int[16][16];
     // 0 grass, // 1 thingamajig //2 nuke //3 apple
-    //4 hill // 5 rocky // 6 forest // 7 soldier
+    //4 hill // 5 rocky // 6 forest // 7 soldier // 8 water
 
     public void setFriendlyTank(ImageView imageView, int direction, int val) {
 
@@ -176,6 +176,8 @@ public class GridAdapter extends BaseAdapter {
                 mEntities[row][col] = 1;
             } else if (hasPowerUp[row][col] == 6) {
                 mEntities[row][col] = 3;
+            } else if( hasPowerUp[row][col] == 8){
+                mEntities[row][col] = 50;
             }
             if(hasPowerUp[row][col] == 4) {
                 imageView.setImageResource(R.drawable.hillyterrain);
@@ -185,7 +187,8 @@ public class GridAdapter extends BaseAdapter {
 
             } else if (hasPowerUp[row][col] == 6) {
                 imageView.setImageResource(R.drawable.forestterrain);
-
+            } else if (hasPowerUp[row][col] == 8) {
+                imageView.setImageResource(R.drawable.water);
             }
             if (val > 0) {
 
@@ -298,6 +301,9 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 3) {
                     hasPowerUp[row][col] = 6;
                     imageView.setImageResource(R.drawable.forestterrain);
+                } else if (val == 50) {
+                    hasPowerUp[row][col] = 8;
+                    imageView.setImageResource(R.drawable.water);
                 }
             } else {
 

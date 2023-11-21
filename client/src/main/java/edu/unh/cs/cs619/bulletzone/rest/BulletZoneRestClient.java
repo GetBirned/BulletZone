@@ -21,7 +21,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+@Rest(rootUrl = "http://10.0.0.190:61907/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 

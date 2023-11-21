@@ -84,6 +84,22 @@ public class GameBoardBuilder {
         gb.setEntity(13, 11, new applePowerUp());
         gb.setEntity(3, 8, new Thingamajig());
 
+        gb.setEntity(1, 13, new Water());
+        gb.setEntity(2, 13, new Water());
+        gb.setEntity(3, 13, new Water());
+        gb.setEntity(4, 13, new Water());
+        gb.setEntity(5, 13, new Water());
+
+        gb.setEntity(1, 14, new Water());
+        gb.setEntity(2, 14, new Water());
+        gb.setEntity(3, 14, new Water());
+        gb.setEntity(4, 14, new Water());
+        gb.setEntity(5, 14, new Water());
+
+        gb.setEntity(11, 1, new Water());
+        gb.setEntity(12, 1, new Water());
+        gb.setEntity(13, 1, new Water());
+
         return gb;
     }
 }
