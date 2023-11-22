@@ -80,8 +80,8 @@ public class GameBoardBuilder {
         gb.setEntity(5, 11, new Forest());
         gb.setEntity(6, 11, new Forest());
 
-        gb.setEntity(6, 9, new nukePowerUp());
-        gb.setEntity(13, 11, new applePowerUp());
+        gb.setEntity(6, 9, new HealthKit());
+        gb.setEntity(13, 11, new Shield());
         gb.setEntity(3, 8, new Thingamajig());
 
         gb.setEntity(1, 13, new Water());
