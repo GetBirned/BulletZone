@@ -11,6 +11,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClientException;
 
+import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
@@ -21,7 +22,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://10.0.0.190:61907/games",
+@Rest(rootUrl = "http://10.0.0.10:61900/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 
@@ -67,6 +68,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Get("/{tankId}/getHealth")
     LongWrapper getHealth(@Path long tankId);
+
+    @Get("/{tankId}/getPowerups/{isTank}")
+    ArrayListWrapper getPowerups(@Path long tankId, @Path boolean isTank);
 
     @Get("/{tankId}/getSoldierHealth")
     LongWrapper getSoldierHealth(@Path long tankId);

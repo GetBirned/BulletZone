@@ -3,13 +3,13 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
-import edu.unh.cs.cs619.bulletzone.model.FieldEntities;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.GridEvent;
@@ -94,10 +94,7 @@ public class InMemoryGameRepository implements GameRepository {
         }
     }
 
-    @Override
-    public void setTankPowerup(long tankId, int powerupValue, boolean isTank) {
 
-    }
 
     @Override
     public int[][] getGrid() {
@@ -194,6 +191,15 @@ public class InMemoryGameRepository implements GameRepository {
         game.setSoldierPowerup(tankId,powerupValue);
     }
 
+    @Override
+    public ArrayList<Integer> getTankPowerups(long tankId) {
+        return game.getTankPowerups(tankId);
+    }
+    @Override
+    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
+        return game.getSoldierPowerups(soldierId);
+
+    }
     public Stack<GridEvent> getCommandHistory() {
         return aci.getCommandHistory();
     }

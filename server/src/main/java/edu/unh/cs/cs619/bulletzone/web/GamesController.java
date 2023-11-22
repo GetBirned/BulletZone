@@ -30,6 +30,7 @@ import edu.unh.cs.cs619.bulletzone.repository.GameRepository;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
+import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
 
 @RestController
 @RequestMapping(value = "/games")
@@ -78,6 +79,19 @@ class GamesController {
 //    ResponseEntity<GridEventListWrapper> event(Timestamp timestamp) {
 //        return new ResponseEntity<GridEventListWrapper>(new GridEventListWrapper(gameRepository.getHistory(timestamp)), HttpStatus.OK);
 //    }
+
+
+    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getPowerups/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    ResponseEntity<ArrayListWrapper> getPowerups(@PathVariable long tankId, @PathVariable boolean isTank) {
+
+        if(isTank){
+            return new ResponseEntity<ArrayListWrapper>(new ArrayListWrapper(gameRepository.getTankPowerups(tankId)), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<ArrayListWrapper>(new ArrayListWrapper(gameRepository.getSoldierPowerups(tankId)), HttpStatus.OK);
+        }
+    }
 
     @RequestMapping(method = RequestMethod.PUT, value = "{tankId}/turn/{direction}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)

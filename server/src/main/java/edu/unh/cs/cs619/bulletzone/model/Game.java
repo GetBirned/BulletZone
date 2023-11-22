@@ -299,6 +299,14 @@ public final class Game {
             }
 
     }
+    public ArrayList<Integer> getTankPowerups(long tankId) {
+        return getTank(tankId).powerupList;
+    }
+
+    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
+
+        return getSoldier(soldierId).powerupList;
+    }
 
 
 

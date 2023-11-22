@@ -195,8 +195,6 @@ public class ClientActivity extends Activity {
         SystemClock.sleep(500);
         gridView.setAdapter(mGridAdapter);
         mGridAdapter.setRestClient(restClient);
-
-
     }
 
     private Timer soldierHealthUpdateTimer;

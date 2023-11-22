@@ -2,6 +2,8 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Tank extends FieldEntity {
@@ -10,7 +12,7 @@ public class Tank extends FieldEntity {
 
     private final long id;
     private int powerUpType;
-
+    public ArrayList<Integer> powerupList = new ArrayList<Integer>(10);
 
     private final String ip;
 
@@ -28,7 +30,7 @@ public class Tank extends FieldEntity {
     private Direction direction;
 
     private int isActive;
-
+    public int ind;
     public Tank(long id, Direction direction, String ip, int isActive) {
         this.id = id;
         this.direction = direction;
@@ -40,13 +42,21 @@ public class Tank extends FieldEntity {
         allowedFireInterval = 1500;
         lastMoveTime = 0;
         allowedMoveInterval = 500;
-        this.powerUpType = 0;
+        setArrList();
+        ind = 0;
     }
-    public int getPowerUpType() {
-        return powerUpType;
+    public void setArrList(){
+        for (int i = 0; i < 100; i++) {
+            powerupList.add(0);
+        }
     }
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
+        powerupList.set(ind, powerupValue);
+        this.ind++;
+    }
+    public int getPowerUpType(){
+        return this.powerUpType;
     }
 
     @Override

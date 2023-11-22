@@ -1,6 +1,7 @@
 package edu.unh.cs.cs619.bulletzone.repository;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
@@ -15,8 +16,6 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 public interface GameRepository {
 
     Tank join(String ip);
-
-    void setTankPowerup(long tankId, int powerupValue, boolean isTank);
 
     int[][] getGrid();
 
@@ -37,6 +36,10 @@ public interface GameRepository {
     void setSoldierPowerup(long tankId, int powerupValue);
 
     void setTankPowerup(long tankId, int powerupValue);
+
+    ArrayList<Integer> getTankPowerups(long tankId);
+
+    ArrayList<Integer> getSoldierPowerups(long soldierId);
 
     public LongWrapper deploySoldier(long tankID);
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
