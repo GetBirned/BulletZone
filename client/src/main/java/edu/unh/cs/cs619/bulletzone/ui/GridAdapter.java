@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.androidannotations.annotations.EBean;
@@ -90,6 +91,7 @@ public class GridAdapter extends BaseAdapter {
     private int[][] hasPowerUp = new int[16][16];
     // 0 grass, // 1 thingamajig //2 nuke //3 apple
     //4 hill // 5 rocky // 6 forest // 7 soldier // 8 water
+    //9 deflector //10 repair kit
 
     public void setFriendlyTank(ImageView imageView, int direction, int val) {
 
@@ -119,15 +121,7 @@ public class GridAdapter extends BaseAdapter {
     }
 
     private boolean isChanged(int[][] grid) {
-        for (int i = 0; i < 16; i++) {
-            for (int k = 0; k < 16; k++) {
-                if (mEntities[i][k] != oldMEntities[i][k]) {
-                    //Log.d("STATE CHANGE", "yes");
-                    return true;
-                }
-            }
-        }
-        return false;
+        return !Arrays.deepEquals(mEntities, grid);
     }
     private void writeToFile() {
         // NEED TO ADD CHECK to see if mendities has changed
@@ -167,6 +161,52 @@ public class GridAdapter extends BaseAdapter {
         int row = position / 16;
         int col = position % 16;
 
+
+        if ((hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
+        || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10)  && mEntities[row][col] > 10000000) {
+            mEntities[row][col] = 0;
+            hasPowerUp[row][col] = 0;
+            numItems--;
+        }
+
+        //setting the has powerup to 0 makes the tank move weird but makes bullet diappar
+        if (hasPowerUp[row][col] == 9) {
+            if (mEntities[row][col] != 3131) {
+                //numItems--;
+                mEntities[row][col] = 0;
+                hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            }
+        } else if (hasPowerUp[row][col] == 10) {
+            if (mEntities[row][col] != 3141) {
+                //numItems--;
+                mEntities[row][col] = 0;
+                hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            }
+        } else if (hasPowerUp[row][col] == 1) {
+            if (mEntities[row][col] != 7) {
+               // numItems--;
+                mEntities[row][col] = 0;
+                hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            }
+        } else if (hasPowerUp[row][col] == 2) {
+            if (mEntities[row][col] != 2002) {
+                //numItems--;
+                mEntities[row][col] = 0;
+                hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            }
+        } else if (hasPowerUp[row][col] == 3) {
+            if (mEntities[row][col] != 2003) {
+               // numItems--;
+                mEntities[row][col] = 0;
+                hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            }
+        }
+
         int val = mEntities[row][col];
 
         synchronized (monitor) {
@@ -196,13 +236,17 @@ public class GridAdapter extends BaseAdapter {
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
                 } else if (val >= 2000000 && val <= 3000000) {
-                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
+                            || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
+                        mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
                     imageView.setImageResource(R.drawable.bulletgrass);
+
                 } else if (val >= 10000000 && val <= 20000000) {
-                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
+                            || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
                         if(hasPowerUp[row][col] == 1){
                             int rand = random.nextInt(196) + 5;
                             numCoins += rand;
@@ -221,6 +265,7 @@ public class GridAdapter extends BaseAdapter {
                                 }
                             }.execute();
                         }
+                        mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     } else {
@@ -246,7 +291,8 @@ public class GridAdapter extends BaseAdapter {
                     }
                 } else if (val >= 40000000 && val <= 50000000) {
                     setSoldier(imageView, direction, hasPowerUp[row][col]);
-                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
+                    || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
                         if(hasPowerUp[row][col] == 1){
                             int rand = random.nextInt(196) + 5;
                             numCoins += rand;
@@ -265,6 +311,7 @@ public class GridAdapter extends BaseAdapter {
                                 }
                             }.execute();
                         }
+                        mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     } else {
@@ -282,15 +329,15 @@ public class GridAdapter extends BaseAdapter {
                     }
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
-                    numItems++;
+                    //numItems++;
                     imageView.setImageResource(R.drawable.coingrass);
                 } else if (val == 2002) {
                     hasPowerUp[row][col] = 2;
-                    numItems++;
+                   // numItems++;
                     imageView.setImageResource(R.drawable.nukepowerupgrass);
                 } else if (val == 2003) {
                     hasPowerUp[row][col] = 3;
-                    numItems++;
+                    ///numItems++;
                     imageView.setImageResource(R.drawable.applepowerupgrass);
                 } else if (val == 2) {
                     hasPowerUp[row][col] = 4;
@@ -304,6 +351,14 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 50) {
                     hasPowerUp[row][col] = 8;
                     imageView.setImageResource(R.drawable.water);
+                } else if (val == 3131) {
+                    //numItems++;
+                    hasPowerUp[row][col] = 9;
+                    imageView.setImageResource(R.drawable.shieldgrass);
+                } else if (val == 3141) {
+                   // numItems++;
+                    hasPowerUp[row][col] = 10;
+                    imageView.setImageResource(R.drawable.toolsgrass);
                 }
             } else {
 
@@ -317,19 +372,32 @@ public class GridAdapter extends BaseAdapter {
                     } else if (hasPowerUp[row][col] == 3) {
                         numItems++;
                         imageView.setImageResource(R.drawable.applepowerupgrass);
+                    }else if (hasPowerUp[row][col] == 9) {
+                        numItems++;
+                        imageView.setImageResource(R.drawable.shieldgrass);
+                    } else if (hasPowerUp[row][col] == 10) {
+                        numItems++;
+                        imageView.setImageResource(R.drawable.toolsgrass);
                     }
 
                 } else {
                     if(0.25 * (numPlayers / (numItems + 1)) > 0) {
                         // Determine whether to place a power-up
                         if (shouldPlacePowerUp()) {
-                            int appear = new Random().nextInt(3);
+                            int appear = new Random().nextInt(5);
                             hasPowerUp[row][col] = appear + 1;
-                            numItems++;
-                            setImageForPowerUp(imageView, hasPowerUp[row][col]);
-                        } //else {
-                        //imageView.setImageResource(R.drawable.grass);
-                        //}
+
+                            //powerups should have been vals 1 2 3 4 5 but theyre not and its too
+                            //late to change so for shield and health kit i changed them to their
+                            //respective vals
+                            if(hasPowerUp[row][col] == 4) {
+                                hasPowerUp[row][col] =9;
+                            } else if(hasPowerUp[row][col] == 5) {
+                                hasPowerUp[row][col] = 10;
+                            }
+                                numItems++;
+                            //setImageForPowerUp(imageView, hasPowerUp[row][col]);
+                        }
                     } else {
 
                         imageView.setImageResource(R.drawable.grass);
@@ -370,6 +438,14 @@ public class GridAdapter extends BaseAdapter {
             case 3:
                 imageView.setImageResource(R.drawable.applepowerupgrass);
                 break;
+            case 4:
+                imageView.setImageResource(R.drawable.shieldgrass);
+                break;
+            case 5:
+                imageView.setImageResource(R.drawable.toolsgrass);
+                break;
+            default:
+                imageView.setImageResource(R.drawable.grass);
         }
     }
 }

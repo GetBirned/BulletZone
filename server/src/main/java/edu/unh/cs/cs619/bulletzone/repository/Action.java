@@ -11,10 +11,13 @@ import edu.unh.cs.cs619.bulletzone.model.FieldEntity;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
+import edu.unh.cs.cs619.bulletzone.model.Grass;
+import edu.unh.cs.cs619.bulletzone.model.HealthKit;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
+import edu.unh.cs.cs619.bulletzone.model.Shield;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
@@ -134,7 +137,9 @@ public class Action {
 
                 boolean isCompleted;
                 if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky
-                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
+                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp
+                        || nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
+                        || nextField.getEntity() instanceof Grass) {
                     // If the next field is empty move the user
 
 
@@ -161,6 +166,9 @@ public class Action {
                     } else if(tank.getPowerUpType() == 5) {
                         System.out.println("Restoring terrain. Current entity type: rock");
                         parent.setFieldEntity(new Rocky());
+                    } else if (tank.getPowerUpType() == 8) {
+                        System.out.println("Restoring terrain. Current entity type: water");
+                        parent.setFieldEntity(new Water());
                     }
                     nextField.setFieldEntity(tank);
                     tank.setParent(nextField);
@@ -204,7 +212,9 @@ public class Action {
                 checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
                 boolean isCompleted;
                 if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest
-                 || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp) {
+                 || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp
+                        || nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
+                        || nextField.getEntity() instanceof Grass) {
                     // If the next field is empty move the user
 
                     //Constraint to allow soldiers on hills and rocky terrain and to slow them on rocky
@@ -232,6 +242,9 @@ public class Action {
                     } else if(soldier.getPowerUpType() == 6) {
                         System.out.println("Restoring terrain. Current entity type: forest");
                         parent.setFieldEntity(new Forest());
+                    }  else if (tank.getPowerUpType() == 8) {
+                        System.out.println("Restoring terrain. Current entity type: water");
+                        parent.setFieldEntity(new Water());
                     }
 
 
@@ -339,9 +352,8 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
-                            !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
-                                    && !(nextField.getEntity() instanceof nukePowerUp) && !(nextField.getEntity() instanceof Water)) {
+                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)
+                                    && !(nextField.getEntity() instanceof Water)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -370,16 +382,34 @@ public class Action {
                                     if (w.getIntValue() > 1000 && w.getIntValue() <= 2000) {
                                         game.getHolderGrid().get(w.getPos()).clearField();
                                     }
+                                } System.out.println("Before clearing field. Entity type: " + nextField.getEntity().getClass().getSimpleName());
+
+                                if (nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
+                                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp
+                                        || nextField.getEntity() instanceof nukePowerUp) {
+                                    // Double-check that the nextField.getEntity() instance matches the actual class type of Shield or HealthKit
+                                    System.out.println("Clearing field for Shield or HealthKit. Entity type: " + nextField.getEntity().getClass().getSimpleName());
+                                    //currentField.clearField();
+                                    nextField.setFieldEntity(new Grass());
                                 }
+
+                                System.out.println("After clearing field. Entity type: " + nextField.getEntity().getClass().getSimpleName());
+
                                 if (isVisible) {
                                     // Remove bullet from field
                                     currentField.clearField();
                                 }
+
+                                System.out.println("After removing bullet. Entity type: " + nextField.getEntity().getClass().getSimpleName());
+
+
+
                                 trackActiveBullets[bullet.getBulletId()] = 0;
                                 tank.setNumberOfBullets(tank.getNumberOfBullets() - 1);
                                 cancel();
 
                             } else {
+
                                 if (isVisible) {
                                     // Remove bullet from field
                                     currentField.clearField();
@@ -448,9 +478,8 @@ public class Action {
                                     && (currentField.getEntity() == bullet);
 
 
-                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky) &&
-                                    !(nextField.getEntity() instanceof Thingamajig) && !(nextField.getEntity() instanceof applePowerUp)
-                                    && !(nextField.getEntity() instanceof nukePowerUp) && !(nextField.getEntity() instanceof Water)) {
+                            if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)
+                                    && !(nextField.getEntity() instanceof Water)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -480,6 +509,19 @@ public class Action {
                                         game.getHolderGrid().get(w.getPos()).clearField();
                                     }
                                 }
+
+                                System.out.println("Before clearing field. Entity type: " + nextField.getEntity().getClass().getSimpleName());
+
+                                if (nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
+                                        || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp
+                                        || nextField.getEntity() instanceof nukePowerUp) {
+                                    // Double-check that the nextField.getEntity() instance matches the actual class type of Shield or HealthKit
+                                    System.out.println("Clearing field for Shield or HealthKit. Entity type: " + nextField.getEntity().getClass().getSimpleName());
+                                    //currentField.clearField();
+                                    nextField.setFieldEntity(new Grass());
+                                }
+
+                                System.out.println("After clearing field. Entity type: " + nextField.getEntity().getClass().getSimpleName());
                                 if (isVisible) {
                                     // Remove bullet from field
                                     currentField.clearField();
@@ -489,6 +531,7 @@ public class Action {
                                 cancel();
 
                             } else {
+
                                 if (isVisible) {
                                     // Remove bullet from field
                                     currentField.clearField();
