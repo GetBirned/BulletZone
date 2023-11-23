@@ -16,6 +16,7 @@ import edu.unh.cs.cs619.bulletzone.model.HealthKit;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
+import edu.unh.cs.cs619.bulletzone.model.Road;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Shield;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
@@ -122,6 +123,11 @@ public class Action {
                             if (!(parent.getEntity() instanceof Hill)) {
                                 tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
                             }
+                        } else if (nextField.getEntity() instanceof Road) {
+                            // Road logic : move speed to entire halved
+                            if (!((parent.getEntity()) instanceof Hill)) {
+                                tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 2));
+                            }
                         }
                     } else {
                         if (parent.getEntity() instanceof Hill) {
@@ -141,6 +147,9 @@ public class Action {
                     } else if (tank.getPowerUpType() == 8) {
                         System.out.println("Restoring terrain. Current entity type: water");
                         parent.setFieldEntity(new Water());
+                    } else if (tank.getPowerUpType() == 9) {
+                        System.out.println("Restoring terrain. Current entity type: road");
+                        parent.setFieldEntity(new Road());
                     }
                     nextField.setFieldEntity(tank);
                     tank.setParent(nextField);
