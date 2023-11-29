@@ -11,7 +11,7 @@ import edu.unh.cs.cs619.bulletzone.R;
 
 public class ReplayGridAdapter extends BaseAdapter {
     private Context context;
-    private int[][] board; // Your 2D int array
+    public int[][] board; // Your 2D int array
 
     public ReplayGridAdapter(Context context) {
         this.context = context;

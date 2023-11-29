@@ -47,8 +47,36 @@ public class ClientHistoryTest {
         //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
         //assertNotNull(restClient.getHistory(now)));
         //assert(restClient.getHistory(now).getResult().contains(restClient.fire(tankId).toString();
-        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir).toString();
-        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir2).toString();
+        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir).getResult;
+        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir2).getResult;
+
+    }
+    @Test
+    public void testHistory_3(){
+        //byte dir = 2;
+        //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
+        //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        //millis now = System.currentTimeMillis();
+        //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
+        //assertNotNull(restClient.getHistory(now)));
+        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir).getResult));
+        //assert(restClient.getHistory(now).getResult().contains(restClient.fire(tankId).getResult));
+
+    }
+    @Test
+    public void testHistory_4(){
+        //byte dir = 2;
+        //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
+        //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        //millis now = System.currentTimeMillis();
+        //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
+        //assertNotNull(restClient.getHistory(now)));
+        //assert(restClient.getHistory(now).getResult().contains(restClient.turn(tankId, dir).getResult));
+        //assert(restClient.getHistory(now).getResult().contains(restClient.fire(tankId).getResult));
+        //assertNotNull(replayActivity.getHistory)
+        //assert(
 
     }
     @Test
@@ -63,45 +91,29 @@ public class ClientHistoryTest {
         //byte dir = 4;
         //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
         //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
+        //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        //when(restClient.move(tankId)).thenReturn(booleanWrapper);
         //long now = System.currentTimeMillis();
         //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
         //verify(restClient, never()).grid()
 
     }
     @Test
-    public void testReplay_0() {
-        //when(restClient.join());
-        //String[][] eventHistory = replayActivity.getRestClient.replay();
-        //long now = System.currentTimeMillis();
-        //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
-        //assert(restClient.getHistory(now)).getResult().contains(restClient.fire(tankId).toString();
-    }
-
-@Test
-public void testReplay_1() {
-   //restClient.join();
-   //byte dir = 6;
-    //byte dir2 = 4;
-    //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
-    //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
-    //when(restClient.turn(tankId, dir2)).thenReturn(booleanWrapper);
-    //long now = System.currentTimeMillis();
-    //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
-    //assertNotNull(restClient.getHistory(now)));
-    //assert(eventHistory.contains(restClient.fire(tankId).toString();
-    //assert(restClient.getHistory(now)).getResult().contains(restClient.turn(tankId, dir).toString());
-    //assert(restClient.getHistory(now)).getResult().contains(restClient.turn(tankId, dir2).toString();
-
-}
-@Test
-    public void testReplay_2() {
+    public void testGridUpdate_2(){
+        //restClient.join();
+        //byte dir = 0;
+        //byte dir2 = 6;
         //when(restClient.fire(tankId)).thenReturn(booleanWrapper);
+        //when(restClient.turn(tankId, dir)).thenReturn(booleanWrapper);
+        //when(restClient.turn(tankId, dir2)).thenReturn(booleanWrapper);
         //long now = System.currentTimeMillis();
         //when(restClient.getHistory(now)).thenReturn(StringArrayWrapper);
         //assertNotNull(restClient.getHistory(now)));
-        //assert(restClient.getHistory(now)).getResult().contains(restClient.fire(tankId).toString();
+        //assert(restClient.getHistory(now)).getResult().contains(restClient.turn(tankId, dir).getResult);
+        //assert(eventHistory.contains(restClient.fire(tankId).toString();
+        //assert(restClient.getHistory(now)).getResult().contains(restClient.turn(tankId, dir2).getResult);
+
+
     }
-
-
 }
 

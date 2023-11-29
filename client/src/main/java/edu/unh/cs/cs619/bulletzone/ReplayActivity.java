@@ -156,7 +156,7 @@ public class ReplayActivity extends AppCompatActivity {
         return max_val;
     }
 
-    private String getReplayFile() {
+    public String getReplayFile() {
         String path = Environment.getExternalStorageDirectory().toString();
         Log.d("Files", "Path: " + path);
         File directory = new File(path);
@@ -200,7 +200,7 @@ public class ReplayActivity extends AppCompatActivity {
         return second_filename;
     }
 
-    private void getReplayStates(String filename) {
+    public void getReplayStates(String filename) {
         getReplayFile();
         //String data = readFromFile(this);
         String ret = "";
