@@ -32,6 +32,7 @@ public class GridAdapter extends BaseAdapter {
     private int[][] mEntities = new int[16][16];
     private int[][] oldMEntities = new int[16][16];
     Context context;
+    String ts;
     Random random = new Random();
 
     @RestService
@@ -120,9 +121,22 @@ public class GridAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    private boolean isChanged(int[][] grid) {
-        return !Arrays.deepEquals(mEntities, grid);
+    public void setTs(String ts) {
+        this.ts = ts;
     }
+
+    private boolean isChanged(int[][] grid) {
+        for (int i = 0; i < 16; i++) {
+            for (int k = 0; k < 16; k++) {
+                if (mEntities[i][k] != oldMEntities[i][k]) {
+                    //Log.d("STATE CHANGE", "yes");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private void writeToFile() {
         // NEED TO ADD CHECK to see if mendities has changed
 
@@ -138,7 +152,7 @@ public class GridAdapter extends BaseAdapter {
                 //String result = ts + " " + grid_string;
                 String result = grid_string;
                 //Log.d("GRID STRING", grid_string);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("replay_file.txt", Context.MODE_APPEND));
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(ts + ".txt", Context.MODE_APPEND));
                 outputStreamWriter.write(result);
                 outputStreamWriter.close();
                 //Log.d("FILE APPEND", result);
@@ -147,6 +161,7 @@ public class GridAdapter extends BaseAdapter {
             }
         }
     }
+
 
 
     @Override
