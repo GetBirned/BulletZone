@@ -138,8 +138,6 @@ public class GridAdapter extends BaseAdapter {
     }
 
     private void writeToFile() {
-        // NEED TO ADD CHECK to see if mendities has changed
-
         if (isChanged(mEntities)) {
             oldMEntities = mEntities;
             try {
@@ -297,6 +295,7 @@ public class GridAdapter extends BaseAdapter {
                         }.execute();
                     }
                     numPlayers++;
+                    // TODO: need to discern between friendly tank
                     if (friendlyTank(val) == 0) {
                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
                     } else {
