@@ -9,7 +9,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Random;
@@ -33,6 +37,7 @@ public class GridAdapter extends BaseAdapter {
     private int[][] oldMEntities = new int[16][16];
     Context context;
     String ts;
+    String username;
     Random random = new Random();
 
     @RestService
@@ -79,7 +84,8 @@ public class GridAdapter extends BaseAdapter {
 
     public int friendlyTank(int value) {
         String tankID = Integer.toString(value);
-        tankID = tankID.substring(2, 4);
+        tankID = tankID.substring(1, 4);
+        Log.d("Sending", tankID);
         return Integer.parseInt(tankID);
     }
 
@@ -160,7 +166,36 @@ public class GridAdapter extends BaseAdapter {
         }
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
+    public int getTankIDFromFile() {
+        try {
+            InputStream inputStream = context.openFileInput(username + ".txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String receiveString = bufferedReader.readLine();
+                int tankID = Integer.parseInt(receiveString);
+                Log.d("Sending", "tankID from file is " + tankID);
+
+                inputStream.close();
+                return tankID;
+            } else {
+                Log.d("ERROR", "Could not parse file");
+                return -1;
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("TANKID FILE", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("TANKID FILE", "Can not read file: " + e.toString());
+        }
+        return -1;
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -288,7 +323,7 @@ public class GridAdapter extends BaseAdapter {
                             @Override
                             protected Void doInBackground(Void... voids) {
                                 restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
-                                Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
+                                Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType + " and " + String.valueOf(finalVal));
 
                                 return null;
                             }
@@ -296,7 +331,7 @@ public class GridAdapter extends BaseAdapter {
                     }
                     numPlayers++;
                     // TODO: need to discern between friendly tank
-                    if (friendlyTank(val) == 0) {
+                    if (friendlyTank(val) == getTankIDFromFile()) {
                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
                     } else {
                         tankRow = row;

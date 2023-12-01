@@ -59,9 +59,13 @@ public class AuthenticateActivity extends AppCompatActivity {
         try {
 
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput(username + ".txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(String.valueOf(tankID));
+            /*
+                just going to subtract 1 as the return val from login is 1 but
+                    for whatever reason the TID reflected in the JSON is all zeroes
+             */
+            outputStreamWriter.write(String.valueOf(tankID - 1));
             outputStreamWriter.close();
-            Log.d("FILE", "created new file with username " + username + " and id " + tankID);
+            Log.d("TANKID FILE", "created new file with username " + username + " and id " + tankID);
         }
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());

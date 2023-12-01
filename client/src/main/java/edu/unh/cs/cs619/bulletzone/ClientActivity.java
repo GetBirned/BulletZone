@@ -136,6 +136,11 @@ public class ClientActivity extends Activity {
         String filename_ts = createNewFile();
         mGridAdapter.setTs(filename_ts);
 
+        // Receiving data in the NextActivity
+        Intent receivedIntent = getIntent();
+        String recievedTankID = receivedIntent.getStringExtra("username");
+        mGridAdapter.setUsername(recievedTankID);
+
 
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
