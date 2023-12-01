@@ -57,7 +57,6 @@
             android:id="@+id/tankHealth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_marginTop="130dp"
             android:layout_marginLeft="30dp"
             android:text=""
@@ -100,33 +99,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         tools:context=".ClientActivity">
 
 
+        <Button
+            android:id="@+id/ejectPowerup"
+            android:layout_width="140dp"
+            android:layout_height="59dp"
+            android:layout_marginLeft="-2dp"
+            android:layout_marginTop="754dp"
+            android:layout_marginEnd="-62dp"
+            android:layout_marginBottom="112dp"
+            android:text="Eject Powerup" />
+
         <GridView
             android:id="@+id/gridView"
-
             android:layout_width="wrap_content"
             android:layout_height="430dp"
+            android:layout_marginTop="280dp"
+            android:layout_marginBottom="-32dp"
+            android:layout_marginLeft="-42dp"
             android:layout_weight="1"
             android:background="#FFFFFF"
             android:numColumns="16"
-            tools:listitem="@layout/field_item"
-            android:layout_marginTop="280dp"
-            android:layout_marginBottom="-32dp"></GridView>
-
+            tools:listitem="@layout/field_item"></GridView>
 
 
         <RelativeLayout
             android:id="@+id/LinearLayoutControl"
             android:layout_width="match_parent"
             android:layout_height="850dp"
-            android:layout_weight="1"
-            android:layout_marginTop="68dp">
+            android:layout_marginTop="68dp"
+            android:layout_weight="1">
 
 
             <Button
@@ -157,10 +165,10 @@
                 android:layout_width="67dp"
                 android:layout_height="68dp"
                 android:layout_above="@+id/buttonDown"
-                android:layout_marginTop="60dp"
                 android:layout_alignLeft="@+id/buttonDown"
                 android:layout_alignRight="@+id/buttonDown"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="60dp"
                 android:layout_marginRight="2dp"
                 android:contentDescription="Button for Up"
                 android:src="@drawable/uparrow" />
@@ -189,8 +197,8 @@
                 android:layout_height="59dp"
                 android:layout_alignLeft="@+id/buttonUp"
                 android:layout_marginLeft="-65dp"
-                android:layout_marginRight="-65dp"
                 android:layout_marginTop="680dp"
+                android:layout_marginRight="-65dp"
                 android:layout_toLeftOf="@+id/buttonRight"
                 android:src="@drawable/fire" />
 
@@ -215,11 +223,7 @@
                 android:src="@drawable/replay" />
 
 
-
-
-
         </RelativeLayout>
-
 
 
     </LinearLayout>

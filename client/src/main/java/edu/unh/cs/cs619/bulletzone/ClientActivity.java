@@ -353,6 +353,14 @@ public class ClientActivity extends Activity {
         restClient.turn(tankId, direction);
     }
 
+    @Click(R.id.ejectPowerup)
+    protected void ejectPowerup(){
+        ejectPowerupAsync();
+    }
+
+    protected void ejectPowerupAsync(){
+
+    }
     @Click(R.id.deploySoldier)
     @Background
     protected void deploySoldier() {
