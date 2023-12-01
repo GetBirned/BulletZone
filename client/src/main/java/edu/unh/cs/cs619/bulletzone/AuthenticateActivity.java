@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.SystemClock;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -16,6 +17,9 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import android.content.Intent;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 @EActivity(R.layout.activity_authenticate)
 public class AuthenticateActivity extends AppCompatActivity {
@@ -51,6 +55,20 @@ public class AuthenticateActivity extends AppCompatActivity {
         //Put any Bean-related setup code here (the you might normally put in onCreate)
     }
 
+    private Boolean createNewUserFile(String username, long tankID) {
+        try {
+
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput(username + ".txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(String.valueOf(tankID));
+            outputStreamWriter.close();
+            Log.d("FILE", "created new file with username " + username + " and id " + tankID);
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+        return true;
+    }
+
     /**
      * Registers a new user and logs them in
      */
@@ -71,7 +89,7 @@ public class AuthenticateActivity extends AppCompatActivity {
             if (userID < 0) {
                 setStatus("Registration unsuccessful--inconsistency with server.");
             } else {
-                navigateToMainAppScreen();
+                navigateToMainAppScreen(username);
             }
             //do other login things?
         }
@@ -91,13 +109,15 @@ public class AuthenticateActivity extends AppCompatActivity {
             setStatus("Invalid username and/or password.\nPlease try again.");
         } else { //register successful
             setStatus("Login successful.");
-            navigateToMainAppScreen();
+            navigateToMainAppScreen(username);
             //do other login things?
         }
     }
 
-    private void navigateToMainAppScreen() {
+    private void navigateToMainAppScreen(String username) {
         Intent intent = new Intent(this, ClientActivity_.class);
+        intent.putExtra("username", username);
+        Boolean madeFile = createNewUserFile(username, userID);
         startActivity(intent);
         finish();  // Optional: Close the authentication screen so the user can't navigate back
     }
