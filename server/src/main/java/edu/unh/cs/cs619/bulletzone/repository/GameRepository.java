@@ -45,4 +45,13 @@ public interface GameRepository {
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
     public int getHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
     public int getSoldierHealth(long soldierId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
+
+    public LongWrapper buildImprovement(int choice, long builderId);
+
+    public LongWrapper dismantleImprovement(long builderId);
+
+    public LongWrapper controlTank(long tankId);
+
+    public LongWrapper controlBuilder(long tankId);
+
 }

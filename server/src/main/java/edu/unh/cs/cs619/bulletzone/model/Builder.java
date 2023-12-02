@@ -1,0 +1,212 @@
+package edu.unh.cs.cs619.bulletzone.model;
+
+import java.util.ArrayList;
+
+public class Builder extends FieldEntity {
+
+    private static final String TAG = "Builder";
+
+    private final long id;
+
+    private String ip;
+    public ArrayList<Integer> powerupList = new ArrayList<>(10);
+
+
+    private long lastMoveTime;
+    private int allowedMoveInterval;
+
+    private boolean isInTank;
+    private long lastEjectionTime;
+
+    private long lastFireTime;
+    private int allowedFireInterval;
+
+    private int numberOfBullets;
+    private int allowedNumberOfBullets;
+
+    private int life;
+
+    private Direction direction;
+    private int powerUpType;
+    private int isActive;
+    public int ind;
+
+    public Builder(long id, Direction direction, String ip, int isActive) {
+        this.id = id;
+        this.direction = direction;
+        this.ip = ip;
+        this.isActive = isActive;
+        numberOfBullets = 0;
+        allowedNumberOfBullets = 4;
+        lastFireTime = 0;
+        allowedFireInterval = 250; // Shoot 250ms
+        lastMoveTime = 0;
+        allowedMoveInterval = 250; // 1 second between move
+        setArrList();
+        ind = 0;
+    }
+    public void setArrList(){
+        for (int i = 0; i < 100; i++) {
+            powerupList.add(0);
+        }
+    }
+    public void setPowerUpType(int powerupValue) {
+        this.powerUpType = powerupValue;
+        powerupList.set(ind, powerupValue);
+        this.ind++;
+    }
+
+    public int getPowerUpType(){
+        return this.powerUpType;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public int getIntValue() {
+        return (int) (50000000 + 10000 * id + 10 * life + Direction
+                .toByte(direction));
+    }
+
+    public boolean reenterTank(Tank tank) {
+        if (!isInTank) {
+            setIsInTank(true);
+            // Soldier re-enters the tank
+            tank.setIsActive(1);
+            isInTank = true;
+            // Reset soldier's health to full
+            setLife(50);
+            // Start or reset the ejection cooldown timer
+            startEjectionCooldown();
+            return true;
+        }
+        return false; // Soldier is already in a tank
+    }
+
+    public void setIsInTank(boolean isInTank) {
+        this.isInTank = isInTank;
+    }
+
+    public boolean getIsInTank() {
+        return this.isInTank;
+    }
+
+    public void startEjectionCooldown() {
+        lastEjectionTime = System.currentTimeMillis();
+    }
+
+    public boolean canEject() {
+        // Check if the ejection cooldown period has elapsed
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - lastEjectionTime) >= 3000;
+    }
+
+    public void resetBuilderLife() {
+        life = 50;
+    }
+
+    @Override
+    public String toString() {
+        return "S";
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
+
+    public String getIp(){
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public long getLastMoveTime() {
+        return lastMoveTime;
+    }
+
+    public void setLastMoveTime(long lastMoveTime) {
+        this.lastMoveTime = lastMoveTime;
+    }
+
+    public long getAllowedMoveInterval() {
+        return allowedMoveInterval;
+    }
+
+    public void setAllowedMoveInterval(int allowedMoveInterval) {
+        this.allowedMoveInterval = allowedMoveInterval;
+    }
+
+    public long getLastFireTime() {
+        return lastFireTime;
+    }
+
+    public void setLastFireTime(long lastFireTime) {
+        this.lastFireTime = lastFireTime;
+    }
+
+    public long getAllowedFireInterval() {
+        return allowedFireInterval;
+    }
+
+    public void setAllowedFireInterval(int allowedFireInterval) {
+        this.allowedFireInterval = allowedFireInterval;
+    }
+
+    public int getNumberOfBullets() {
+        return numberOfBullets;
+    }
+
+    public void setNumberOfBullets(int numberOfBullets) {
+        this.numberOfBullets = numberOfBullets;
+    }
+
+    public int getAllowedNumberOfBullets() {
+        return allowedNumberOfBullets;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public void hit(int damage) {
+        life = life - damage;
+        System.out.println("Soldier life: " + id + " : " + life);
+//		Log.d(TAG, "TankId: " + id + " hit -> life: " + life);
+
+        if (life <= 0) {
+//			Log.d(TAG, "Tank event");
+            //eventBus.post(Tank.this);
+            //eventBus.post(new Object());
+        }
+    }
+
+    @Override
+    public FieldEntity copy() {
+        return new Soldier(id, direction, ip);
+    }
+
+    public void setAllowedNumberOfBullets(int allowedNumberOfBullets) {
+        this.allowedNumberOfBullets = allowedNumberOfBullets;
+    }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
+}

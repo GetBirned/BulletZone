@@ -1,7 +1,6 @@
 package edu.unh.cs.cs619.bulletzone.ui;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.Random;
-
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.rest.spring.annotations.RestService;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.Random;
 
 import edu.unh.cs.cs619.bulletzone.R;
@@ -92,7 +89,7 @@ public class GridAdapter extends BaseAdapter {
     private int[][] hasPowerUp = new int[16][16];
     // 0 grass, // 1 thingamajig //2 nuke //3 apple
     //4 hill // 5 rocky // 6 forest // 7 soldier // 8 water
-    //9 deflector //10 repair kit
+    //9 deflector //10 repair kit // 11 bridge // 12 road
 
     public void setFriendlyTank(ImageView imageView, int direction, int val) {
 
@@ -110,6 +107,11 @@ public class GridAdapter extends BaseAdapter {
     public void setSoldier(ImageView imageView, int direction, int val) {
         TerrainUI t = new TerrainUI();
         t.soldierImage(imageView, direction, val);
+    }
+
+    public void setBuilder(ImageView imageView, int direction, int val) {
+        TerrainUI t = new TerrainUI();
+        t.builderImage(imageView, direction, val);
     }
 
     public void addSoldier(long soldierId) {
@@ -243,7 +245,14 @@ public class GridAdapter extends BaseAdapter {
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
-                    imageView.setImageResource(R.drawable.bulletgrass);
+                    if (hasPowerUp[row][col] == 8) {
+                        imageView.setImageResource(R.drawable.bulletwater);
+                    } else if (hasPowerUp[row][col] == 12) {
+                        imageView.setImageResource(R.drawable.bulletroad);
+                    } else {
+                        imageView.setImageResource(R.drawable.bulletgrass);
+                    }
+
 
                 } else if (val >= 10000000 && val <= 20000000) {
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
@@ -271,19 +280,20 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val >= 40000000 && val <= 50000000) {
                     setSoldier(imageView, direction, hasPowerUp[row][col]);
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
-                    || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
-                        if(hasPowerUp[row][col] == 1){
+                            || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
+                        if (hasPowerUp[row][col] == 1) {
                             int rand = random.nextInt(196) + 5;
                             numCoins += rand;
-                            Log.d("NUMCOINS:", this.numCoins+"");
-                        }
-                        else if(hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3){
+                            Log.d("NUMCOINS:", this.numCoins + "");
+                        } else if (hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
                             collectPowerupAsync(friendlyTank(val), hasPowerUp[row][col], false);
                         }
                         mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
+                } else if (val >= 50000000 && val <= 60000000) {
+                    setBuilder(imageView, direction, hasPowerUp[row][col]);
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
                     //numItems++;
@@ -316,9 +326,14 @@ public class GridAdapter extends BaseAdapter {
                    // numItems++;
                     hasPowerUp[row][col] = 10;
                     imageView.setImageResource(R.drawable.toolsgrass);
+                } else if (val == 60) {
+                    hasPowerUp[row][col] = 11;
+                    imageView.setImageResource(R.drawable.waterwithbridge);
+                } else if (val == 70) {
+                    hasPowerUp[row][col] = 12;
+                    imageView.setImageResource(R.drawable.roadongrass);
                 }
             } else {
-
                 if (hasPowerUp[row][col] != 0) {
                     if (hasPowerUp[row][col] == 1) {
                         numItems++;

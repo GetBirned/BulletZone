@@ -1,20 +1,20 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-public class Road extends FieldEntity {
+public class Bridge extends FieldEntity {
     int pos;
     int destructValue;
 
-    public Road(){
+    public Bridge(){
         pos = 2;
     }
 
-    public Road(int pos){
+    public Bridge(int pos){
         this.pos = pos;
     }
 
     @Override
     public int getIntValue() {
-        return 70;
+        return 60;
     }
 
     @Override
@@ -25,11 +25,10 @@ public class Road extends FieldEntity {
 
     @Override
     public String toString() {
-        return "R";
+        return "B";
     }
 
     public int getPos(){
         return pos;
     }
 }
-

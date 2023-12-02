@@ -29,7 +29,7 @@ import edu.unh.cs.cs619.bulletzone.model.Water;
 import edu.unh.cs.cs619.bulletzone.model.applePowerUp;
 import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
 
-public class SoldierAction {
+public class BuilderAction {
 
     private final Object monitor;
     private Game game;
@@ -43,7 +43,7 @@ public class SoldierAction {
      * Bullet step time in milliseconds
      */
     private static final int BULLET_PERIOD = 200;
-    public SoldierAction(Object monitor, Game game) {
+    public BuilderAction(Object monitor, Game game) {
         this.monitor = monitor;
         this.game = game;
     }
@@ -61,13 +61,13 @@ public class SoldierAction {
 
 
             long millis = System.currentTimeMillis();
-            Soldier soldier = game.getSoldiers().get(tankId);
-            if(millis < soldier.getLastMoveTime())
+            Builder builder = game.getBuilders().get(tankId);
+            if(millis < builder.getLastMoveTime())
                 return false;
 
-            soldier.setLastMoveTime(millis+tank.getAllowedMoveInterval());
+            builder.setLastMoveTime(millis+tank.getAllowedMoveInterval());
 
-            soldier.setDirection(direction);
+            builder.setDirection(direction);
         }
 
         return true;
@@ -81,19 +81,19 @@ public class SoldierAction {
                 throw new TankDoesNotExistException(tankId);
             }
 
-            Soldier soldier = game.getSoldiers().get(tankId);
-            if (Direction.toByte(direction) != Direction.toByte(soldier.getDirection()) && Direction.toByte(direction) != Direction.opposite(soldier.getDirection())) {
+            Builder builder = game.getBuilders().get(tankId);
+            if (Direction.toByte(direction) != Direction.toByte(builder.getDirection()) && Direction.toByte(direction) != Direction.opposite(builder.getDirection())) {
                 return false;
             }
 
 
             long millis = System.currentTimeMillis();
-            if(millis < soldier.getLastMoveTime())
+            if(millis < builder.getLastMoveTime())
                 return false;
 
-            soldier.setLastMoveTime(millis + soldier.getAllowedMoveInterval());
+            builder.setLastMoveTime(millis + builder.getAllowedMoveInterval());
 
-            FieldHolder parent = soldier.getParent();
+            FieldHolder parent = builder.getParent();
 
             FieldHolder nextField = parent.getNeighbor(direction);
             checkNotNull(parent.getNeighbor(direction), "Neightbor is not available");
@@ -101,52 +101,59 @@ public class SoldierAction {
             if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest
                     || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp
                     || nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
-                    || nextField.getEntity() instanceof Grass || nextField.getEntity() instanceof Road || nextField.getEntity() instanceof Bridge) {
+                    || nextField.getEntity() instanceof Grass || nextField.getEntity() instanceof Road ||
+                    nextField.getEntity() instanceof Bridge ) {
                 // If the next field is empty move the user
 
                 //Constraint to allow soldiers on hills and rocky terrain and to slow them on rocky
                 if (nextField.isPresent()) {
                     if (nextField.getEntity() instanceof Rocky) {
                         if (!(parent.getEntity() instanceof Rocky)) {
-                            soldier.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
+                            builder.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
                         }
                     }
                 } else {
                     if (parent.getEntity() instanceof Rocky) {
-                        soldier.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 1.5));
+                        builder.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 1.5));
                     }
                 }
 
 
                 parent.clearField();
 
-                if(soldier.getPowerUpType() == 4) {
+                if(builder.getPowerUpType() == 4) {
                     System.out.println("Restoring terrain. Current entity type: hill");
                     parent.setFieldEntity(new Hill());
-                } else if(soldier.getPowerUpType() == 5) {
+                } else if(builder.getPowerUpType() == 5) {
                     System.out.println("Restoring terrain. Current entity type: rock");
                     parent.setFieldEntity(new Rocky());
-                } else if(soldier.getPowerUpType() == 6) {
+                } else if(builder.getPowerUpType() == 6) {
                     System.out.println("Restoring terrain. Current entity type: forest");
                     parent.setFieldEntity(new Forest());
-                }  else if (tank.getPowerUpType() == 8) {
+                } else if (builder.getPowerUpType() == 8) {
                     System.out.println("Restoring terrain. Current entity type: water");
                     parent.setFieldEntity(new Water());
+                } else if (builder.getPowerUpType() == 11) {
+                    System.out.println("Restoring terrain. Current entity type: bridge");
+                    parent.setFieldEntity(new Bridge());
+                } else if (builder.getPowerUpType() == 12) {
+                    System.out.println("Restoring terrain. Current entity type: road");
+                    parent.setFieldEntity(new Road());
                 }
 
 
-                nextField.setFieldEntity(soldier);
-                soldier.setParent(nextField);
+                nextField.setFieldEntity(builder);
+                builder.setParent(nextField);
 
                 isCompleted = true;
             } else if (nextField.getEntity() instanceof Tank) {
                 Tank t = (Tank) nextField.getEntity();
-                if (t.getId() == soldier.getId())  { // make sure soldier is attempting to join it's own tank
+                if (t.getId() == builder.getId())  { // make sure soldier is attempting to join it's own tank
                     if (t.getLife() != 0) { // cannot enter tank if its dead
-                        if (soldier.reenterTank(tank)) {
+                        if (builder.reenterTank(tank)) {
                             game.removeSoldier(tankId);
                             game.startEjectionCooldown();
-                            soldier.getParent().clearField();
+                            builder.getParent().clearField();
                             isCompleted = true;
                         } else {
                             // Re-entry failed, soldier is already in a tank
@@ -159,9 +166,9 @@ public class SoldierAction {
                 return true;
             } else {
                 if (nextField.getEntity() instanceof Wall) {
-                    ((Wall) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    ((Wall) nextField.getEntity()).takeDamagefromSoldier(builder.getLife());
                 } else if (nextField.getEntity() instanceof Tank) {
-                    ((Tank) nextField.getEntity()).takeDamagefromSoldier(soldier.getLife());
+                    ((Tank) nextField.getEntity()).takeDamagefromSoldier(builder.getLife());
                 }
                 isCompleted = false;
             }
@@ -182,26 +189,26 @@ public class SoldierAction {
                 throw new TankDoesNotExistException(tankId);
             }
 
-            Soldier soldier = game.getSoldiers().get(tankId);
-            if (soldier.getNumberOfBullets() >= soldier.getAllowedNumberOfBullets())
+            Builder builder = game.getBuilders().get(tankId);
+            if (builder.getNumberOfBullets() >= builder.getAllowedNumberOfBullets())
                 return false;
 
             long millis = System.currentTimeMillis();
-            if (millis < soldier.getLastFireTime()/*>tank.getAllowedFireInterval()*/) {
+            if (millis < builder.getLastFireTime()/*>tank.getAllowedFireInterval()*/) {
                 return false;
             }
 
             //Log.i(TAG, "Cannot find user with id: " + tankId);
-            Direction direction = soldier.getDirection();
-            FieldHolder parent = soldier.getParent();
-            soldier.setNumberOfBullets(soldier.getNumberOfBullets() + 1);
+            Direction direction = builder.getDirection();
+            FieldHolder parent = builder.getParent();
+            builder.setNumberOfBullets(builder.getNumberOfBullets() + 1);
 
             if (!(bulletType >= 1 && bulletType <= 3)) {
                 System.out.println("Bullet type must be 1, 2 or 3, set to 1 by default.");
                 bulletType = 1;
             }
 
-            soldier.setLastFireTime(millis + bulletDelay[bulletType - 1]);
+            builder.setLastFireTime(millis + bulletDelay[bulletType - 1]);
 
             int bulletId = 0;
             if (trackActiveBullets[0] == 0) {
@@ -213,7 +220,7 @@ public class SoldierAction {
             }
 
             // Create a new bullet to fire
-            final Bullet bullet = new Bullet(tankId, direction, 5);
+            final Bullet bullet = new Bullet(builder.getId(), direction, 10);
             // Set the same parent for the bullet.
             // This should be only a one way reference.
             bullet.setParent(parent);
@@ -225,7 +232,7 @@ public class SoldierAction {
                 @Override
                 public void run() {
                     synchronized (monitor) {
-                        System.out.println("Soldier Active Bullet: " + soldier.getNumberOfBullets() + "---- Bullet ID: " + bullet.getIntValue());
+                        System.out.println("Builder Active Bullet: " + builder.getNumberOfBullets() + "---- Bullet ID: " + bullet.getIntValue());
                         FieldHolder currentField = bullet.getParent();
                         Direction direction = bullet.getDirection();
                         FieldHolder nextField = currentField
@@ -261,6 +268,18 @@ public class SoldierAction {
                                     game.removeSoldier(s.getId());
                                     game.removeTank(t.getId());
                                 }
+                            } else if (nextField.getEntity() instanceof Builder) { // Soldier Hit
+                                Builder b = (Builder) nextField.getEntity();
+                                System.out.println("soldier is hit, soldier life: " + b.getLife());
+                                if (b.getLife() <= 0) {
+                                    Tank t = game.getTank(b.getIp());
+                                    t.getParent().clearField();
+                                    t.setParent(null);
+                                    b.getParent().clearField();
+                                    b.setParent(null);
+                                    game.removeSoldier(b.getId());
+                                    game.removeTank(t.getId());
+                                }
                             } else if (nextField.getEntity() instanceof Builder) {
                                 Builder b = (Builder) nextField.getEntity();
                                 System.out.println("builder is hit, builder life: " + b.getLife());
@@ -293,7 +312,7 @@ public class SoldierAction {
                                 currentField.clearField();
                             }
                             trackActiveBullets[bullet.getBulletId()] = 0;
-                            soldier.setNumberOfBullets(soldier.getNumberOfBullets() - 1);
+                            builder.setNumberOfBullets(builder.getNumberOfBullets() - 1);
                             cancel();
 
                         } else {
@@ -315,3 +334,4 @@ public class SoldierAction {
         }
     }
 }
+

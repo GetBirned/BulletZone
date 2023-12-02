@@ -3,29 +3,17 @@ package edu.unh.cs.cs619.bulletzone;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.hardware.Sensor;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.squareup.otto.Subscribe;
-
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -56,8 +44,6 @@ import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
-import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
-import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 
@@ -100,13 +86,17 @@ public class ClientActivity extends Activity {
     private long tankId = -1;
 
     private long soldierId = -1;
+
+    private long builderId = -1;
     private SensorManager sensorManager;
     private Sensor mAccelerometer;
 
     ShakeDetector mShakeDetector;
     @ViewById(R.id.bank_balance)
     TextView bankBalanceTextView;
-    private int tankIsActive;
+    int controllingTank;
+
+    int controllingBuilder;
 
 
     @Override
@@ -241,12 +231,14 @@ public class ClientActivity extends Activity {
         try {
             tankId = restClient.join().getResult();
             gridPollTask.doPoll();
-            tankIsActive = 1;
+            controllingTank = 1;
             updateHealthAsync(tankId);
         } catch (Exception e) {
             System.out.println("ERROR: joining game");
         }
     }
+
+    @UiThread
     public void updateBankBalanceText(int numCoins) {
         bankBalanceTextView.setText(String.valueOf(numCoins));
     }
@@ -291,7 +283,6 @@ public class ClientActivity extends Activity {
                 Log.e(TAG, "Unknown movement button id: " + viewId);
                 break;
         }
-        if (tankIsActive == 1) {
             if (previousDirection == direction) {
                 previousDirection = tempDirection;
                 this.moveAsync(tankId, direction);
@@ -313,36 +304,11 @@ public class ClientActivity extends Activity {
                     this.turnAsync(tankId, direction);
                 }
             }
-        } else {
-            if (previousDirection == direction) {
-                previousDirection = tempDirection;
-                this.moveAsync(soldierId, direction);
-            } else {
-                if (previousDirection == 2 && direction == 6) {
-                    previousDirection = tempDirection;
-                    this.moveAsync(soldierId, direction);
-                } else if (previousDirection == 6 && direction == 2) {
-                    previousDirection = tempDirection;
-                    this.moveAsync(soldierId, direction);
-                } else if (previousDirection == 0 && direction == 4) {
-                    previousDirection = tempDirection;
-                    this.moveAsync(soldierId, direction);
-                } else if (previousDirection == 4 && direction == 0) {
-                    previousDirection = tempDirection;
-                    this.moveAsync(soldierId, direction);
-                } else {
-                    previousDirection = tempDirection;
-                    this.turnAsync(soldierId, direction);
-                }
-            }
-        }
-
     }
 
     @Background
     void moveAsync(long tankId, byte direction) {
         restClient.move(tankId, direction);
-
     }
 
     @Background
@@ -353,8 +319,16 @@ public class ClientActivity extends Activity {
     @Click(R.id.deploySoldier)
     @Background
     protected void deploySoldier() {
-        tankIsActive = 0;
-        deploySoldierAsync();
+        if (controllingTank == 1) {
+            deploySoldierAsync();
+        } else {
+            showCannotDeployMessage();
+        }
+    }
+
+    @UiThread
+    protected void showCannotDeployMessage() {
+        Toast.makeText(getApplicationContext(), "Cannot deploy soldier when controlling Builder. Please switch to Tank then try again.", Toast.LENGTH_SHORT).show();
     }
     private boolean isSoldierDeployed = false;
 
@@ -369,12 +343,12 @@ public class ClientActivity extends Activity {
                 soldierId = soldierWrapper.getResult();
                 isSoldierDeployed = true;
 
-                Log.d(TAG, "SoldierID is " + soldierId);
+                Log.d(TAG, "SoldierId is " + soldierId);
 
                 updateSoldierHealthAsync(soldierId);
 
             } else {
-                Log.d(TAG, "SoldierID is NULL.\n");
+                Log.d(TAG, "SoldierId is " + soldierWrapper.getResult() + "\n");
                 // Handle other HTTP status codes if needed
             }
             /**
@@ -464,7 +438,139 @@ public class ClientActivity extends Activity {
                 .show();
     }
 
+    @Click(R.id.controlBuilder)
+    @Background
+    protected void controlBuilder() {
+        controllingTank = 0;
+        controllingBuilder = 1;
+        controlBuilderAsync();
+    }
 
+    protected void controlBuilderAsync() {
+       LongWrapper res = restClient.controlBuilder(tankId);
+    }
+
+    @Click(R.id.controlTank)
+    @Background
+    protected void controlTank() {
+        controllingTank = 1;
+        controllingBuilder = 0;
+        controlTankAsync();
+    }
+
+    protected void controlTankAsync() {
+        LongWrapper res = restClient.controlTank(tankId);
+    }
+
+    @Click(R.id.buildBridge)
+    @Background
+    void buildBridge() {
+        if (mGridAdapter.numCoins >= 80) {
+            buildImprovement(3, tankId);
+        } else {
+            Log.d(TAG, "Bridge could not be built. Bank Account associated to " +
+                    "ID: " + tankId + " doesn't have more than 80 credits.\n");
+        }
+    }
+
+    @Click(R.id.buildRoad)
+    @Background
+    void buildRoad() {
+        if (mGridAdapter.numCoins >= 40) {
+            buildImprovement(2 , tankId);
+        } else {
+            Log.d(TAG, "Road could not be built. Bank Account associated to " +
+                    "ID: " + tankId + " doesn't have more than 40 credits.\n");
+        }
+    }
+
+    @Click(R.id.buildWall)
+    @Background
+    void buildWall() {
+        if (mGridAdapter.numCoins >= 100) {
+            buildImprovement(1, tankId);
+        } else {
+            Log.d(TAG, "Wall could not be built. Bank Account associated to " +
+                    "ID: " + tankId + " doesn't have more than 100 credits.\n");
+        }
+    }
+
+    public void buildImprovement(int choice, long builderId) {
+        if (controllingBuilder == 1) {
+                LongWrapper res = restClient.buildImprovement(choice, tankId);
+                if (res != null) {
+                    if (res.getResult() == 1) {
+                        Log.d(TAG, "Wall properly built by ID: " + builderId + "\n");
+                        mGridAdapter.numCoins = mGridAdapter.numCoins - 100;
+                    } else if (res.getResult() == 2) {
+                        Log.d(TAG, "Road properly built by ID: " + builderId + "\n");
+                        mGridAdapter.numCoins = mGridAdapter.numCoins - 40;
+                    } else if (res.getResult() == 3) {
+                        Log.d(TAG, "Bridge properly built by ID: " + builderId + "\n");
+                        mGridAdapter.numCoins = mGridAdapter.numCoins - 80;
+                    }
+                    updateBankBalanceText(mGridAdapter.numCoins);
+                } else {
+                    Log.d(TAG, "Build failed with ID: " + builderId + "\n");
+                }
+        } else {
+            showCannotBuildMessage();
+        }
+    }
+
+    @UiThread
+    protected void showCannotBuildMessage() {
+        Toast.makeText(getApplicationContext(), "Cannot build while controlling Tank/Soldier. Please switch to Builder then try again.\n", Toast.LENGTH_SHORT).show();
+    }
+
+    @UiThread
+    protected void showCannotBuildOnTopMessage() {
+        Toast.makeText(getApplicationContext(), "Cannot build an improvement on top of another improvement / invalid area.\n", Toast.LENGTH_SHORT).show();
+    }
+
+    @UiThread
+    protected void showCannotBuildBridgeMessage() {
+        Toast.makeText(getApplicationContext(), "Cannot build bridge when not back is not facing water. Try again.\n", Toast.LENGTH_SHORT).show();
+    }
+
+    @Click(R.id.dismantleImprovement)
+    @Background
+    void dismantleImprovement() { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
+        dismantleImprovementAsync(tankId);
+    }
+
+    void dismantleImprovementAsync(long builderId) { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
+        if (controllingBuilder == 1) {
+            if (builderId != -1) {
+                LongWrapper res = restClient.dismantleImprovement(builderId);
+                if (res != null) {
+                    if (res.getResult() == 1) {
+                        Log.d(TAG, "Wall properly dismantled by: " + builderId + "\n");
+                        mGridAdapter.numCoins = mGridAdapter.numCoins + 100;
+                        Log.d(TAG, "100 (Wall) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 2) {
+                        Log.d(TAG, "Road properly dismantled by: " + builderId + "\n");
+                        mGridAdapter.numCoins = mGridAdapter.numCoins + 40;
+                        Log.d(TAG, "40 (Road) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 3) {
+                        Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
+                        mGridAdapter.numCoins = mGridAdapter.numCoins + 80;
+                        Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
+                    }
+                    updateBankBalanceText(mGridAdapter.numCoins);
+                } else {
+                    Log.d(TAG, "Dismantle failed with ID: " + builderId + "\n");
+                }
+            }
+        } else {
+            showCannotDismantleMessage();
+        }
+    }
+
+    @UiThread
+    protected void showCannotDismantleMessage() {
+        Toast.makeText(getApplicationContext(), "Cannot dismantle while controlling Tank/Soldier. Please switch to Builder then try again.\n", Toast.LENGTH_SHORT).show();
+    }
 
     @UiThread
     public void updateTankHealth(int health) {

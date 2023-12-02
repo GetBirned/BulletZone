@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
+import edu.unh.cs.cs619.bulletzone.model.Builder;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
 import edu.unh.cs.cs619.bulletzone.model.Game;
@@ -37,6 +38,7 @@ public class InMemoryGameRepository implements GameRepository {
      * Tank's default life [life]
      */
     private static final int TANK_LIFE = 100;
+    private static final int BUILDER_LIFE = 50;
     private final AtomicLong idGenerator = new AtomicLong();
     private final Object monitor = new Object();
     private Game game = null;
@@ -47,6 +49,7 @@ public class InMemoryGameRepository implements GameRepository {
     public Tank join(String ip) {
         synchronized (this.monitor) {
             Tank tank;
+            Builder builder;
             if (game == null) {
                game = new Game();
             }
@@ -57,8 +60,12 @@ public class InMemoryGameRepository implements GameRepository {
 
             Long tankId = this.idGenerator.getAndIncrement();
 
+
             tank = new Tank(tankId, Direction.Up, ip, 1);
+            builder = new Builder(tankId, Direction.Up, ip, 0);
+
             tank.setLife(TANK_LIFE);
+            builder.setLife(BUILDER_LIFE);
 
             Random random = new Random();
             int x;
@@ -76,7 +83,19 @@ public class InMemoryGameRepository implements GameRepository {
                 }
             }
 
+            for (; ; ) {
+                x = random.nextInt(FIELD_DIM);
+                y = random.nextInt(FIELD_DIM);
+                FieldHolder fieldElement = game.getHolderGrid().get(x * FIELD_DIM + y);
+                if (!fieldElement.isPresent()) {
+                    fieldElement.setFieldEntity(builder);
+                    builder.setParent(fieldElement);
+                    break;
+                }
+            }
+
             game.addTank(ip, tank);
+            game.addBuilder(ip, builder);
 
             /*
             I have abstracted this into the Action class
@@ -207,6 +226,31 @@ public class InMemoryGameRepository implements GameRepository {
     @Override
     public LongWrapper deploySoldier(long tankID) {
         return game.deploySoldier(tankID);
+    }
+
+    public LongWrapper controlBuilder(long tankId) {
+        return game.controlBuilder(tankId);
+    }
+
+    public LongWrapper controlTank(long tankId) {
+        return game.controlTank(tankId);
+    }
+
+    /**
+    @Override
+    public LongWrapper deployBuilder(long tankID) {
+        return game.deployBuilder(tankID);
+    }
+     */
+
+    @Override
+    public LongWrapper buildImprovement(int choice, long builderId) {
+        return game.buildImprovement(choice, builderId);
+    }
+
+    @Override
+    public LongWrapper dismantleImprovement(long builderId) {
+        return game.dismantleImprovement(builderId);
     }
 }
 

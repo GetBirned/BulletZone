@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
-import java.nio.file.Path;
-
 import javax.servlet.http.HttpServletRequest;
-
 
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
@@ -27,10 +24,10 @@ import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.repository.GameRepository;
+import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
-import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
 
 @RestController
 @RequestMapping(value = "/games")
@@ -166,6 +163,53 @@ class GamesController {
                 HttpStatus.CREATED
         );
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/builder/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    ResponseEntity<LongWrapper> controlBuilder(@PathVariable long tankId) {
+        LongWrapper response = gameRepository.controlBuilder(tankId);
+        return new ResponseEntity<LongWrapper>(
+                new LongWrapper(response.getResult()),
+                HttpStatus.CREATED
+        );
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/tank/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    ResponseEntity<LongWrapper> controlTank(@PathVariable long tankId) {
+        LongWrapper response = gameRepository.controlTank(tankId);
+        return new ResponseEntity<LongWrapper>(
+                new LongWrapper(response.getResult()),
+                HttpStatus.CREATED
+        );
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/dismantleImprovement/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    ResponseEntity<LongWrapper> dismantleImprovement(@PathVariable long tankId) {
+        LongWrapper response = gameRepository.dismantleImprovement(tankId);
+        return new ResponseEntity<LongWrapper>(
+                new LongWrapper(response.getResult()),
+                HttpStatus.CREATED
+        );
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/buildImprovement/{choice}/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    ResponseEntity<LongWrapper> buildImprovement(@PathVariable int choice, @PathVariable long tankId) {
+        LongWrapper response = gameRepository.buildImprovement(choice, tankId);
+        return new ResponseEntity<LongWrapper>(
+                new LongWrapper(response.getResult()),
+                HttpStatus.CREATED
+        );
+    }
+
+
+
     @PostMapping(value = "/setTankPowerup/{tankId}/{powerupValue}/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

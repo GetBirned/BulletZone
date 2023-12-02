@@ -5,11 +5,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.unh.cs.cs619.bulletzone.model.Bridge;
+import edu.unh.cs.cs619.bulletzone.model.Builder;
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
-import edu.unh.cs.cs619.bulletzone.model.FieldEntity;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
-import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Grass;
 import edu.unh.cs.cs619.bulletzone.model.HealthKit;
@@ -27,7 +27,6 @@ import edu.unh.cs.cs619.bulletzone.model.Wall;
 import edu.unh.cs.cs619.bulletzone.model.Water;
 import edu.unh.cs.cs619.bulletzone.model.applePowerUp;
 import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
-import jdk.internal.org.jline.utils.Log;
 
 /*
     I believe this should ultimately be a command? pattern
@@ -56,6 +55,7 @@ public class Action {
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
         synchronized (this.monitor) {
             checkNotNull(direction);
+            Builder builder = game.getBuilders().get(tankId);
 
             // Find user
             Tank tank = game.getTanks().get(tankId);
@@ -73,6 +73,9 @@ public class Action {
                 tank.setDirection(direction);
 
                 return true;
+            } else if (builder.getIsActive() == 1) {
+                BuilderAction b = new BuilderAction(monitor, game);
+                return b.turn(tankId, direction);
             } else {
                 SoldierAction s = new SoldierAction(monitor, game);
                 return s.turn(tankId, direction);
@@ -85,6 +88,7 @@ public class Action {
             throws TankDoesNotExistException, IllegalTransitionException, LimitExceededException {
         synchronized (this.monitor) {
             Tank tank = game.getTanks().get(tankId);
+            Builder builder = game.getBuilders().get(tankId);
             if (tank == null) {
                 throw new TankDoesNotExistException(tankId);
             }
@@ -112,7 +116,7 @@ public class Action {
                 if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky
                         || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp
                         || nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
-                        || nextField.getEntity() instanceof Grass) {
+                        || nextField.getEntity() instanceof Grass || nextField.getEntity() instanceof Road || nextField.getEntity() instanceof Bridge) {
                     // If the next field is empty move the user
 
 
@@ -174,6 +178,9 @@ public class Action {
                 }
 
                 return isCompleted;
+            } else if (builder.getIsActive() == 1) {
+                BuilderAction b = new BuilderAction(monitor, game);
+                return b.move(tankId, direction);
             } else {
                 SoldierAction s = new SoldierAction(monitor, game);
                 return s.move(tankId, direction);
@@ -188,6 +195,7 @@ public class Action {
 
             // Find tank
             Tank tank = game.getTanks().get(tankId);
+            Builder builder = game.getBuilders().get(tankId);
             if (tank == null) {
                 //Log.i(TAG, "Cannot find user with id: " + tankId);
                 //return false;
@@ -249,7 +257,7 @@ public class Action {
 
 
                             if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)
-                                    && !(nextField.getEntity() instanceof Water)) {
+                                    && !(nextField.getEntity() instanceof Water) && !(nextField.getEntity() instanceof Road) && !(nextField.getEntity() instanceof Bridge)) {
                                 // Something is there, hit it
                                 nextField.getEntity().hit(bullet.getDamage());
 
@@ -272,6 +280,14 @@ public class Action {
                                         s.setParent(null);
                                         game.removeSoldier(s.getId());
                                         game.removeTank(t.getId());
+                                    }
+                                } else if (nextField.getEntity() instanceof Builder) {
+                                    Builder b = (Builder) nextField.getEntity();
+                                    System.out.println("builder is hit, builder life: " + b.getLife());
+                                    if (b.getLife() <= 0) {
+                                        b.getParent().clearField();
+                                        b.setParent(null);
+                                        game.removeBuilder(b.getId());
                                     }
                                 } else if (nextField.getEntity() instanceof Wall) {
                                     Wall w = (Wall) nextField.getEntity();
@@ -319,10 +335,12 @@ public class Action {
                 }, 0, BULLET_PERIOD);
 
                 return true;
-            } else { // Soldier fire
+            } else if (builder.getIsActive() == 1) { // Builder fire
+                BuilderAction b = new BuilderAction(monitor, game);
+                return b.fire(tankId, bulletType);
+            } else {
                 SoldierAction s = new SoldierAction(monitor, game);
                 return s.fire(tankId, bulletType);
-
             }
         }
     }
