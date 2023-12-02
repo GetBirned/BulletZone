@@ -30,6 +30,7 @@ import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
 
 /*
     I believe this should ultimately be a command? pattern
+    new action class
  */
 public class Action {
     private final Object monitor;

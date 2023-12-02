@@ -15,8 +15,10 @@ import org.androidannotations.rest.spring.annotations.RestService;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.Random;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
 
 import edu.unh.cs.cs619.bulletzone.R;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
@@ -30,6 +32,8 @@ public class GridAdapter extends BaseAdapter {
     private int[][] mEntities = new int[16][16];
     private int[][] oldMEntities = new int[16][16];
     Context context;
+    String ts;
+    String username;
     Random random = new Random();
 
     @RestService
@@ -76,7 +80,8 @@ public class GridAdapter extends BaseAdapter {
 
     public int friendlyTank(int value) {
         String tankID = Integer.toString(value);
-        tankID = tankID.substring(2, 4);
+        tankID = tankID.substring(1, 4);
+        Log.d("Sending", tankID);
         return Integer.parseInt(tankID);
     }
 
@@ -123,12 +128,23 @@ public class GridAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    private boolean isChanged(int[][] grid) {
-        return !Arrays.deepEquals(mEntities, grid);
+    public void setTs(String ts) {
+        this.ts = ts;
     }
-    private void writeToFile() {
-        // NEED TO ADD CHECK to see if mendities has changed
 
+    private boolean isChanged(int[][] grid) {
+        for (int i = 0; i < 16; i++) {
+            for (int k = 0; k < 16; k++) {
+                if (mEntities[i][k] != oldMEntities[i][k]) {
+                    //Log.d("STATE CHANGE", "yes");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void writeToFile() {
         if (isChanged(mEntities)) {
             oldMEntities = mEntities;
             try {
@@ -141,7 +157,7 @@ public class GridAdapter extends BaseAdapter {
                 //String result = ts + " " + grid_string;
                 String result = grid_string;
                 //Log.d("GRID STRING", grid_string);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("replay_file.txt", Context.MODE_APPEND));
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(ts + ".txt", Context.MODE_APPEND));
                 outputStreamWriter.write(result);
                 outputStreamWriter.close();
                 //Log.d("FILE APPEND", result);
@@ -151,6 +167,36 @@ public class GridAdapter extends BaseAdapter {
         }
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public int getTankIDFromFile() {
+        try {
+            InputStream inputStream = context.openFileInput(username + ".txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String receiveString = bufferedReader.readLine();
+                int tankID = Integer.parseInt(receiveString);
+                Log.d("Sending", "tankID from file is " + tankID);
+
+                inputStream.close();
+                return tankID;
+            } else {
+                Log.d("ERROR", "Could not parse file");
+                return -1;
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("TANKID FILE", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("TANKID FILE", "Can not read file: " + e.toString());
+        }
+        return -1;
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -166,7 +212,7 @@ public class GridAdapter extends BaseAdapter {
 
 
         if ((hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
-        || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10)  && mEntities[row][col] > 10000000) {
+                || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10)  && mEntities[row][col] > 10000000) {
             mEntities[row][col] = 0;
             hasPowerUp[row][col] = 0;
             numItems--;
@@ -189,7 +235,7 @@ public class GridAdapter extends BaseAdapter {
             }
         } else if (hasPowerUp[row][col] == 1) {
             if (mEntities[row][col] != 7) {
-               // numItems--;
+                // numItems--;
                 mEntities[row][col] = 0;
                 hasPowerUp[row][col] = 0;
                 imageView.setImageResource(R.drawable.grass);
@@ -203,7 +249,7 @@ public class GridAdapter extends BaseAdapter {
             }
         } else if (hasPowerUp[row][col] == 3) {
             if (mEntities[row][col] != 2003) {
-               // numItems--;
+                // numItems--;
                 mEntities[row][col] = 0;
                 hasPowerUp[row][col] = 0;
                 imageView.setImageResource(R.drawable.grass);
@@ -262,15 +308,38 @@ public class GridAdapter extends BaseAdapter {
                             numCoins += rand;
                             Log.d("NUMCOINS:", this.numCoins+"");
                         }
-                        else if(hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3){
-                            collectPowerupAsync(friendlyTank(val), hasPowerUp[row][col], true);
+                        else if(hasPowerUp[row][col] != 1){
+                            int finalType = hasPowerUp[row][col];
+                            int finalVal = val;
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                    Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
+
+                                    return null;
+                                }
+                            }.execute();
                         }
                         mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType + " and " + String.valueOf(finalVal));
+
+                                return null;
+                            }
+                        }.execute();
                     }
                     numPlayers++;
-                    if (friendlyTank(val) == 0) {
+                    // TODO: need to discern between friendly tank
+                    if (friendlyTank(val) == getTankIDFromFile()) {
                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
                     } else {
                         tankRow = row;
@@ -281,16 +350,39 @@ public class GridAdapter extends BaseAdapter {
                     setSoldier(imageView, direction, hasPowerUp[row][col]);
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
-                        if (hasPowerUp[row][col] == 1) {
+                        if(hasPowerUp[row][col] == 1){
                             int rand = random.nextInt(196) + 5;
                             numCoins += rand;
-                            Log.d("NUMCOINS:", this.numCoins + "");
-                        } else if (hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3) {
-                            collectPowerupAsync(friendlyTank(val), hasPowerUp[row][col], false);
+                            Log.d("NUMCOINS:", this.numCoins+"");
+                        }
+                        else if(hasPowerUp[row][col] != 1){
+                            int finalType = hasPowerUp[row][col];
+                            int finalVal1 = val;
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                    Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
+
+                                    return null;
+                                }
+                            }.execute();
                         }
                         mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal1 = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                Log.e("soldier", "Solder #: " + friendlyTank(finalVal1) +  "toRestClient withVal:"  + finalType);
+
+                                return null;
+                            }
+                        }.execute();
                     }
                 } else if (val >= 50000000 && val <= 60000000) {
                     setBuilder(imageView, direction, hasPowerUp[row][col]);
@@ -300,7 +392,7 @@ public class GridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.coingrass);
                 } else if (val == 2002) {
                     hasPowerUp[row][col] = 2;
-                   // numItems++;
+                    // numItems++;
                     imageView.setImageResource(R.drawable.nukepowerupgrass);
                 } else if (val == 2003) {
                     hasPowerUp[row][col] = 3;
@@ -323,7 +415,7 @@ public class GridAdapter extends BaseAdapter {
                     hasPowerUp[row][col] = 9;
                     imageView.setImageResource(R.drawable.shieldgrass);
                 } else if (val == 3141) {
-                   // numItems++;
+                    // numItems++;
                     hasPowerUp[row][col] = 10;
                     imageView.setImageResource(R.drawable.toolsgrass);
                 } else if (val == 60) {
@@ -334,6 +426,7 @@ public class GridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.roadongrass);
                 }
             } else {
+
                 if (hasPowerUp[row][col] != 0) {
                     if (hasPowerUp[row][col] == 1) {
                         numItems++;
@@ -367,7 +460,7 @@ public class GridAdapter extends BaseAdapter {
                             } else if(hasPowerUp[row][col] == 5) {
                                 hasPowerUp[row][col] = 10;
                             }
-                                numItems++;
+                            numItems++;
                             //setImageForPowerUp(imageView, hasPowerUp[row][col]);
                         }
                     } else {
@@ -393,20 +486,6 @@ public class GridAdapter extends BaseAdapter {
         return imageView;
     }
 
-    @Background
-    void collectPowerupAsync(long id, int powerupValue, boolean isTank) {
-        try {
-            restClient.setTankPowerup(id, powerupValue, isTank);
-            if(!isTank && restClient.getPowerups(id,false) != null) {
-                Log.d("POWERUP LIST : " + restClient.getPowerups(id, false), "");
-            } else if(isTank && restClient.getPowerups(id,true) != null) {
-                Log.d("POWERUP LIST : " + restClient.getPowerups(id, true), "");
-            }
-
-        } catch (Exception e) {
-            Log.e("ERR:collecting powerup", "ID= "+ id);
-        }
-    }
     private boolean shouldPlacePowerUp() {
         int randNum = new Random().nextInt(101);
         return randNum <= (chance * 100);
