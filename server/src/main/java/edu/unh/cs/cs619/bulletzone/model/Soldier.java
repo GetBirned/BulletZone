@@ -2,7 +2,7 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import java.util.ArrayList;
 
-public class Soldier extends FieldEntity {
+public class Soldier extends FieldEntity implements Vehicle{
 
     private static final String TAG = "Soldier";
 
@@ -122,8 +122,28 @@ public class Soldier extends FieldEntity {
         return ip;
     }
 
+    @Override
+    public int getIsActive() {
+        return 0;
+    }
+
+    @Override
+    public void setIsActive(int isActive) {
+
+    }
+
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    @Override
+    public void takeDamage(int othersArmor) {
+
+    }
+
+    @Override
+    public void takeDamagefromSoldier(int othersArmor) {
+
     }
 
     public long getLastMoveTime() {

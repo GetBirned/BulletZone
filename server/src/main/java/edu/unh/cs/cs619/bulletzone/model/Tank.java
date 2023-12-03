@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Tank extends FieldEntity {
+public class Tank extends FieldEntity implements Vehicle {
 
     private static final String TAG = "Tank";
 
@@ -64,17 +64,6 @@ public class Tank extends FieldEntity {
         return new Tank(id, direction, ip, isActive);
     }
 
-    /**
-    public interface OnLifeChangeListener {
-        void onLifeChanged(int newLife);
-    }
-     */
-
-    /**
-    public void setOnLifeChangeListener(OnLifeChangeListener listener) {
-        this.onLifeChangeListener = listener;
-    }
-     */
 
     @Override
     public void hit(int damage) {
@@ -158,6 +147,11 @@ public class Tank extends FieldEntity {
     @JsonIgnore
     public long getId() {
         return id;
+    }
+
+    @Override
+    public boolean reenterTank(Tank tank) {
+        return false;
     }
 
     @Override

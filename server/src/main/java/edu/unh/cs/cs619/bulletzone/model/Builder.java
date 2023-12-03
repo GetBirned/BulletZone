@@ -2,7 +2,7 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import java.util.ArrayList;
 
-public class Builder extends FieldEntity {
+public class Builder extends FieldEntity implements Vehicle{
 
     private static final String TAG = "Builder";
 
@@ -126,6 +126,16 @@ public class Builder extends FieldEntity {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    @Override
+    public void takeDamage(int othersArmor) {
+
+    }
+
+    @Override
+    public void takeDamagefromSoldier(int othersArmor) {
+
     }
 
     public long getLastMoveTime() {
