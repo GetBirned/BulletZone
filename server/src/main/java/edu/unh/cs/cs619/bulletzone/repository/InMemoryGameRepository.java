@@ -3,7 +3,6 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Stack;
@@ -157,9 +156,8 @@ public class InMemoryGameRepository implements GameRepository {
         return this.game;
     }
     @Override
-    public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
-        Command updateLifeCommand = new ConcreteUpdateLifeCommand(action, tankId, newLife);
-        aci.executeCommand(tankId, updateLifeCommand);
+    public void updateLife(long tankId, boolean isTank, long offset) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+       game.setHealth(tankId,isTank,offset);
     }
 
     @Override
@@ -191,15 +189,17 @@ public class InMemoryGameRepository implements GameRepository {
         game.setSoldierPowerup(tankId,powerupValue);
     }
 
-    @Override
-    public ArrayList<Integer> getTankPowerups(long tankId) {
-        return game.getTankPowerups(tankId);
-    }
-    @Override
-    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
-        return game.getSoldierPowerups(soldierId);
 
+    @Override
+    public int getSoldierPowerup(long tankId) {
+       return game.getSoldierPowerup(tankId);
     }
+
+    @Override
+    public int getTankPowerup(long tankId) {
+       return game.getTankPowerup(tankId);
+    }
+
     public Stack<GridEvent> getCommandHistory() {
         return aci.getCommandHistory();
     }

@@ -1,5 +1,8 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -250,6 +253,15 @@ public final class Game {
         }
         return null;
     }
+    public void setHealth(long id, boolean isTank, long offset){
+        if(isTank){
+            Tank curr = getTank(id);
+            curr.setLife(curr.getLife() + (int) offset);
+        } else{
+            Soldier curr = getSoldier(id);
+            curr.setLife(curr.getLife() + (int) offset);
+        }
+    }
 
     public Soldier getSoldier(long soldierID) {
         return soldiers.get((long) soldierID);
@@ -257,6 +269,24 @@ public final class Game {
 
     public ConcurrentMap<Long, Soldier> getSoldiers() {
         return soldiers;
+    }
+
+    public int getTankPowerup(long tankId) {
+        Tank curr = tanks.get(tankId);
+        if (curr == null || curr.pQ.peek() == null) {
+            return -1;
+        }
+        curr.revertBuffs(curr.pQ.peek());
+        return curr.pQ.poll();
+    }
+
+    public int getSoldierPowerup(long tankId) {
+        Soldier curr = soldiers.get(tankId);
+        if (curr == null || curr.pQ.peek() == null) {
+            return -1;
+        }
+        curr.revertBuffs(curr.pQ.peek());
+        return curr.pQ.poll();
     }
 
     public void removeSoldier(long soldierId){
@@ -272,6 +302,7 @@ public final class Game {
     public void setSoldierPowerup(long tankId, int powerupValue){
         getSoldier((int) tankId).setPowerUpType(powerupValue);
         Soldier curr = getSoldier((int) tankId);
+        curr.pQ.add(powerupValue);
         if (powerupValue == 2) {
             curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
             curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
@@ -281,12 +312,34 @@ public final class Game {
             curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
         }
-
+        //SHIELD
+        if(powerupValue == 9){
+            if(!curr.hasShield) {
+                curr.hasShield = true;
+                //Add 50 points of armor to entity
+                curr.setLife(curr.getLife() + 50);
+                //Delays firing (and building????) by 50%
+                curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
+                //Loses 1 point of armor per second
+                //Make a timer
+                    //while(timer.time > 0)
+                //When all armor is lost, no more powerup
+                //Only one can be equipped to an entity at a time
+            }
+        }
+        //REPAIRKIT
+        if(powerupValue == 10){
+            //Heals player 1HP for up to 120 seconds
+            //After 120 seconds, no more powerup
+            //CANNOT BE EJECTED
+        }
     }
     public void setTankPowerup(long tankId, int powerupValue) {
             getTank(tankId).setPowerUpType(powerupValue);
             Tank curr = getTank(tankId);
-            //FUSION
+            curr.pQ.add(powerupValue);
+
+        //FUSION
             if (powerupValue == 2) {
                 curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
                 curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
@@ -297,17 +350,27 @@ public final class Game {
                 curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
                 curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
             }
-
+        //SHIELD
+        if(powerupValue == 9){
+            if(!curr.hasShield) {
+                curr.hasShield = true;
+                //Add 50 points of armor to entity
+                curr.setLife(curr.getLife() + 50);
+                //Delays firing (and building????) by 50%
+                curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
+                //Loses 1 point of armor per second
+                //Make a timer
+                    //while(timer.time > 0)
+                //When all armor is lost, no more powerup
+                //Only one can be equipped to an entity at a time
+            }
+        }
+        //REPAIRKIT
+        if(powerupValue == 10){
+            //Heals player 1HP for up to 120 seconds
+            //After 120 seconds, no more powerup
+            //CANNOT BE EJECTED
+        }
     }
-    public ArrayList<Integer> getTankPowerups(long tankId) {
-        return getTank(tankId).powerupList;
-    }
-
-    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
-
-        return getSoldier(soldierId).powerupList;
-    }
-
-
 
 }

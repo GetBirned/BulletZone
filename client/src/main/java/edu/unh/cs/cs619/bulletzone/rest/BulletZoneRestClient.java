@@ -22,7 +22,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://10.0.0.10:61900/games",
+@Rest(rootUrl = "http://10.21.149.194:61900/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 
@@ -54,6 +54,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Put("/{tankId}/fire/1")
     BooleanWrapper fire(@Path long tankId);
 
+    @Get("/{tankId}/ejectPowerup/{isTank}")
+    LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
+
     @Post("/setTankPowerup/{tankId}/{powerupValue}/{isTank}")
     void setTankPowerup(@Path long tankId, @Path int powerupValue, @Path boolean isTank);
 
@@ -69,8 +72,8 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Get("/{tankId}/getHealth")
     LongWrapper getHealth(@Path long tankId);
 
-    @Get("/{tankId}/getPowerups/{isTank}")
-    ArrayListWrapper getPowerups(@Path long tankId, @Path boolean isTank);
+    @Post("/{tankId}/setHealth/{isTank}/{offset}")
+    void setHealth(@Path long tankId, @Path boolean isTank, @Path long offset);
 
     @Get("/{tankId}/getSoldierHealth")
     LongWrapper getSoldierHealth(@Path long tankId);

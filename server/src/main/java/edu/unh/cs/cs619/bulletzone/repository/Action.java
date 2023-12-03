@@ -125,7 +125,7 @@ public class Action {
                                 tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() * 1.5));
                             }
                         } else if (nextField.getEntity() instanceof Road) {
-                            // Road logic : move speed to entire halved
+                            // Road logic : move speed to enter halved
                             if (!((parent.getEntity()) instanceof Hill)) {
                                 tank.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 2));
                             }
@@ -199,7 +199,7 @@ public class Action {
                     return false;
 
                 long millis = System.currentTimeMillis();
-                if (millis < tank.getLastFireTime()/*>tank.getAllowedFireInterval()*/) {
+                if (millis < tank.getLastFireTime() && millis  > tank.getAllowedFireInterval()) {
                     return false;
                 }
 
@@ -286,8 +286,9 @@ public class Action {
                                         || nextField.getEntity() instanceof nukePowerUp) {
                                     // Double-check that the nextField.getEntity() instance matches the actual class type of Shield or HealthKit
                                     System.out.println("Clearing field for Shield or HealthKit. Entity type: " + nextField.getEntity().getClass().getSimpleName());
-                                    //currentField.clearField();
+                                    currentField.clearField();
                                     nextField.setFieldEntity(new Grass());
+                                    isVisible = true;
                                 }
 
                                 System.out.println("After clearing field. Entity type: " + nextField.getEntity().getClass().getSimpleName());

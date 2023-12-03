@@ -1,6 +1,8 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Soldier extends FieldEntity {
 
@@ -9,9 +11,6 @@ public class Soldier extends FieldEntity {
     private final long id;
 
     private String ip;
-    public ArrayList<Integer> powerupList = new ArrayList<>(10);
-
-
     private long lastMoveTime;
     private int allowedMoveInterval;
 
@@ -23,12 +22,14 @@ public class Soldier extends FieldEntity {
 
     private int numberOfBullets;
     private int allowedNumberOfBullets;
+    public Queue<Integer> pQ = new LinkedList<>();
 
     private int life;
 
     private Direction direction;
     private int powerUpType;
     public int ind;
+    public boolean hasShield;
 
     public Soldier(long id, Direction direction, String ip) {
         this.id = id;
@@ -40,18 +41,24 @@ public class Soldier extends FieldEntity {
         allowedFireInterval = 250; // Shoot 250ms
         lastMoveTime = 0;
         allowedMoveInterval = 1000; // 1 second between move
-        setArrList();
+        hasShield = false;
         ind = 0;
     }
-    public void setArrList(){
-        for (int i = 0; i < 100; i++) {
-            powerupList.add(0);
+    public void revertBuffs(int type){
+        if (type == 2) {
+            this.setAllowedFireInterval((int) (this.getAllowedFireInterval() * 2));
+            this.setAllowedNumberOfBullets(this.getAllowedNumberOfBullets() / 2);
+            this.setAllowedMoveInterval((int) (this.getAllowedMoveInterval() / 1.25));
+        } else if (type == 3){
+            this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
+            this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
         }
+
+        //TODO: revert buffs for the new powerups
     }
+
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
-        powerupList.set(ind, powerupValue);
-        this.ind++;
     }
 
     public int getPowerUpType(){
