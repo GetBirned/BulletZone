@@ -86,7 +86,7 @@ public class GridAdapter extends BaseAdapter {
     public int friendlyTank(int value) {
         String tankID = Integer.toString(value);
         tankID = tankID.substring(1, 4);
-        Log.d("Sending", tankID);
+        //Log.d("Sending", tankID);
         return Integer.parseInt(tankID);
     }
 
@@ -186,7 +186,7 @@ public class GridAdapter extends BaseAdapter {
 
                 String receiveString = bufferedReader.readLine();
                 int tankID = Integer.parseInt(receiveString);
-                Log.d("Sending", "tankID from file is " + tankID);
+                //Log.d("Sending", "tankID from file is " + tankID);
 
                 inputStream.close();
                 return tankID;
