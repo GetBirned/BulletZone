@@ -1,16 +1,17 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
-public class Soldier extends FieldEntity implements Vehicle{
+public class Builder extends FieldEntity implements Vehicle{
 
-    private static final String TAG = "Soldier";
+    private static final String TAG = "Builder";
 
     private final long id;
 
     private String ip;
+    public ArrayList<Integer> powerupList = new ArrayList<>(10);
+
+
     private long lastMoveTime;
     private int allowedMoveInterval;
 
@@ -22,43 +23,37 @@ public class Soldier extends FieldEntity implements Vehicle{
 
     private int numberOfBullets;
     private int allowedNumberOfBullets;
-    public Queue<Integer> pQ = new LinkedList<>();
 
     private int life;
 
     private Direction direction;
     private int powerUpType;
+    private int isActive;
     public int ind;
-    public boolean hasShield;
 
-    public Soldier(long id, Direction direction, String ip) {
+    public Builder(long id, Direction direction, String ip, int isActive) {
         this.id = id;
         this.direction = direction;
         this.ip = ip;
+        this.isActive = isActive;
         numberOfBullets = 0;
-        allowedNumberOfBullets = 6;
+        allowedNumberOfBullets = 4;
         lastFireTime = 0;
         allowedFireInterval = 250; // Shoot 250ms
         lastMoveTime = 0;
-        allowedMoveInterval = 1000; // 1 second between move
-        hasShield = false;
+        allowedMoveInterval = 250; // 1 second between move
+        setArrList();
         ind = 0;
     }
-    public void revertBuffs(int type){
-        if (type == 2) {
-            this.setAllowedFireInterval((int) (this.getAllowedFireInterval() * 2));
-            this.setAllowedNumberOfBullets(this.getAllowedNumberOfBullets() / 2);
-            this.setAllowedMoveInterval((int) (this.getAllowedMoveInterval() / 1.25));
-        } else if (type == 3){
-            this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
-            this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
+    public void setArrList(){
+        for (int i = 0; i < 100; i++) {
+            powerupList.add(0);
         }
-
-        //TODO: revert buffs for the new powerups
     }
-
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
+        powerupList.set(ind, powerupValue);
+        this.ind++;
     }
 
     public int getPowerUpType(){
@@ -71,7 +66,7 @@ public class Soldier extends FieldEntity implements Vehicle{
 
     @Override
     public int getIntValue() {
-        return (int) (40000000 + 10000 * id + 10 * life + Direction
+        return (int) (50000000 + 10000 * id + 10 * life + Direction
                 .toByte(direction));
     }
 
@@ -82,7 +77,7 @@ public class Soldier extends FieldEntity implements Vehicle{
             tank.setIsActive(1);
             isInTank = true;
             // Reset soldier's health to full
-            setLife(25);
+            setLife(50);
             // Start or reset the ejection cooldown timer
             startEjectionCooldown();
             return true;
@@ -108,8 +103,8 @@ public class Soldier extends FieldEntity implements Vehicle{
         return (currentTime - lastEjectionTime) >= 3000;
     }
 
-    public void resetSoldierLife() {
-        life = 25;
+    public void resetBuilderLife() {
+        life = 50;
     }
 
     @Override
@@ -127,16 +122,6 @@ public class Soldier extends FieldEntity implements Vehicle{
 
     public String getIp(){
         return ip;
-    }
-
-    @Override
-    public int getIsActive() {
-        return 0;
-    }
-
-    @Override
-    public void setIsActive(int isActive) {
-
     }
 
     public void setIp(String ip) {
@@ -224,6 +209,14 @@ public class Soldier extends FieldEntity implements Vehicle{
 
     public void setAllowedNumberOfBullets(int allowedNumberOfBullets) {
         this.allowedNumberOfBullets = allowedNumberOfBullets;
+    }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
     }
 
 }

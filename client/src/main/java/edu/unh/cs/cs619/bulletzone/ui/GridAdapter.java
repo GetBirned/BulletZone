@@ -9,6 +9,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.SystemService;
+import org.androidannotations.rest.spring.annotations.RestService;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -84,7 +90,7 @@ public class GridAdapter extends BaseAdapter {
     public int friendlyTank(int value) {
         String tankID = Integer.toString(value);
         tankID = tankID.substring(1, 4);
-        // Log.d("Sending", tankID);
+        //Log.d("Sending", tankID);
         return Integer.parseInt(tankID);
     }
 
@@ -97,9 +103,10 @@ public class GridAdapter extends BaseAdapter {
     private int[][] hasPowerUp = new int[16][16];
     // 0 grass, // 1 thingamajig //2 nuke //3 apple
     //4 hill // 5 rocky // 6 forest // 7 soldier // 8 water
-    //9 deflector //10 repair kit
+    //9 deflector //10 repair kit // 11 bridge // 12 road
 
     public void setFriendlyTank(ImageView imageView, int direction, int val) {
+
         lastFriendlyDirection = direction;
         TerrainUI t = new TerrainUI();
         t.friendlyTankImage(imageView, direction, val);
@@ -114,6 +121,11 @@ public class GridAdapter extends BaseAdapter {
     public void setSoldier(ImageView imageView, int direction, int val) {
         TerrainUI t = new TerrainUI();
         t.soldierImage(imageView, direction, val);
+    }
+
+    public void setBuilder(ImageView imageView, int direction, int val) {
+        TerrainUI t = new TerrainUI();
+        t.builderImage(imageView, direction, val);
     }
 
     public void addSoldier(long soldierId) {
@@ -178,7 +190,7 @@ public class GridAdapter extends BaseAdapter {
 
                 String receiveString = bufferedReader.readLine();
                 int tankID = Integer.parseInt(receiveString);
-                // Log.d("Sending", "tankID from file is " + tankID);
+                //Log.d("Sending", "tankID from file is " + tankID);
 
                 inputStream.close();
                 return tankID;
@@ -273,6 +285,7 @@ public class GridAdapter extends BaseAdapter {
                 imageView.setImageResource(R.drawable.water);
             }
             if (val > 0) {
+
                 int direction = (val % 10);
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
@@ -283,7 +296,20 @@ public class GridAdapter extends BaseAdapter {
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
-                    imageView.setImageResource(R.drawable.bulletgrass);
+                    if (hasPowerUp[row][col] == 4) {
+                        imageView.setImageResource(R.drawable.bullethilly);
+                    } else if(hasPowerUp[row][col] == 5) {
+                        imageView.setImageResource(R.drawable.bulletrocky);
+                    } else if (hasPowerUp[row][col] == 8) {
+                        imageView.setImageResource(R.drawable.bulletwater);
+                    } else if (hasPowerUp[row][col] == 11) {
+                        imageView.setImageResource(R.drawable.bulletbridge);
+                    } else if (hasPowerUp[row][col] == 12) {
+                        imageView.setImageResource(R.drawable.bulletroad);
+                    } else {
+                        imageView.setImageResource(R.drawable.bulletgrass);
+                    }
+
 
                 } else if (val >= 10000000 && val <= 20000000) {
                     if(didEject) {
@@ -315,6 +341,18 @@ public class GridAdapter extends BaseAdapter {
                         mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType + " and " + String.valueOf(finalVal));
+
+                                return null;
+                            }
+                        }.execute();
                     }
                     numPlayers++;
                     // TODO: need to discern between friendly tank
@@ -353,7 +391,21 @@ public class GridAdapter extends BaseAdapter {
                         mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
                         numItems--;
+                    } else {
+                        int finalType = hasPowerUp[row][col];
+                        int finalVal1 = val;
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                Log.e("soldier", "Solder #: " + friendlyTank(finalVal1) +  "toRestClient withVal:"  + finalType);
+
+                                return null;
+                            }
+                        }.execute();
                     }
+                } else if (val >= 50000000 && val <= 60000000) {
+                    setBuilder(imageView, direction, hasPowerUp[row][col]);
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
                     //numItems++;
@@ -386,6 +438,12 @@ public class GridAdapter extends BaseAdapter {
                     // numItems++;
                     hasPowerUp[row][col] = 10;
                     imageView.setImageResource(R.drawable.toolsgrass);
+                } else if (val == 60) {
+                    hasPowerUp[row][col] = 11;
+                    imageView.setImageResource(R.drawable.waterwithbridge);
+                } else if (val == 70) {
+                    hasPowerUp[row][col] = 12;
+                    imageView.setImageResource(R.drawable.roadongrass);
                 }
             } else {
 
@@ -418,7 +476,7 @@ public class GridAdapter extends BaseAdapter {
                             //late to change so for shield and health kit i changed them to their
                             //respective vals
                             if(hasPowerUp[row][col] == 4) {
-                                hasPowerUp[row][col] = 9;
+                                hasPowerUp[row][col] =9;
                             } else if(hasPowerUp[row][col] == 5) {
                                 hasPowerUp[row][col] = 10;
                             }

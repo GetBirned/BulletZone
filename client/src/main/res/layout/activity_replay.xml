@@ -31,12 +31,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LEAVE" />
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:layout_marginLeft="100dp"
-                android:id="@+id/speed_text"/>
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:id="@+id/speed_text"
+                android:src="@drawable/currspeed_1"/>
         </LinearLayout>
         <SeekBar
             android:id="@+id/seekbar"
@@ -49,7 +50,6 @@
             android:id="@+id/replayGV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:stretchMode="columnWidth"
             android:layout_weight="1"
             android:background="#FFFFFF"
             android:numColumns="16"

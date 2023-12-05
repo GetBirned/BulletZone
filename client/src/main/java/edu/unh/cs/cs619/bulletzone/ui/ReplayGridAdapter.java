@@ -71,6 +71,14 @@ public class ReplayGridAdapter extends BaseAdapter {
             imageView.setImageResource(R.drawable.applepowerupgrass);
         } else if (cellValue == 7) {
             imageView.setImageResource(R.drawable.coingrass);
+        } else if (cellValue == 50) {
+            imageView.setImageResource(R.drawable.water);
+        } else if (cellValue == 3131) {
+            imageView.setImageResource(R.drawable.shieldgrass);
+        } else if (cellValue == 3141) {
+            imageView.setImageResource(R.drawable.toolsgrass);
+        } else if (cellValue == 60) {
+            imageView.setImageResource(R.drawable.waterwithbridge);
         } else if (cellValue == 1000 || (cellValue > 1000 && cellValue <= 2000)) {
             imageView.setImageResource(R.drawable.brick);
         } else if (cellValue >= 2 * mill_scale && cellValue < 3 * mill_scale) {
@@ -107,6 +115,10 @@ public class ReplayGridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.soldiergrassleft);
                     break;
             }
+        } else if (cellValue == 60) {
+            imageView.setImageResource(R.drawable.waterwithbridge);
+        } else if (cellValue == 70) {
+            imageView.setImageResource(R.drawable.roadongrass);
         }
         return imageView;
     }

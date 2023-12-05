@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Queue;
 
 
-public class Tank extends FieldEntity {
+public class Tank extends FieldEntity implements Vehicle {
 
     private static final String TAG = "Tank";
 
     private final long id;
     private int powerUpType;
+    public ArrayList<Integer> powerupList = new ArrayList<Integer>(10);
+
     private final String ip;
     public Queue<Integer> pQ = new LinkedList<>();
     private long lastMoveTime;
@@ -46,6 +48,16 @@ public class Tank extends FieldEntity {
         numShield = 0;
         ind = 0;
     }
+    public void setArrList(){
+        for (int i = 0; i < 100; i++) {
+            powerupList.add(0);
+        }
+    }
+    public void setPowerUpType(int powerupValue) {
+        this.powerUpType = powerupValue;
+        powerupList.set(ind, powerupValue);
+        this.ind++;
+    }
     public int getPowerUpType(){
         return this.powerUpType;
     }
@@ -71,17 +83,6 @@ public class Tank extends FieldEntity {
         return new Tank(id, direction, ip, isActive);
     }
 
-    /**
-     public interface OnLifeChangeListener {
-     void onLifeChanged(int newLife);
-     }
-     */
-
-    /**
-     public void setOnLifeChangeListener(OnLifeChangeListener listener) {
-     this.onLifeChangeListener = listener;
-     }
-     */
 
     @Override
     public void hit(int damage) {
@@ -165,6 +166,11 @@ public class Tank extends FieldEntity {
     @JsonIgnore
     public long getId() {
         return id;
+    }
+
+    @Override
+    public boolean reenterTank(Tank tank) {
+        return false;
     }
 
     @Override
