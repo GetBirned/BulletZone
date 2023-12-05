@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -43,7 +44,7 @@ public class ReplayActivity extends AppCompatActivity {
     protected ReplayGridAdapter replayAdapter;
     ReplayRunner replayRunner;
     ReplaySpeed replaySpeed;
-    TextView speed_text;
+    ImageView speed_text;
     private Button play;
     private Button leave;
     private Button pause;
@@ -70,9 +71,9 @@ public class ReplayActivity extends AppCompatActivity {
         replay_gv.setAdapter(replayAdapter);
 
         // set speed_text view
-        speed_text = (TextView) findViewById(R.id.speed_text);
+        speed_text = (ImageView) findViewById(R.id.speed_text);
         // Initial speed_text value
-        speed_text.setText("CURR SPEED 1x");
+        speed_text.setImageResource(R.drawable.currspeed_1);
 
         play = (Button) findViewById(R.id.play);
         play.setOnClickListener(new View.OnClickListener() {
@@ -111,8 +112,22 @@ public class ReplayActivity extends AppCompatActivity {
                 // delay_default = 4000
 
                 replaySpeed.setSpeed(progress+1);
+                switch (progress+1) {
+                    case 2:
+                        speed_text.setImageResource(R.drawable.currspeed_2);
+                        break;
+                    case 3:
+                        speed_text.setImageResource(R.drawable.currspeed_3);
+                        break;
+                    case 4:
+                        speed_text.setImageResource(R.drawable.currspeed_4);
+                        break;
+                    default:
+                        speed_text.setImageResource(R.drawable.currspeed_1);
+                        break;
+                }
                 // default delay is 4 == 1x 4000 / 4 ;; 4000 ( delay_amount)
-                speed_text.setText("CURR SPEED " + String.valueOf(progress+1) + "x");
+                //speed_text.setText("CURR SPEED " + String.valueOf(progress+1) + "x");
             }
 
             @Override
