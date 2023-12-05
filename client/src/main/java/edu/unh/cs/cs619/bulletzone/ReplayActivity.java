@@ -135,6 +135,7 @@ public class ReplayActivity extends AppCompatActivity {
                     Log.d("PAUSED", "not paused");
 
                     int[][] currFrame = replayRunner.getCurrBoardState();
+                    // if getPaused is true, don't update frame
                     replayRunner.updateFrame();
                     replayAdapter.updateList(currFrame);
                     replayAdapter.notifyDataSetChanged();

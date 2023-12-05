@@ -98,7 +98,6 @@ public class ReplayRunner {
 
     public void getReplayStates(String filename) {
         getReplayFile();
-        //String data = readFromFile(this);
         String ret = "";
 
         try {
@@ -116,7 +115,6 @@ public class ReplayRunner {
 
                 inputStream.close();
                 ret = stringBuilder.toString();
-                //Log.d("RES", ret);
             }
         }
         catch (FileNotFoundException e) {
@@ -126,9 +124,6 @@ public class ReplayRunner {
         }
 
         String[] board_line_split = ret.split(" ");
-        //Log.d("Array RET split", Arrays.toString(board_line_split));
-        //Log.d("Array RET size", String.valueOf(ret.length()));
-        //Log.d("ARR", Arrays.toString(board_line_split));
 
         int[][] board_state = new int[16][16];
         // NOTE: need to do length-1 as split includes newline char or something
@@ -150,6 +145,8 @@ public class ReplayRunner {
             }
             //Log.d("VAL VAL", logging_thang);
         }
+        // remove first board_state (always blank)
+        board_states.remove(0);
         Log.d("FRAME NUM", String.valueOf(board_states.size()));
     }
 
