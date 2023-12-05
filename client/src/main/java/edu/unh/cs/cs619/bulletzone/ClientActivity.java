@@ -100,11 +100,13 @@ public class ClientActivity extends Activity {
     int controllingTank;
 
     int controllingBuilder;
-
+    ButtonController buttonController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        buttonController = new ButtonController(this);
         // Establish shake/sensorManager. Will handle shakes.
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -239,7 +241,10 @@ public class ClientActivity extends Activity {
         try {
             tankId = restClient.join().getResult();
             gridPollTask.doPoll();
+            buttonController.initializeButtons();
             controllingTank = 1;
+            controllingBuilder = 0;
+            buttonController.updateButtons(controllingBuilder);
             updateHealthAsync(tankId);
         } catch (Exception e) {
             System.out.println("ERROR: joining game");
@@ -451,6 +456,7 @@ public class ClientActivity extends Activity {
     protected void controlBuilder() {
         controllingTank = 0;
         controllingBuilder = 1;
+        buttonController.updateButtons(controllingBuilder);
         controlBuilderAsync();
     }
 
@@ -463,6 +469,7 @@ public class ClientActivity extends Activity {
     protected void controlTank() {
         controllingTank = 1;
         controllingBuilder = 0;
+        buttonController.updateButtons(controllingBuilder);
         controlTankAsync();
     }
 
