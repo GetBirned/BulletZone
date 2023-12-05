@@ -31,4 +31,8 @@ public class Shield extends FieldEntity{
     public int getPos(){
         return pos;
     }
+
+    public void giveEffects(FieldEntity curr){
+        //Do timer shit here
+    }
 }

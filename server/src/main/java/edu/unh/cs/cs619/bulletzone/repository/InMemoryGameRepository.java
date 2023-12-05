@@ -47,7 +47,7 @@ public class InMemoryGameRepository implements GameRepository {
         synchronized (this.monitor) {
             Tank tank;
             if (game == null) {
-               game = new Game();
+                game = new Game();
             }
 
             if( (tank = game.getTank(ip)) != null){
@@ -157,7 +157,7 @@ public class InMemoryGameRepository implements GameRepository {
     }
     @Override
     public void updateLife(long tankId, boolean isTank, long offset) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
-       game.setHealth(tankId,isTank,offset);
+        game.setHealth(tankId,isTank,offset);
     }
 
     @Override
@@ -192,12 +192,12 @@ public class InMemoryGameRepository implements GameRepository {
 
     @Override
     public int getSoldierPowerup(long tankId) {
-       return game.getSoldierPowerup(tankId);
+        return game.getSoldierPowerup(tankId);
     }
 
     @Override
     public int getTankPowerup(long tankId) {
-       return game.getTankPowerup(tankId);
+        return game.getTankPowerup(tankId);
     }
 
     public Stack<GridEvent> getCommandHistory() {

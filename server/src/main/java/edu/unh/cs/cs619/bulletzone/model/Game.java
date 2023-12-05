@@ -303,6 +303,7 @@ public final class Game {
         getSoldier((int) tankId).setPowerUpType(powerupValue);
         Soldier curr = getSoldier((int) tankId);
         curr.pQ.add(powerupValue);
+
         if (powerupValue == 2) {
             curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
             curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
@@ -322,7 +323,7 @@ public final class Game {
                 curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
                 //Loses 1 point of armor per second
                 //Make a timer
-                    //while(timer.time > 0)
+                //while(timer.time > 0)
                 //When all armor is lost, no more powerup
                 //Only one can be equipped to an entity at a time
             }
@@ -331,38 +332,44 @@ public final class Game {
         if(powerupValue == 10){
             //Heals player 1HP for up to 120 seconds
             //After 120 seconds, no more powerup
-            //CANNOT BE EJECTED
+            //Destroyed when ejected
         }
     }
     public void setTankPowerup(long tankId, int powerupValue) {
-            getTank(tankId).setPowerUpType(powerupValue);
-            Tank curr = getTank(tankId);
-            curr.pQ.add(powerupValue);
+        getTank(tankId).setPowerUpType(powerupValue);
+        Tank curr = getTank(tankId);
+        curr.pQ.add(powerupValue);
 
         //FUSION
-            if (powerupValue == 2) {
-                curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
-                curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
-                curr.setAllowedFireInterval((int)curr.getAllowedFireInterval() / 2);
-            }
-            //ANTIGRAV
-            if (powerupValue == 3) {
-                curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
-                curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
-            }
+        if (powerupValue == 2) {
+            curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
+            curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
+            curr.setAllowedFireInterval((int)curr.getAllowedFireInterval() / 2);
+        }
+        //ANTIGRAV
+        if (powerupValue == 3) {
+            curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
+            curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        }
         //SHIELD
         if(powerupValue == 9){
-            if(!curr.hasShield) {
-                curr.hasShield = true;
+            //While curr.numshield >= 0?
+            //new method for sure
+
+            //Make sure to make this a while loop after
+            if(curr.numShield >= 0) {
+                curr.numShield --;
                 //Add 50 points of armor to entity
+                int origlife = curr.getLife();
                 curr.setLife(curr.getLife() + 50);
                 //Delays firing (and building????) by 50%
                 curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
                 //Loses 1 point of armor per second
                 //Make a timer
-                    //while(timer.time > 0)
-                //When all armor is lost, no more powerup
+                //while(curr.life (orig+50) > origlife)
                 //Only one can be equipped to an entity at a time
+            } else{
+                curr.numShield++;
             }
         }
         //REPAIRKIT

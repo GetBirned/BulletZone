@@ -26,7 +26,7 @@ public class Tank extends FieldEntity {
     public int allowedNumberOfBullets;
 
     private int life;
-    public boolean hasShield;
+    public int numShield;
 
     private Direction direction;
 
@@ -43,7 +43,7 @@ public class Tank extends FieldEntity {
         allowedFireInterval = 1500;
         lastMoveTime = 0;
         allowedMoveInterval = 500;
-        hasShield = false;
+        numShield = 0;
         ind = 0;
     }
     public int getPowerUpType(){
@@ -72,15 +72,15 @@ public class Tank extends FieldEntity {
     }
 
     /**
-    public interface OnLifeChangeListener {
-        void onLifeChanged(int newLife);
-    }
+     public interface OnLifeChangeListener {
+     void onLifeChanged(int newLife);
+     }
      */
 
     /**
-    public void setOnLifeChangeListener(OnLifeChangeListener listener) {
-        this.onLifeChangeListener = listener;
-    }
+     public void setOnLifeChangeListener(OnLifeChangeListener listener) {
+     this.onLifeChangeListener = listener;
+     }
      */
 
     @Override

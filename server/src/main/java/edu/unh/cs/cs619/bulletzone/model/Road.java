@@ -14,7 +14,7 @@ public class Road extends FieldEntity {
 
     @Override
     public int getIntValue() {
-        return 2;
+        return 70;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class Road extends FieldEntity {
 
     @Override
     public String toString() {
-        return "W";
+        return "R";
     }
 
     public int getPos(){

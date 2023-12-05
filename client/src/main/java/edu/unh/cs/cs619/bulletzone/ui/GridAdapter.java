@@ -84,7 +84,7 @@ public class GridAdapter extends BaseAdapter {
     public int friendlyTank(int value) {
         String tankID = Integer.toString(value);
         tankID = tankID.substring(1, 4);
-       // Log.d("Sending", tankID);
+        // Log.d("Sending", tankID);
         return Integer.parseInt(tankID);
     }
 
@@ -178,7 +178,7 @@ public class GridAdapter extends BaseAdapter {
 
                 String receiveString = bufferedReader.readLine();
                 int tankID = Integer.parseInt(receiveString);
-               // Log.d("Sending", "tankID from file is " + tankID);
+                // Log.d("Sending", "tankID from file is " + tankID);
 
                 inputStream.close();
                 return tankID;
@@ -213,6 +213,7 @@ public class GridAdapter extends BaseAdapter {
     }
 
     public void ejectPowerup(int row, int col) {
+        //FIND SOLDIER'S POSITION
         if (convert(ejectedType) != -1) {
             int[][] offsets = {
                     {1, 1}, {1, 0}, {1, -1},
@@ -286,9 +287,9 @@ public class GridAdapter extends BaseAdapter {
 
                 } else if (val >= 10000000 && val <= 20000000) {
                     if(didEject) {
-                        //could produce -1
-                        //FIX, randomize
-                        ejectPowerup(row, col);
+                        if(convert(ejectedType) != 3141) {
+                            ejectPowerup(row, col);
+                        }
 
                     }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
@@ -417,7 +418,7 @@ public class GridAdapter extends BaseAdapter {
                             //late to change so for shield and health kit i changed them to their
                             //respective vals
                             if(hasPowerUp[row][col] == 4) {
-                                hasPowerUp[row][col] =9;
+                                hasPowerUp[row][col] = 9;
                             } else if(hasPowerUp[row][col] == 5) {
                                 hasPowerUp[row][col] = 10;
                             }

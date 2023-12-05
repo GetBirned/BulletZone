@@ -22,7 +22,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://10.21.149.194:61900/games",
+@Rest(rootUrl = "http://stman1.cs.unh.edu:6191/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 
@@ -77,4 +77,16 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Get("/{tankId}/getSoldierHealth")
     LongWrapper getSoldierHealth(@Path long tankId);
+
+    @Post("/builder/{tankId}")
+    LongWrapper controlBuilder(@Path long tankId);
+
+    @Post("/tank/{tankId}")
+    LongWrapper controlTank(@Path long tankId);
+
+    @Post("/dismantleImprovement/{tankId}")
+    LongWrapper dismantleImprovement(@Path long tankId);
+
+    @Post("/buildImprovement/{choice}/{tankId}")
+    LongWrapper buildImprovement(@Path int choice,@Path long tankId);
 }
