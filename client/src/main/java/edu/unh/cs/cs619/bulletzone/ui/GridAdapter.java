@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.rest.spring.annotations.RestService;
@@ -21,9 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Random;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
 
 import edu.unh.cs.cs619.bulletzone.R;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
@@ -296,8 +292,14 @@ public class GridAdapter extends BaseAdapter {
                         hasPowerUp[row][col] = 0;
                         numItems--;
                     }
-                    if (hasPowerUp[row][col] == 8) {
+                    if (hasPowerUp[row][col] == 4) {
+                        imageView.setImageResource(R.drawable.bullethilly);
+                    } else if(hasPowerUp[row][col] == 5) {
+                        imageView.setImageResource(R.drawable.bulletrocky);
+                    } else if (hasPowerUp[row][col] == 8) {
                         imageView.setImageResource(R.drawable.bulletwater);
+                    } else if (hasPowerUp[row][col] == 11) {
+                        imageView.setImageResource(R.drawable.bulletbridge);
                     } else if (hasPowerUp[row][col] == 12) {
                         imageView.setImageResource(R.drawable.bulletroad);
                     } else {
