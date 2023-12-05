@@ -79,9 +79,8 @@ public class ClientActivity extends Activity {
 
     @Bean
     BZRestErrorhandler bzRestErrorhandler;
-
-    byte previousDirection;
-    byte tempDirection;
+    byte previousBuilderDirection = 0;
+    byte previousTankDirection = 0;
 
     /**
      * Remote tank identifier
@@ -265,6 +264,7 @@ public class ClientActivity extends Activity {
         }
     }
 
+    byte tempDirection;
     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})
     protected void onButtonMove(View view) {
         final int viewId = view.getId();
@@ -296,25 +296,49 @@ public class ClientActivity extends Activity {
                 Log.e(TAG, "Unknown movement button id: " + viewId);
                 break;
         }
-            if (previousDirection == direction) {
-                previousDirection = tempDirection;
-                this.moveAsync(tankId, direction);
-            } else {
-                if (previousDirection == 2 && direction == 6) {
-                    previousDirection = tempDirection;
-                    this.moveAsync(tankId, direction);
-                } else if (previousDirection == 6 && direction == 2) {
-                    previousDirection = tempDirection;
-                    this.moveAsync(tankId, direction);
-                } else if (previousDirection == 0 && direction == 4) {
-                    previousDirection = tempDirection;
-                    this.moveAsync(tankId, direction);
-                } else if (previousDirection == 4 && direction == 0) {
-                    previousDirection = tempDirection;
+            if (controllingTank == 1) {
+                if (previousTankDirection == direction) {
+                    previousTankDirection = tempDirection;
                     this.moveAsync(tankId, direction);
                 } else {
-                    previousDirection = tempDirection;
-                    this.turnAsync(tankId, direction);
+                    if (previousTankDirection == 2 && direction == 6) {
+                        previousTankDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else if (previousTankDirection == 6 && direction == 2) {
+                        previousTankDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else if (previousTankDirection == 0 && direction == 4) {
+                        previousTankDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else if (previousTankDirection == 4 && direction == 0) {
+                        previousTankDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else {
+                        previousTankDirection = tempDirection;
+                        this.turnAsync(tankId, direction);
+                    }
+                }
+            } else {
+                if (previousBuilderDirection == direction) {
+                    previousBuilderDirection = tempDirection;
+                    this.moveAsync(tankId, direction);
+                } else {
+                    if (previousBuilderDirection == 2 && direction == 6) {
+                        previousBuilderDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else if (previousBuilderDirection == 6 && direction == 2) {
+                        previousBuilderDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else if (previousBuilderDirection == 0 && direction == 4) {
+                        previousBuilderDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else if (previousBuilderDirection == 4 && direction == 0) {
+                        previousBuilderDirection = tempDirection;
+                        this.moveAsync(tankId, direction);
+                    } else {
+                        previousBuilderDirection = tempDirection;
+                        this.turnAsync(tankId, direction);
+                    }
                 }
             }
     }
