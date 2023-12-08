@@ -324,11 +324,22 @@ public class GridAdapter extends BaseAdapter {
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
                         if(hasPowerUp[row][col] == 1){
-                            int rand = random.nextInt(196) + 5;
-                            numCoins += rand;
-                            Log.d("NUMCOINS:", this.numCoins+"");
+
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                   Log.e("Sending money toRest", " Sending money toRest withVal: " + username);
+                                    System.out.println(" Sending money toRest withVal: " + username);
+                                    int rand = random.nextInt(196) + 5;
+                                    restClient.updateBalance(username, rand );
+
+
+                                    return null;
+                                }
+                            }.execute();
                         }
                         else if(hasPowerUp[row][col] != 1){
+                            Log.e("TAG", "MAKING IT TO THE COIN");
                             int finalType = hasPowerUp[row][col];
                             int finalVal = val;
                             new AsyncTask<Void, Void, Void>() {
@@ -363,9 +374,18 @@ public class GridAdapter extends BaseAdapter {
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
                         if(hasPowerUp[row][col] == 1){
-                            int rand = random.nextInt(196) + 5;
-                            numCoins += rand;
-                            Log.d("NUMCOINS:", this.numCoins+"");
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    Log.e("Sending money toRest", " Sending money toRest withVal: " + username);
+                                    System.out.println(" Sending money toRest withVal: " + username);
+                                    int rand = random.nextInt(196) + 5;
+                                    restClient.updateBalance(username, rand );
+
+
+                                    return null;
+                                }
+                            }.execute();
                         }
                         else if(hasPowerUp[row][col] != 1){
                             int finalType = hasPowerUp[row][col];
@@ -375,7 +395,6 @@ public class GridAdapter extends BaseAdapter {
                                 protected Void doInBackground(Void... voids) {
                                     restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
                                     Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
-
 
                                     return null;
                                 }

@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.unh.cs.cs619.bulletzone.datalayer.BulletZoneData;
+import edu.unh.cs.cs619.bulletzone.datalayer.account.BankAccount;
 import edu.unh.cs.cs619.bulletzone.datalayer.user.GameUser;
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
@@ -36,7 +37,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 //created and used for the Controller classes in the "web" package.
 @Component
 public class DataRepository {
-    private BulletZoneData bzdata;
+    public BulletZoneData bzdata;
 
     DataRepository() {
         //TODO: Replace database name, username, and password with what's appropriate for your group
@@ -74,4 +75,6 @@ public class DataRepository {
 
         return x;
     }
+
+
 }

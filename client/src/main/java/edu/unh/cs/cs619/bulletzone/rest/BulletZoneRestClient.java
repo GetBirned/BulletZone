@@ -14,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
+import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 /** "http://stman1.cs.unh.edu:6191/games"
@@ -22,7 +23,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://10.21.171.201:61907/games",
+@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 
@@ -92,4 +93,10 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Get("/{tankId}/ejectPowerup/{isTank}")
     LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
+
+    @Post("/account/updateBalance/{username}/{amount}")
+    BooleanWrapper updateBalance(@Path String username, @Path double amount);
+
+    @Get("/account/getBalance/{username}")
+    IntegerWrapper getBalance(@Path String username);
 }
