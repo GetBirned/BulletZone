@@ -175,6 +175,7 @@ public class GridAdapter extends BaseAdapter {
         t.builderImage(imageView, direction, val);
     }
 
+
     public void addSoldier(long soldierId) {
         mEntities[tankRow + 1][tankCol] = (int) soldierId;
         notifyDataSetChanged();

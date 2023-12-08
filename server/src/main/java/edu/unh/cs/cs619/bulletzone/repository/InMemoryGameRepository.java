@@ -228,6 +228,11 @@ public class InMemoryGameRepository implements GameRepository {
         return game.deploySoldier(tankID);
     }
 
+    @Override
+    public void updateLife(long tankId, boolean isTank, long offset) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+
+    }
+
     public LongWrapper controlBuilder(long tankId) {
         return game.controlBuilder(tankId);
     }

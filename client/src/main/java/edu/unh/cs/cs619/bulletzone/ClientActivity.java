@@ -317,38 +317,9 @@ public class ClientActivity extends Activity {
             Log.e(TAG, "GridWrapper is null");
         }
     }
-    @Click(R.id.ejectPowerup)
-    protected void ejectPowerup(){
-        ejectPowerupAsync();
-    }
 
-    @UiThread
-    public void noPowerupToEjectToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-    @Background
-    protected void ejectPowerupAsync() {
-        LongWrapper result;
-        int type = 0;
 
-        if (isSoldierDeployed) {
-            result = restClient.ejectPowerup(tankId, false);
-            Log.d("EJECTPOWERUP ------> ", "SOLDIER IS DEPLOYED ");
-        } else {
-            result = restClient.ejectPowerup(tankId, true);
-        }
-        if (result == null) {
-            Log.d(TAG, "ejectPowerupAsync: Result is NULL");
-        } else {
-            type = (int) result.getResult();
-        }
 
-        if (result == null || type == -1) {
-            noPowerupToEjectToast(this, "No Powerup To Eject!");
-        }
-        mGridAdapter.didEject = true;
-        mGridAdapter.ejectedType = type;
-    }
 
     byte tempDirection;
     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})

@@ -443,7 +443,7 @@ public final class Game {
 
     public ArrayList<Integer> getSoldierPowerups(long soldierId) {
 
-        return getSoldier(soldierId).powerupList;
+        return null;
     }
 
     public int getTankPowerup(long tankId) {

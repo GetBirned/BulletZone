@@ -133,5 +133,69 @@ public class TerrainUI {
         }
 
     }
+    public void builderImage(ImageView imageView, int direction, int val) {
+        if (val == 4) {
+            if (direction == 0) { // Hilly
+                imageView.setImageResource(R.drawable.hillybuilderup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.hillybuilderright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.hillybuilderdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.hillybuilderleft);
+            }
+        } else if (val == 5) {
+            if (direction == 0) { // Rocky
+                imageView.setImageResource(R.drawable.rockybuilderup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.rockybuilderright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.rockybuilderdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.rockybuilderleft);
+            }
+        } else if (val == 6) {
+            if (direction == 0) { // Forest
+                imageView.setImageResource(R.drawable.builderforestup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.builderforestright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.builderforestdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.builderforestleft);
+            }
+        } else if (val == 11) {
+            if (direction == 0) { // Bridge
+                imageView.setImageResource(R.drawable.builderbridgeup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.builderbridgeright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.builderbridgedown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.builderbridgeleft);
+            }
+        } else if (val == 12) {
+            if (direction == 0) { // Road
+                imageView.setImageResource(R.drawable.builderroadup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.builderroadright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.builderroaddown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.builderroadleft);
+            }
+        } else {
+            if (direction == 0) {
+                imageView.setImageResource(R.drawable.buildergrassup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.buildergrassright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.buildergrassdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.buildergrassleft);
+            }
+        }
+
+    }
 }
 

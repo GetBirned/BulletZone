@@ -188,29 +188,6 @@ class GamesController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/ejectPowerup/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<Long> ejectPowerup(@PathVariable long tankId, @PathVariable boolean isTank) {
-        try {
-            long powerup;
-            if (isTank) {
-                powerup = gameRepository.getTankPowerup(tankId);
-            } else {
-                powerup = gameRepository.getSoldierPowerup(tankId);
-            }
-
-            if (powerup == -1) {
-                return new ResponseEntity<>((long) -1, HttpStatus.NOT_FOUND);
-            }
-            System.out.println("POWERUP TYPE IS ------------------> " + powerup);
-
-            return new ResponseEntity<>(powerup, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getSoldierHealth", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
