@@ -30,9 +30,14 @@ public class UIFunctionalityTest {
 
     @Mock
     private LongWrapper longWrapper;
+    @Mock
+    private ButtonController buttonController;
 
     @Mock
     private GridWrapper gridWrapper;
+
+    @Mock
+    private ClientActivity clientActivity;
 
     @Mock
     private BooleanWrapper booleanWrapper;
@@ -285,5 +290,60 @@ public class UIFunctionalityTest {
     public void testLeave_0() {
         when(restClient.leave(anyLong())).thenReturn(booleanWrapper);
         assertTrue(restClient.leave(anyLong()).isResult());
+    }
+
+    //TANK
+    @Test
+    public void testControlPanel_0() {
+        when(restClient.join()).thenReturn(longWrapper);
+        assert (clientActivity.controllingTank == 1);
+        assert(clientActivity.controllingBuilder == 0);
+        assert (buttonController.deploySoldier.isActivated());
+        assert (!buttonController.dismantle.isActivated());
+
+
+    }
+    //BUILDER
+    @Test
+    public void testControlPanel_1() {
+        when(restClient.join()).thenReturn(longWrapper);
+        assert (clientActivity.controllingTank == 1);
+        assert(clientActivity.controllingBuilder == 0);
+        when(restClient.controlBuilder(tankId)).thenReturn(longWrapper);
+        assert (clientActivity.controllingTank == 0);
+        assert(clientActivity.controllingBuilder == 1);
+        assert (!buttonController.deploySoldier.isActivated());
+        assert (buttonController.buildBridge.isActivated());
+        assert (buttonController.buildRoad.isActivated());
+        assert (buttonController.buildWall.isActivated());
+
+
+    }
+    //TANK AND BUILDER
+    @Test
+    public void testControlPanel_2() {
+        when(restClient.join()).thenReturn(longWrapper);
+        assert (clientActivity.controllingTank == 1);
+        assert(clientActivity.controllingBuilder == 0);
+        assert(buttonController.deploySoldier.isActivated());
+        assert(!buttonController.controlBuilder.isActivated());
+        assert (!buttonController.buildBridge.isActivated());
+        assert (!buttonController.buildRoad.isActivated());
+        assert (!buttonController.buildWall.isActivated());
+        when(restClient.controlBuilder(tankId)).thenReturn(longWrapper);
+        assert (clientActivity.controllingTank == 0);
+        assert(clientActivity.controllingBuilder == 1);
+        buttonController.updateButtons(clientActivity.controllingBuilder);
+        assert (!buttonController.deploySoldier.isActivated());
+        assert (buttonController.buildBridge.isActivated());
+        assert (buttonController.buildRoad.isActivated());
+        assert (buttonController.buildWall.isActivated());
+        assert (buttonController.dismantle.isActivated());
+
+
+
+
+
+
     }
 }
