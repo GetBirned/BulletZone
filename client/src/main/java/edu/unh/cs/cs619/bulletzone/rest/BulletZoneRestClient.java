@@ -22,7 +22,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+@Rest(rootUrl = "http://10.21.171.201:61907/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 
@@ -54,9 +54,6 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Put("/{tankId}/fire/1")
     BooleanWrapper fire(@Path long tankId);
 
-    @Get("/{tankId}/ejectPowerup/{isTank}")
-    LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
-
     @Post("/setTankPowerup/{tankId}/{powerupValue}/{isTank}")
     void setTankPowerup(@Path long tankId, @Path int powerupValue, @Path boolean isTank);
 
@@ -78,6 +75,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Get("/{tankId}/getSoldierHealth")
     LongWrapper getSoldierHealth(@Path long tankId);
 
+    @Get("/{tankId}/getBuilderHealth")
+    LongWrapper getBuilderHealth(@Path long tankId);
+
     @Post("/builder/{tankId}")
     LongWrapper controlBuilder(@Path long tankId);
 
@@ -89,4 +89,7 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Post("/buildImprovement/{choice}/{tankId}")
     LongWrapper buildImprovement(@Path int choice,@Path long tankId);
+
+    @Get("/{tankId}/ejectPowerup/{isTank}")
+    LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
 }

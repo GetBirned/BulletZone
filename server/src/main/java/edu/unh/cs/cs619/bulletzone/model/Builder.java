@@ -113,7 +113,7 @@ public class Builder extends FieldEntity implements Vehicle{
     }
 
     public int getLife() {
-        return life;
+        return this.life;
     }
 
     public void setLife(int life) {

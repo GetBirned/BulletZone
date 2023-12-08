@@ -67,7 +67,7 @@
 
         <ImageView
             android:id="@+id/tankHealthDesc"
-            android:layout_width="90dp"
+            android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_marginBottom="650dp"
             android:layout_marginTop="100dp"
@@ -87,12 +87,31 @@
 
         <ImageView
             android:id="@+id/soldierHealthDesc"
-            android:layout_width="100dp"
+            android:layout_width="130dp"
             android:layout_height="30dp"
             android:layout_marginBottom="650dp"
             android:layout_marginTop="100dp"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="110dp"
             android:src="@drawable/soldierhealth" />
+        <ImageView
+            android:id="@+id/builderHealthDesc"
+            android:layout_width="140dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="650dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="250dp"
+            android:src="@drawable/builderhealth" />
+        <TextView
+            android:id="@+id/builderHealth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="130dp"
+            android:layout_marginLeft="290dp"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <LinearLayout

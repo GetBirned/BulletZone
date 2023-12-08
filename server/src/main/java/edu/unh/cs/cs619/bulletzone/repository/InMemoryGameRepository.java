@@ -233,6 +233,16 @@ public class InMemoryGameRepository implements GameRepository {
 
     }
 
+    @Override
+    public int getBuilderHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+        Command getBuilderHealth = new ConcreteGetBuilderHealthCommand(action, tankId);
+
+        int res = getBuilderHealth.execute1();
+
+        return res;
+    }
+
+
     public LongWrapper controlBuilder(long tankId) {
         return game.controlBuilder(tankId);
     }

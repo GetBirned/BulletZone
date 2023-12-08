@@ -250,6 +250,7 @@ public class ClientActivity extends Activity {
     }
 
     private Timer soldierHealthUpdateTimer;
+
     @AfterInject
     void afterInject() {
         restClient.setRestErrorHandler(bzRestErrorhandler);
@@ -264,6 +265,8 @@ public class ClientActivity extends Activity {
             public void run() {
                 // Call the method to update health information
                 updateHealthAsync(tankId);
+                updateBuilderHealthAsync(tankId);
+                //TODO: ADD builder health method here
             }
         }, 0, 1000); // Update health every 5 seconds (adjust the interval as needed)
         soldierHealthUpdateTimer = new Timer();
@@ -299,6 +302,7 @@ public class ClientActivity extends Activity {
             buttonController.updateButtons(controllingBuilder);
             tankIsActive = 1;
             updateHealthAsync(tankId);
+            updateBuilderHealthAsync(tankId);
         } catch (Exception e) {
             System.out.println("ERROR: joining game");
         }
@@ -675,6 +679,7 @@ public class ClientActivity extends Activity {
     }
 
 
+
     @Background
     void updateHealthAsync(long tankId) {
         try {
@@ -696,6 +701,37 @@ public class ClientActivity extends Activity {
         }
     }
 
+    @UiThread
+    public void updateBuilderHealth(int health) {
+        TextView builderHealthTextView = findViewById(R.id.builderHealth);
+        if(health <= 0) {
+            builderHealthTextView.setText("0");
+        } else {
+            builderHealthTextView.setText("" + health);
+        }
+    }
+
+
+    @Background
+    void updateBuilderHealthAsync(long tankId) {
+        try {
+            // Call your restClient method to get the tank's health
+            LongWrapper healthWrapper = restClient.getBuilderHealth(tankId);
+
+            if (healthWrapper != null) {
+                // Only update the health if it's not null
+                Log.e(TAG, "HealthWrapper value: " + healthWrapper.getResult());
+                long health = healthWrapper.getResult();
+                updateBuilderHealth((int) health);
+                Log.e(TAG, "Received health from restClient.getHealth: " + health + "for Builder tank id: " + tankId);
+            } else {
+                Log.e(TAG, "Received null health from restClient.getHealth for Builder tankId: " + tankId);
+            }
+        } catch (Exception e) {
+            // Handle the exception
+            Log.e(TAG, "Error updating Builder health", e);
+        }
+    }
 
 
     /**

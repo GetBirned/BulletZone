@@ -319,6 +319,14 @@ public class Action {
         return 0;
     }
 
+    public int getBuilderHealth(long tankId) {
+        Builder builder = game.getBuilder(tankId);
+        if(builder != null) {
+            return builder.getLife();
+        }
+        return 0;
+    }
+
     public int getSoldierHealth(long soldierId) {
         Soldier soldier = game.getSoldier((int)soldierId);
         if(soldier != null) {
