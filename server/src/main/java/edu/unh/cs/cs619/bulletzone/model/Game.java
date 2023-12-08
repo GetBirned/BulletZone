@@ -437,15 +437,6 @@ public final class Game {
             }
         }
     }
-    public ArrayList<Integer> getTankPowerups(long tankId) {
-        return getTank(tankId).powerupList;
-    }
-
-    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
-
-        return null;
-    }
-
     public int getTankPowerup(long tankId) {
         Tank curr = tanks.get(tankId);
         if (curr == null || curr.pQ.peek() == null) {
@@ -484,6 +475,7 @@ public final class Game {
         getTank(tankId).setPowerUpType(powerupValue);
         Tank curr = getTank(tankId);
         curr.pQ.add(powerupValue);
+
         //FUSION
         if (powerupValue == 2) {
             curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));

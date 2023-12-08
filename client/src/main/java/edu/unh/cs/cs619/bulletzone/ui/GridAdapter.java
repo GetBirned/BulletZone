@@ -58,9 +58,6 @@ public class GridAdapter extends BaseAdapter {
         return -1;
     }
 
-
-
-
     @RestService
     BulletZoneRestClient restClient;
     private static final int[] ITEM_RESOURCES = {
@@ -87,36 +84,6 @@ public class GridAdapter extends BaseAdapter {
     public int numCoins = 1000;
     private static final String TAGFRIEND = "GridAdapter (Friendly):";
     private static final String TAGENEMY = "GridAdapter (Enemy):";
-
-    static boolean isValidIndex(int row, int col) {
-        return row >= 0 && row < 16 && col >= 0 && col < 16 && mEntities[row][col] == 0;
-    }
-    public void ejectPowerup(int row, int col) {
-        //FIND SOLDIER'S POSITION
-        if (convert(ejectedType) != -1) {
-            int[][] offsets = {
-                    {1, 1}, {1, 0}, {1, -1},
-                    {0, 1},          {0, -1},
-                    {-1, 1}, {-1, 0}, {-1, -1}
-            };
-
-
-            for (int[] offset : offsets) {
-                int newRow = row + offset[0];
-                int newCol = col + offset[1];
-
-
-                if (isValidIndex(newRow, newCol)) {
-                    mEntities[newRow][newCol] = convert(ejectedType);
-                    hasPowerUp[newRow][newCol] = ejectedType;
-                    ejectedType = 0;
-                    didEject = false;
-                    break;
-                }
-            }
-        }
-    }
-
 
 
     @Override
@@ -147,10 +114,37 @@ public class GridAdapter extends BaseAdapter {
     int numPlayers;
     double chance;
 
-    private int[][] hasPowerUp = new int[16][16];
+    private static int[][] hasPowerUp = new int[16][16];
     // 0 grass, // 1 thingamajig //2 nuke //3 apple
     //4 hill // 5 rocky // 6 forest // 7 soldier // 8 water
     //9 deflector //10 repair kit // 11 bridge // 12 road
+
+    static boolean isValidIndex(int row, int col) {
+        return row >= 0 && row < 16 && col >= 0 && col < 16 && mEntities[row][col] == 0 && hasPowerUp[row][col] == 0;
+    }
+    public void ejectPowerup(int row, int col) {
+        //FIND SOLDIER'S POSITION
+        if (convert(ejectedType) != -1) {
+            int[][] offsets = {
+                    {1, 1}, {1, 0}, {1, -1},
+                    {0, 1},          {0, -1},
+                    {-1, 1}, {-1, 0}, {-1, -1}
+            };
+            for (int[] offset : offsets) {
+                int newRow = row + offset[0];
+                int newCol = col + offset[1];
+
+
+                if (isValidIndex(newRow, newCol)) {
+                    mEntities[newRow][newCol] = convert(ejectedType);
+                    hasPowerUp[newRow][newCol] = ejectedType;
+                    ejectedType = 0;
+                    didEject = false;
+                    break;
+                }
+            }
+        }
+    }
 
     public void setFriendlyTank(ImageView imageView, int direction, int val) {
 
@@ -290,8 +284,6 @@ public class GridAdapter extends BaseAdapter {
                 imageView.setImageResource(R.drawable.water);
             }
             if (val > 0) {
-
-
                 int direction = (val % 10);
                 if (val == 1000 || (val > 1000 && val <= 2000)) {
                     imageView.setImageResource(R.drawable.brick); // Set the appropriate image resource for walls
@@ -309,17 +301,11 @@ public class GridAdapter extends BaseAdapter {
                     } else {
                         imageView.setImageResource(R.drawable.bulletgrass);
                     }
-
-
-
-
                 } else if (val >= 10000000 && val <= 20000000) {
                     if(didEject) {
                         if(convert(ejectedType) != 3141) {
                             ejectPowerup(row, col);
                         }
-
-
                     }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {

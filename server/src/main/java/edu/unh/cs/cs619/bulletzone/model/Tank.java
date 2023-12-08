@@ -2,9 +2,7 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 
@@ -14,7 +12,6 @@ public class Tank extends FieldEntity implements Vehicle {
 
     private final long id;
     private int powerUpType;
-    public ArrayList<Integer> powerupList = new ArrayList<Integer>(10);
 
     private final String ip;
     public Queue<Integer> pQ = new LinkedList<>();
@@ -48,15 +45,9 @@ public class Tank extends FieldEntity implements Vehicle {
         numShield = 0;
         ind = 0;
     }
-    public void setArrList(){
-        for (int i = 0; i < 100; i++) {
-            powerupList.add(0);
-        }
-    }
+
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
-        powerupList.set(ind, powerupValue);
-        this.ind++;
     }
     public int getPowerUpType(){
         return this.powerUpType;
