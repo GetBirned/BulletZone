@@ -1,6 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
