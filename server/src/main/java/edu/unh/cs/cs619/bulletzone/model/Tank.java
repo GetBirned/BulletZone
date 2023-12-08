@@ -17,7 +17,7 @@ public class Tank extends FieldEntity implements Vehicle {
     public ArrayList<Integer> powerupList = new ArrayList<Integer>(10);
 
     private final String ip;
-
+    public Queue<Integer> pQ = new LinkedList<>();
     private long lastMoveTime;
     public int allowedMoveInterval;
 
@@ -29,6 +29,7 @@ public class Tank extends FieldEntity implements Vehicle {
     public Queue<Integer> pQ = new LinkedList<>();
 
     private int life;
+    public int numShield;
 
     private Direction direction;
 
@@ -45,7 +46,7 @@ public class Tank extends FieldEntity implements Vehicle {
         allowedFireInterval = 1500;
         lastMoveTime = 0;
         allowedMoveInterval = 500;
-        setArrList();
+        numShield = 0;
         ind = 0;
     }
     public void setArrList(){
@@ -62,6 +63,22 @@ public class Tank extends FieldEntity implements Vehicle {
         return this.powerUpType;
     }
 
+    public void revertBuffs(int type){
+        if (type == 2) {
+            this.setAllowedFireInterval((int) (this.getAllowedFireInterval() * 2));
+            this.setAllowedNumberOfBullets(this.getAllowedNumberOfBullets() / 2);
+            this.setAllowedMoveInterval((int) (this.getAllowedMoveInterval() / 1.25));
+        } else if (type == 3){
+            this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
+            this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
+        }
+
+        //TODO: revert buffs for the new powerups
+    }
+
+    public void setPowerUpType(int type){
+        this.powerUpType = type;
+    }
     @Override
     public FieldEntity copy() {
         return new Tank(id, direction, ip, isActive);

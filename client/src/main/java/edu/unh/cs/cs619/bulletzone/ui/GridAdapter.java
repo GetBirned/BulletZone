@@ -15,11 +15,17 @@ import org.androidannotations.rest.spring.annotations.RestService;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Random;
+
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.SystemService;
+import org.androidannotations.rest.spring.annotations.RestService;
 
 import edu.unh.cs.cs619.bulletzone.R;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
@@ -254,6 +260,7 @@ public class GridAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.field_item, null);
         }
+
         ImageView imageView = convertView.findViewById(R.id.imageView);
         int row = position / 16;
         int col = position % 16;

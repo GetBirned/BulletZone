@@ -212,11 +212,11 @@ public class InMemoryGameRepository implements GameRepository {
 
     @Override
     public ArrayList<Integer> getTankPowerups(long tankId) {
-        return game.getTankPowerups(tankId);
+        return null;
     }
     @Override
     public ArrayList<Integer> getSoldierPowerups(long soldierId) {
-        return game.getSoldierPowerups(soldierId);
+        return null;
 
     }
     public Stack<GridEvent> getCommandHistory() {

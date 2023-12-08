@@ -14,6 +14,8 @@ public class ClientHistoryTest {
     //The tests are commented out as to not cause errors when running.
     //I have mocked this structure to mimic the instructions in milestone 1
 
+    //ArrayList<String> history = new ArrayList();
+
     @Test
     public void testHistorySetup_0() {
         //long now = System.currentTimeMillis();

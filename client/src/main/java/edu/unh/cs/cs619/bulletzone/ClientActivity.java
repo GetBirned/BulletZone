@@ -5,15 +5,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
+import android.content.Intent;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.otto.Subscribe;
+
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -44,6 +57,8 @@ import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
+import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
+import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 
@@ -100,6 +115,8 @@ public class ClientActivity extends Activity {
 
     int controllingBuilder;
     ButtonController buttonController;
+    private int tankIsActive;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,12 +291,13 @@ public class ClientActivity extends Activity {
     @Background
     void joinAsync() {
         try {
-            tankId = restClient.join().getResult();
+            this.tankId = restClient.join().getResult();
             gridPollTask.doPoll();
             buttonController.initializeButtons();
             controllingTank = 1;
             controllingBuilder = 0;
             buttonController.updateButtons(controllingBuilder);
+            tankIsActive = 1;
             updateHealthAsync(tankId);
         } catch (Exception e) {
             System.out.println("ERROR: joining game");
@@ -298,6 +316,38 @@ public class ClientActivity extends Activity {
         } else {
             Log.e(TAG, "GridWrapper is null");
         }
+    }
+    @Click(R.id.ejectPowerup)
+    protected void ejectPowerup(){
+        ejectPowerupAsync();
+    }
+
+    @UiThread
+    public void noPowerupToEjectToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+    @Background
+    protected void ejectPowerupAsync() {
+        LongWrapper result;
+        int type = 0;
+
+        if (isSoldierDeployed) {
+            result = restClient.ejectPowerup(tankId, false);
+            Log.d("EJECTPOWERUP ------> ", "SOLDIER IS DEPLOYED ");
+        } else {
+            result = restClient.ejectPowerup(tankId, true);
+        }
+        if (result == null) {
+            Log.d(TAG, "ejectPowerupAsync: Result is NULL");
+        } else {
+            type = (int) result.getResult();
+        }
+
+        if (result == null || type == -1) {
+            noPowerupToEjectToast(this, "No Powerup To Eject!");
+        }
+        mGridAdapter.didEject = true;
+        mGridAdapter.ejectedType = type;
     }
 
     byte tempDirection;

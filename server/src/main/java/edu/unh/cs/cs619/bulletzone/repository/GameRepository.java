@@ -37,22 +37,16 @@ public interface GameRepository {
 
     void setTankPowerup(long tankId, int powerupValue);
 
-    ArrayList<Integer> getTankPowerups(long tankId);
+    int getSoldierPowerup(long tankId);
 
-    ArrayList<Integer> getSoldierPowerups(long soldierId);
+    int getTankPowerup(long tankId);
 
     public LongWrapper deploySoldier(long tankID);
-    public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
+    void updateLife(long tankId, boolean isTank, long offset) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
+
     public int getHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
     public int getSoldierHealth(long soldierId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
 
-    public LongWrapper buildImprovement(int choice, long builderId);
-
-    public LongWrapper dismantleImprovement(long builderId);
-
-    public LongWrapper controlTank(long tankId);
-
-    public LongWrapper controlBuilder(long tankId);
 
     public int getSoldierPowerup(long tankId);
     public int getTankPowerup(long tankId);

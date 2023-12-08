@@ -1,5 +1,7 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
+import java.util.Timer;
+
 public class HealthKit extends FieldEntity{
     int pos;
 
@@ -30,4 +32,6 @@ public class HealthKit extends FieldEntity{
     public int getPos(){
         return pos;
     }
+
+
 }

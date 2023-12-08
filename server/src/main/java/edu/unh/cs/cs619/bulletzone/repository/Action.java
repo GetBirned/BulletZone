@@ -30,6 +30,7 @@ import edu.unh.cs.cs619.bulletzone.model.Wall;
 import edu.unh.cs.cs619.bulletzone.model.Water;
 import edu.unh.cs.cs619.bulletzone.model.applePowerUp;
 import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
+import jdk.internal.org.jline.utils.Log;
 
 /*
     I believe this should ultimately be a command? pattern
@@ -272,7 +273,7 @@ public class Action {
             return null;
 
         long millis = System.currentTimeMillis();
-        if (millis < v.getLastFireTime()/*>tank.getAllowedFireInterval()*/) {
+        if (millis < v.getLastFireTime() && millis  > v.getAllowedFireInterval()) {
             return null;
         }
         Direction direction = v.getDirection();

@@ -5,8 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.unh.cs.cs619.bulletzone.model.Bridge;
-import edu.unh.cs.cs619.bulletzone.model.Builder;
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
@@ -17,7 +15,6 @@ import edu.unh.cs.cs619.bulletzone.model.HealthKit;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
-import edu.unh.cs.cs619.bulletzone.model.Road;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Shield;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
@@ -101,7 +98,7 @@ public class SoldierAction {
             if (!nextField.isPresent() || nextField.getEntity() instanceof Hill || nextField.getEntity() instanceof Rocky || nextField.getEntity() instanceof Forest
                     || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp
                     || nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
-                    || nextField.getEntity() instanceof Grass || nextField.getEntity() instanceof Road || nextField.getEntity() instanceof Bridge) {
+                    || nextField.getEntity() instanceof Grass) {
                 // If the next field is empty move the user
 
                 //Constraint to allow soldiers on hills and rocky terrain and to slow them on rocky
@@ -237,7 +234,7 @@ public class SoldierAction {
 
 
                         if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)
-                                && !(nextField.getEntity() instanceof Water) && !(nextField.getEntity() instanceof Road) && !(nextField.getEntity() instanceof Bridge)) {
+                                && !(nextField.getEntity() instanceof Water)) {
                             // Something is there, hit it
                             nextField.getEntity().hit(bullet.getDamage());
 
@@ -260,14 +257,6 @@ public class SoldierAction {
                                     s.setParent(null);
                                     game.removeSoldier(s.getId());
                                     game.removeTank(t.getId());
-                                }
-                            } else if (nextField.getEntity() instanceof Builder) {
-                                Builder b = (Builder) nextField.getEntity();
-                                System.out.println("builder is hit, builder life: " + b.getLife());
-                                if (b.getLife() <= 0) {
-                                    b.getParent().clearField();
-                                    b.setParent(null);
-                                    game.removeBuilder(b.getId());
                                 }
                             } else if (nextField.getEntity() instanceof Wall) {
                                 Wall w = (Wall) nextField.getEntity();

@@ -78,18 +78,6 @@ class GamesController {
 //    }
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getPowerups/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    ResponseEntity<ArrayListWrapper> getPowerups(@PathVariable long tankId, @PathVariable boolean isTank) {
-
-        if(isTank){
-            return new ResponseEntity<ArrayListWrapper>(new ArrayListWrapper(gameRepository.getTankPowerups(tankId)), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<ArrayListWrapper>(new ArrayListWrapper(gameRepository.getSoldierPowerups(tankId)), HttpStatus.OK);
-        }
-    }
-
     @RequestMapping(method = RequestMethod.PUT, value = "{tankId}/turn/{direction}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<BooleanWrapper> turn(@PathVariable long tankId, @PathVariable byte direction)
@@ -109,7 +97,6 @@ class GamesController {
                 HttpStatus.OK
         );
     }
-
     @RequestMapping(method = RequestMethod.PUT, value = "{tankId}/fire", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<BooleanWrapper> fire(@PathVariable long tankId)
@@ -164,52 +151,6 @@ class GamesController {
         );
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/builder/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    ResponseEntity<LongWrapper> controlBuilder(@PathVariable long tankId) {
-        LongWrapper response = gameRepository.controlBuilder(tankId);
-        return new ResponseEntity<LongWrapper>(
-                new LongWrapper(response.getResult()),
-                HttpStatus.CREATED
-        );
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/tank/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    ResponseEntity<LongWrapper> controlTank(@PathVariable long tankId) {
-        LongWrapper response = gameRepository.controlTank(tankId);
-        return new ResponseEntity<LongWrapper>(
-                new LongWrapper(response.getResult()),
-                HttpStatus.CREATED
-        );
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/dismantleImprovement/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    ResponseEntity<LongWrapper> dismantleImprovement(@PathVariable long tankId) {
-        LongWrapper response = gameRepository.dismantleImprovement(tankId);
-        return new ResponseEntity<LongWrapper>(
-                new LongWrapper(response.getResult()),
-                HttpStatus.CREATED
-        );
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/buildImprovement/{choice}/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    ResponseEntity<LongWrapper> buildImprovement(@PathVariable int choice, @PathVariable long tankId) {
-        LongWrapper response = gameRepository.buildImprovement(choice, tankId);
-        return new ResponseEntity<LongWrapper>(
-                new LongWrapper(response.getResult()),
-                HttpStatus.CREATED
-        );
-    }
-
-
-
     @PostMapping(value = "/setTankPowerup/{tankId}/{powerupValue}/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -231,9 +172,8 @@ class GamesController {
     }
     @RequestMapping(method = RequestMethod.POST, value = "{tankId}/updateLife", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void updateLife(@PathVariable long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
-        // Find the tank with tankId and update its life
-       gameRepository.updateLife(tankId, newLife);
+    public void setHealth(@PathVariable long tankId, boolean isTank, long offset) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
+       gameRepository.updateLife(tankId, isTank, offset);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getHealth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -244,6 +184,30 @@ class GamesController {
             return new ResponseEntity<>((long) health, HttpStatus.OK);
         } catch (Exception e) {
             // Handle exceptions if necessary
+            return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/ejectPowerup/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<Long> ejectPowerup(@PathVariable long tankId, @PathVariable boolean isTank) {
+        try {
+            long powerup;
+            if (isTank) {
+                powerup = gameRepository.getTankPowerup(tankId);
+            } else {
+                powerup = gameRepository.getSoldierPowerup(tankId);
+            }
+
+            if (powerup == -1) {
+                return new ResponseEntity<>((long) -1, HttpStatus.NOT_FOUND);
+            }
+            System.out.println("POWERUP TYPE IS ------------------> " + powerup);
+
+            return new ResponseEntity<>(powerup, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+
             return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

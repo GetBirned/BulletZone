@@ -54,6 +54,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Put("/{tankId}/fire/1")
     BooleanWrapper fire(@Path long tankId);
 
+    @Get("/{tankId}/ejectPowerup/{isTank}")
+    LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
+
     @Post("/setTankPowerup/{tankId}/{powerupValue}/{isTank}")
     void setTankPowerup(@Path long tankId, @Path int powerupValue, @Path boolean isTank);
 

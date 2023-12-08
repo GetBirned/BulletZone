@@ -34,6 +34,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 public class ReplayTest {
     private ReplayActivity replayActivity;
     private ClientActivity clientActivity;
+    private ReplayRunner replayRunner;
     private ReplayGridAdapter rGA;
     @InjectMocks
     BulletZoneRestClient restClient = Mockito.mock(BulletZoneRestClient.class);
@@ -49,7 +50,7 @@ public class ReplayTest {
 
 
     int tankId = 1;
-    String file = replayActivity.getReplayFile();
+    String file = replayRunner.getReplayFile();
     @Before
     public void setUp() {
         replayActivity = new ReplayActivity();
@@ -76,8 +77,8 @@ public class ReplayTest {
         clientActivity.restClient.fire(1);
         clientActivity.restClient.turn(1, (byte) 4);
 
-        replayActivity.getReplayStates(file);
-        ArrayList<int[][]> boardStates = replayActivity.board_states;
+        replayRunner.getReplayStates(file);
+        ArrayList<int[][]> boardStates = replayRunner.board_states;
 
         assertNotNull(boardStates);
         assertFalse(((ArrayList<?>) boardStates).isEmpty());
@@ -113,8 +114,8 @@ public class ReplayTest {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
         assert (rGA.board== newGrid);
-        replayActivity.getReplayStates(file);
-        ArrayList<int[][]> boardStates = replayActivity.board_states;
+        replayRunner.getReplayStates(file);
+        ArrayList<int[][]> boardStates = replayRunner.board_states;
         assertNotNull(boardStates);
         assertFalse(((ArrayList<?>) boardStates).isEmpty());
     }
@@ -145,8 +146,8 @@ public class ReplayTest {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
         assert (rGA.board== newGrid);
-        replayActivity.getReplayStates(file);
-        ArrayList<int[][]> boardStates = replayActivity.board_states;
+        replayRunner.getReplayStates(file);
+        ArrayList<int[][]> boardStates = replayRunner.board_states;
         assertNotNull(boardStates);
         assertFalse(((ArrayList<?>) boardStates).isEmpty());
         assert(boardStates.contains(clientActivity.restClient.move(1, (byte) 2).isResult()));
@@ -183,8 +184,8 @@ public class ReplayTest {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
         assert (rGA.board== newGrid);
-        replayActivity.getReplayStates(file);
-        ArrayList<int[][]> boardStates = replayActivity.board_states;
+        replayRunner.getReplayStates(file);
+        ArrayList<int[][]> boardStates = replayRunner.board_states;
         assertNotNull(boardStates);
         assertFalse(((ArrayList<?>) boardStates).isEmpty());
         assert(boardStates.contains(clientActivity.restClient.move(1, (byte) 2).isResult()));
