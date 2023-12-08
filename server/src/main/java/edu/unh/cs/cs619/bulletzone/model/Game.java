@@ -434,9 +434,37 @@ public final class Game {
             }
         }
     }
+    public ArrayList<Integer> getTankPowerups(long tankId) {
+        return getTank(tankId).powerupList;
+    }
+
+    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
+
+        return getSoldier(soldierId).powerupList;
+    }
+
+    public int getTankPowerup(long tankId) {
+        Tank curr = tanks.get(tankId);
+        if (curr == null || curr.pQ.peek() == null) {
+            return -1;
+        }
+        curr.revertBuffs(curr.pQ.peek());
+        return curr.pQ.poll();
+    }
+
+
+    public int getSoldierPowerup(long tankId) {
+        Soldier curr = soldiers.get(tankId);
+        if (curr == null || curr.pQ.peek() == null) {
+            return -1;
+        }
+        curr.revertBuffs(curr.pQ.peek());
+        return curr.pQ.poll();
+    }
     public void setSoldierPowerup(long tankId, int powerupValue){
         getSoldier((int) tankId).setPowerUpType(powerupValue);
         Soldier curr = getSoldier((int) tankId);
+        curr.pQ.add(powerupValue);
         if (powerupValue == 2) {
             curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
             curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
@@ -447,32 +475,26 @@ public final class Game {
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
         }
 
+
     }
     public void setTankPowerup(long tankId, int powerupValue) {
-            getTank(tankId).setPowerUpType(powerupValue);
-            Tank curr = getTank(tankId);
-            //FUSION
-            if (powerupValue == 2) {
-                curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
-                curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
-                curr.setAllowedFireInterval((int)curr.getAllowedFireInterval() / 2);
-            }
-            //ANTIGRAV
-            if (powerupValue == 3) {
-                curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
-                curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
-            }
+        getTank(tankId).setPowerUpType(powerupValue);
+        Tank curr = getTank(tankId);
+        curr.pQ.add(powerupValue);
+        //FUSION
+        if (powerupValue == 2) {
+            curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
+            curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
+            curr.setAllowedFireInterval((int)curr.getAllowedFireInterval() / 2);
+        }
+        //ANTIGRAV
+        if (powerupValue == 3) {
+            curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
+            curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        }
+
 
     }
-    public ArrayList<Integer> getTankPowerups(long tankId) {
-        return getTank(tankId).powerupList;
-    }
-
-    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
-
-        return getSoldier(soldierId).powerupList;
-    }
-
 
 
 }

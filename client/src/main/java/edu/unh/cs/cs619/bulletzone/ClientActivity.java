@@ -136,6 +136,42 @@ public class ClientActivity extends Activity {
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
+    @Click(R.id.ejectPowerup)
+    protected void ejectPowerup(){
+        ejectPowerupAsync();
+    }
+
+    @UiThread
+    public void noPowerupToEjectToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+    @Background
+    protected void ejectPowerupAsync() {
+        LongWrapper result;
+        int type = 0;
+
+
+        if (isSoldierDeployed) {
+            result = restClient.ejectPowerup(tankId, false);
+            Log.d("EJECTPOWERUP ------> ", "SOLDIER IS DEPLOYED ");
+        } else {
+            result = restClient.ejectPowerup(tankId, true);
+        }
+        if (result == null) {
+            Log.d(TAG, "ejectPowerupAsync: Result is NULL");
+        } else {
+            type = (int) result.getResult();
+        }
+
+
+        if (result == null || type == -1) {
+            noPowerupToEjectToast(this, "No Powerup To Eject!");
+        }
+        mGridAdapter.didEject = true;
+        mGridAdapter.ejectedType = type;
+    }
+
+
     private String createNewFile() {
         Long tsLong = System.currentTimeMillis()/1000;
         String ts = tsLong.toString();

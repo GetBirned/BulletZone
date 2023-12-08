@@ -1,11 +1,13 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Soldier extends FieldEntity implements Vehicle{
 
     private static final String TAG = "Soldier";
-
+    public Queue<Integer> pQ = new LinkedList<>();
     private final long id;
 
     private String ip;
@@ -218,5 +220,20 @@ public class Soldier extends FieldEntity implements Vehicle{
     public void setAllowedNumberOfBullets(int allowedNumberOfBullets) {
         this.allowedNumberOfBullets = allowedNumberOfBullets;
     }
+
+    public void revertBuffs(int type){
+        if (type == 2) {
+            this.setAllowedFireInterval((int) (this.getAllowedFireInterval() * 2));
+            this.setAllowedNumberOfBullets(this.getAllowedNumberOfBullets() / 2);
+            this.setAllowedMoveInterval((int) (this.getAllowedMoveInterval() / 1.25));
+        } else if (type == 3){
+            this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
+            this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
+        }
+
+
+        //TODO: revert buffs for the new powerups
+    }
+
 
 }

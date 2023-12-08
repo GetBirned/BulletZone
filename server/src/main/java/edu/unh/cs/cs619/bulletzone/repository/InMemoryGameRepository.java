@@ -252,5 +252,14 @@ public class InMemoryGameRepository implements GameRepository {
     public LongWrapper dismantleImprovement(long builderId) {
         return game.dismantleImprovement(builderId);
     }
+    @Override
+    public int getSoldierPowerup(long tankId) {
+        return game.getSoldierPowerup(tankId);
+    }
+
+    @Override
+    public int getTankPowerup(long tankId) {
+        return game.getTankPowerup(tankId);
+    }
 }
 

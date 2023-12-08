@@ -106,10 +106,19 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context=".ClientActivity">
 
+        <Button
+            android:id="@+id/ejectPowerup"
+            android:layout_width="140dp"
+            android:layout_height="59dp"
+            android:layout_marginLeft="-2dp"
+            android:layout_marginTop="754dp"
+            android:layout_marginEnd="-62dp"
+            android:layout_marginBottom="112dp"
+            android:text="Eject Powerup"/>
+
 
         <GridView
             android:id="@+id/gridView"
-
             android:layout_width="wrap_content"
             android:layout_height="430dp"
             android:layout_weight="1"
@@ -117,7 +126,8 @@
             android:numColumns="16"
             tools:listitem="@layout/field_item"
             android:layout_marginTop="280dp"
-            android:layout_marginBottom="-32dp"></GridView>
+            android:layout_marginBottom="-32dp"
+            android:layout_marginLeft="-42dp"></GridView>
 
 
 

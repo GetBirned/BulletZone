@@ -54,4 +54,6 @@ public interface GameRepository {
 
     public LongWrapper controlBuilder(long tankId);
 
+    public int getSoldierPowerup(long tankId);
+    public int getTankPowerup(long tankId);
 }
