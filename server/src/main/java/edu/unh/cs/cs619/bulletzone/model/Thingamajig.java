@@ -25,7 +25,7 @@ public class Thingamajig extends FieldEntity{
 
     @Override
     public String toString() {
-        return "W";
+        return "Thingamajig";
     }
 
     public int getPos(){

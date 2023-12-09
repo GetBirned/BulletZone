@@ -110,11 +110,13 @@ public final class Game {
                 for (int j = 0; j < FIELD_DIM; j++) {
                     holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
                     if (holder.isPresent()) {
-                        grid[i][j] = holder.getEntity().getIntValue();
+                        //System.out.print(holder.getEntity().toString() + ", ");
+                        grid[i][j] = holder.getEntity().getIntValue(); // changing to 2345 turns everything into mines
                     } else {
                         grid[i][j] = 0;
                     }
                 }
+                //System.out.println();
             }
         }
 
@@ -288,6 +290,56 @@ public final class Game {
             }
         } else {
             throw new IllegalArgumentException("Builder associated with Id: " + builderId + " not found.");
+        }
+        return new LongWrapper(4);
+    }
+
+    public LongWrapper buildTrap(int choice, long tankID) {
+        System.out.println("SET TRAP SET TRAP SET TRAP");
+        Soldier soldier = getSoldier(tankID);
+        if (soldier != null) {
+            TankLocation soldierLocation = findSoldier(soldier, tankID);
+            int x = soldierLocation.getRow();
+            int y = soldierLocation.getColumn();
+            int direction = (soldier.getIntValue() % 10);
+            int[] offset = getOffsetForDirection(direction);
+
+            int newX = x + offset[0];
+            int newY = y + offset[1];
+            FieldHolder fieldElement = getHolderGrid().get(newX * FIELD_DIM + newY);
+
+            /**
+             long buildTime = System.currentTimeMillis(); // DEPLOYMENT TIMES
+
+             long buildDuration = (fieldElement.getEntity() instanceof Hill || fieldElement.getEntity() instanceof Rocky
+             || fieldElement.getEntity() instanceof Forest) ? 2000 : 1000;
+
+             while (System.currentTimeMillis() - buildTime <= buildDuration) {
+             if
+             }
+             */
+
+            if (choice == 1) { // Mine -20 credits
+                System.out.println("SET MINE");
+                Mine mine = new Mine();
+                if (!fieldElement.isPresent()) {
+                    fieldElement.setFieldEntity(mine);
+                    mine.setParent(fieldElement);
+                    return new LongWrapper(1);
+                }
+            } else if (choice == 2) { // Hijack Trap -40 credits
+                System.out.println("SET HIJACK TRAP");
+                HijackTrap hijackTrap = new HijackTrap();
+                if (!fieldElement.isPresent()) {
+                    fieldElement.setFieldEntity(hijackTrap);
+                    hijackTrap.setParent(fieldElement);
+                    return new LongWrapper(2);
+                }
+            } else { // improper input -- this should never happen with how I have buildChoice added.
+                throw new IllegalArgumentException("Improper Build Request: " + choice);
+            }
+        } else {
+            throw new IllegalArgumentException("Soldier associated with Id: " + tankID + " not found.");
         }
         return new LongWrapper(4);
     }

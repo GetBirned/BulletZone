@@ -25,7 +25,7 @@ public class Shield extends FieldEntity{
 
     @Override
     public String toString() {
-        return "W";
+        return "Shield";
     }
 
     public int getPos(){

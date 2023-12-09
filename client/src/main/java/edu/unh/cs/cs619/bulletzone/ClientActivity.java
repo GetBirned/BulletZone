@@ -622,6 +622,53 @@ public class ClientActivity extends Activity {
         }
     }
 
+    @Click(R.id.buildMine)
+    @Background
+    void buildMine() {
+        if (curBalance >= 20) {
+            buildTrap(1, tankId);
+        } else {
+            Log.d(TAG, "Mine could not be built. Bank Account associated to " +
+                    "ID: " + tankId + " doesn't have more than 80 credits.\n");
+        }
+    }
+
+    @Click(R.id.buildHijackTrap)
+    @Background
+    void buildHijackTrap() {
+        if (curBalance >= 40) {
+            buildTrap(2 , tankId);
+        } else {
+            Log.d(TAG, "HijackTrap could not be built. Bank Account associated to " +
+                    "ID: " + tankId + " doesn't have more than 40 credits.\n");
+        }
+    }
+
+    public void buildTrap(int choice, long soldierId) {
+        if (controllingTank == 1) {
+            LongWrapper res = restClient.buildTrap(choice, tankId);
+            if (res != null) {
+                if (res.getResult() == 1) {
+                    Log.d(TAG, "Mine properly built by ID: " + tankId + "\n");
+                    restClient.updateBalance(receivedTankID, -20);
+                } else if (res.getResult() == 2) {
+                    Log.d(TAG, "Hijack Trap properly built by ID: " + tankId + "\n");
+                    restClient.updateBalance(receivedTankID, -40);
+                }
+                updateBankAccountAsync(receivedTankID);
+            } else {
+                Log.d(TAG, "Trap build failed with ID: " + tankId + "\n");
+            }
+        } else {
+            showCannotBuildTrapMessage();
+        }
+    }
+
+    @UiThread
+    protected void showCannotBuildTrapMessage() {
+        Toast.makeText(getApplicationContext(), "Cannot construct trap as builder. Please switch to Soldier then try again.\n", Toast.LENGTH_SHORT).show();
+    }
+
     @UiThread
     protected void showCannotBuildMessage() {
         Toast.makeText(getApplicationContext(), "Cannot build while controlling Tank/Soldier. Please switch to Builder then try again.\n", Toast.LENGTH_SHORT).show();

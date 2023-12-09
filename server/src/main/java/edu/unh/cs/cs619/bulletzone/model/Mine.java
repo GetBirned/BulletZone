@@ -1,35 +1,37 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-public class Rocky extends FieldEntity {
-    int pos;
-    int destructValue;
+import java.util.Timer;
 
-    public Rocky(){
-        pos = 1;
+public class Mine extends FieldEntity{
+    int pos;
+
+    public Mine(){
+        pos = 1234;
     }
 
-    public Rocky(int pos){
+    public Mine(int pos){
         this.pos = pos;
     }
 
     @Override
     public int getIntValue() {
-        return 1;
+        return 1234;
     }
 
     @Override
     public FieldEntity copy() {
-        return new Hill();
+        return new Mine();
     }
 
 
     @Override
     public String toString() {
-        return "Rocky";
+        return "Mine";
     }
 
     public int getPos(){
         return pos;
     }
-}
 
+
+}

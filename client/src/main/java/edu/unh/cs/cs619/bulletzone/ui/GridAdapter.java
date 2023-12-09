@@ -432,6 +432,12 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 70) {
                     hasPowerUp[row][col] = 12;
                     imageView.setImageResource(R.drawable.roadongrass);
+                } else if (val == 1234) {
+                    hasPowerUp[row][col] = 13; // TODO: figure out why
+                    imageView.setImageResource(R.drawable.minegrass);
+                } else if (val == 2345) {
+                    hasPowerUp[row][col] = 14;
+                    imageView.setImageResource(R.drawable.minegrass);
                 }
             } else {
 

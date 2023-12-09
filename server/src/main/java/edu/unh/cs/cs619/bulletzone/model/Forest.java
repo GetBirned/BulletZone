@@ -25,7 +25,7 @@ public class Forest extends FieldEntity {
 
     @Override
     public String toString() {
-        return "W";
+        return "Forest";
     }
 
     public int getPos(){
