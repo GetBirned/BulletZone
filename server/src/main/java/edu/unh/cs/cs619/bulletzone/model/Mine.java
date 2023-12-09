@@ -6,7 +6,7 @@ public class Mine extends FieldEntity{
     int pos;
 
     public Mine(){
-        pos = 1234;
+        pos = 83030;
     }
 
     public Mine(int pos){
@@ -15,7 +15,7 @@ public class Mine extends FieldEntity{
 
     @Override
     public int getIntValue() {
-        return 1234;
+        return 83030;
     }
 
     @Override

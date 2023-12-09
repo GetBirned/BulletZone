@@ -626,10 +626,11 @@ public class ClientActivity extends Activity {
     @Background
     void buildMine() {
         if (curBalance >= 20) {
+            Log.d("MINE", "set mine");
             buildTrap(1, tankId);
         } else {
             Log.d(TAG, "Mine could not be built. Bank Account associated to " +
-                    "ID: " + tankId + " doesn't have more than 80 credits.\n");
+                    "ID: " + tankId + " doesn't have more than 20 credits.\n");
         }
     }
 
