@@ -49,6 +49,11 @@ public interface GameRepository {
 
     public LongWrapper dismantleImprovement(long builderId);
     public LongWrapper buildImprovement(int choice, long builderId);
+
+    public LongWrapper controlTank(long tankId);
+
+    public LongWrapper controlBuilder(long tankId);
+
     public ArrayList<Integer> getSoldierPowerups(long soldierId);
     public ArrayList<Integer> getTankPowerups(long tankId);
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
