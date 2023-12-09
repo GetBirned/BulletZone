@@ -345,6 +345,8 @@ public class GridAdapter extends BaseAdapter {
                     }
                     numPlayers++;
                     // TODO: need to discern between friendly tank
+                    // problem is friendlyTank(val) isn't right value (from file works)
+                    Log.d("ID THANG", "ft " + friendlyTank(val) + ": from file " + getTankIDFromFile());
                     if (friendlyTank(val) == getTankIDFromFile()) {
                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
                     } else {
