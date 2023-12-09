@@ -56,8 +56,10 @@ import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
+import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
+import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
@@ -102,6 +104,8 @@ public class ClientActivity extends Activity {
      */
     private long tankId = -1;
 
+    private int curBalance;
+
     private long soldierId = -1;
 
     private long builderId = -1;
@@ -116,6 +120,8 @@ public class ClientActivity extends Activity {
     int controllingBuilder;
     ButtonController buttonController;
     private int tankIsActive;
+
+    public String receivedTankID;
 
 
     @Override
@@ -148,6 +154,7 @@ public class ClientActivity extends Activity {
         Intent receivedIntent = getIntent();
         String recievedTankID = receivedIntent.getStringExtra("username");
         mGridAdapter.setUsername(recievedTankID);
+        this.receivedTankID = recievedTankID;
 
 
         sensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
@@ -308,15 +315,11 @@ public class ClientActivity extends Activity {
         }
     }
 
-    @UiThread
-    public void updateBankBalanceText(int numCoins) {
-        bankBalanceTextView.setText(String.valueOf(numCoins));
-    }
+
 
     public void updateGrid(GridWrapper gw) {
         if (gw != null) {
             mGridAdapter.updateList(gw.getGrid());
-            updateBankBalanceText(mGridAdapter.numCoins);
         } else {
             Log.e(TAG, "GridWrapper is null");
         }
@@ -565,7 +568,7 @@ public class ClientActivity extends Activity {
     @Click(R.id.buildBridge)
     @Background
     void buildBridge() {
-        if (mGridAdapter.numCoins >= 80) {
+        if (curBalance >= 80) {
             buildImprovement(3, tankId);
         } else {
             Log.d(TAG, "Bridge could not be built. Bank Account associated to " +
@@ -576,7 +579,7 @@ public class ClientActivity extends Activity {
     @Click(R.id.buildRoad)
     @Background
     void buildRoad() {
-        if (mGridAdapter.numCoins >= 40) {
+        if (curBalance >= 40) {
             buildImprovement(2 , tankId);
         } else {
             Log.d(TAG, "Road could not be built. Bank Account associated to " +
@@ -587,7 +590,7 @@ public class ClientActivity extends Activity {
     @Click(R.id.buildWall)
     @Background
     void buildWall() {
-        if (mGridAdapter.numCoins >= 100) {
+        if (curBalance >= 100) {
             buildImprovement(1, tankId);
         } else {
             Log.d(TAG, "Wall could not be built. Bank Account associated to " +
@@ -601,15 +604,16 @@ public class ClientActivity extends Activity {
                 if (res != null) {
                     if (res.getResult() == 1) {
                         Log.d(TAG, "Wall properly built by ID: " + builderId + "\n");
-                        mGridAdapter.numCoins = mGridAdapter.numCoins - 100;
+                        restClient.updateBalance(receivedTankID, -100);
                     } else if (res.getResult() == 2) {
                         Log.d(TAG, "Road properly built by ID: " + builderId + "\n");
-                        mGridAdapter.numCoins = mGridAdapter.numCoins - 40;
+                        restClient.updateBalance(receivedTankID, -40);
                     } else if (res.getResult() == 3) {
                         Log.d(TAG, "Bridge properly built by ID: " + builderId + "\n");
-                        mGridAdapter.numCoins = mGridAdapter.numCoins - 80;
+                        restClient.updateBalance(receivedTankID, -80);
+
                     }
-                    updateBankBalanceText(mGridAdapter.numCoins);
+                    updateBankAccountAsync(receivedTankID);
                 } else {
                     Log.d(TAG, "Build failed with ID: " + builderId + "\n");
                 }
@@ -646,18 +650,18 @@ public class ClientActivity extends Activity {
                 if (res != null) {
                     if (res.getResult() == 1) {
                         Log.d(TAG, "Wall properly dismantled by: " + builderId + "\n");
-                        mGridAdapter.numCoins = mGridAdapter.numCoins + 100;
+                        restClient.updateBalance(receivedTankID, 100);
                         Log.d(TAG, "100 (Wall) credits returned to BankAccount with ID: " + builderId + "\n");
                     } else if (res.getResult() == 2) {
                         Log.d(TAG, "Road properly dismantled by: " + builderId + "\n");
-                        mGridAdapter.numCoins = mGridAdapter.numCoins + 40;
+                        restClient.updateBalance(receivedTankID, 40);
                         Log.d(TAG, "40 (Road) credits returned to BankAccount with ID: " + builderId + "\n");
                     } else if (res.getResult() == 3) {
                         Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
-                        mGridAdapter.numCoins = mGridAdapter.numCoins + 80;
+                        restClient.updateBalance(receivedTankID, 80);
                         Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
                     }
-                    updateBankBalanceText(mGridAdapter.numCoins);
+                   updateBankAccountAsync(receivedTankID);
                 } else {
                     Log.d(TAG, "Dismantle failed with ID: " + builderId + "\n");
                 }
@@ -692,6 +696,7 @@ public class ClientActivity extends Activity {
                 long health = healthWrapper.getResult();
                 updateTankHealth((int) health);
                 Log.e(TAG, "Received health from restClient.getHealth: " + health + "for tank id: " + tankId);
+                updateBankAccountAsync(receivedTankID);
             } else {
                 Log.e(TAG, "Received null health from restClient.getHealth for tankId: " + tankId);
             }
@@ -699,6 +704,33 @@ public class ClientActivity extends Activity {
             // Handle the exception
             Log.e(TAG, "Error updating tank health", e);
         }
+    }
+
+    @Background
+    void updateBankAccountAsync(String user) {
+        try {
+            // Call your restClient method to update bank account
+            IntegerWrapper updateResult = restClient.getBalance(user);
+            curBalance = updateResult.getValue();
+            if (updateResult != null) {
+                // Log or handle the update result if needed
+                Log.d(TAG, "Bank account updated successfully for tank id: " + tankId);
+                updateBalance(updateResult.getValue());
+            } else {
+                Log.e(TAG, "Update bank account result is null for tankId: " + tankId);
+            }
+        } catch (Exception e) {
+            // Handle the exception
+            Log.e(TAG, "Error updating bank account", e);
+        }
+    }
+
+    @UiThread
+    public void updateBalance(int health) {
+        TextView builderHealthTextView = findViewById(R.id.bank_balance);
+
+        builderHealthTextView.setText("" + health);
+
     }
 
     @UiThread
@@ -733,14 +765,6 @@ public class ClientActivity extends Activity {
         }
     }
 
-
-    /**
-     @Click(R.id.buttonLogin)
-     void login() {
-     Intent intent = new Intent(this, AuthenticateActivity_.class);
-     startActivity(intent);
-     }
-     **/
 
     @Background
     void leaveAsync(long tankId) {
