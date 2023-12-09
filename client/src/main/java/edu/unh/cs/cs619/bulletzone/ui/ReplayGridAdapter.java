@@ -115,6 +115,21 @@ public class ReplayGridAdapter extends BaseAdapter {
                     imageView.setImageResource(R.drawable.soldiergrassleft);
                     break;
             }
+        } else if (cellValue >= 50 * mill_scale && cellValue < 60 * mill_scale) {
+            switch (cellValue % 10) {
+                case 0:
+                    imageView.setImageResource(R.drawable.buildergrassup);
+                    break;
+                case 2:
+                    imageView.setImageResource(R.drawable.buildergrassleft);
+                    break;
+                case 4:
+                    imageView.setImageResource(R.drawable.buildergrassdown);
+                    break;
+                case 6:
+                    imageView.setImageResource(R.drawable.buildergrassright);
+                    break;
+            }
         } else if (cellValue == 60) {
             imageView.setImageResource(R.drawable.waterwithbridge);
         } else if (cellValue == 70) {
