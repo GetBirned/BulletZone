@@ -243,6 +243,10 @@ public class InMemoryGameRepository implements GameRepository {
         return game.getBuilderPowerup(tankId);
     }
 
+    public LongWrapper getDismantleTime(long tankId) {
+        return game.getDismantleTime(tankId);
+    }
+
 
     public LongWrapper controlBuilder(long tankId) {
         return game.controlBuilder(tankId);
@@ -269,6 +273,10 @@ public class InMemoryGameRepository implements GameRepository {
     }
      */
 
+    public LongWrapper getBuildTime(long tankId) {
+        return game.getBuildTime(tankId);
+    }
+
     @Override
     public LongWrapper buildImprovement(int choice, long builderId) {
         return game.buildImprovement(choice, builderId);
@@ -278,6 +286,12 @@ public class InMemoryGameRepository implements GameRepository {
     public LongWrapper dismantleImprovement(long builderId) {
         return game.dismantleImprovement(builderId);
     }
+
+    @Override
+    public LongWrapper buildTrap(int choice, long tankID) {
+        return game.buildTrap(choice, tankID);
+    }
+
     @Override
     public int getSoldierPowerup(long tankId) {
         return game.getSoldierPowerup(tankId);

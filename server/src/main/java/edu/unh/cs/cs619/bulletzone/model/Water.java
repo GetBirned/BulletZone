@@ -24,7 +24,7 @@ public class Water extends FieldEntity{
 
     @Override
     public String toString() {
-        return "W";
+        return "Water";
     }
 
     public int getPos(){

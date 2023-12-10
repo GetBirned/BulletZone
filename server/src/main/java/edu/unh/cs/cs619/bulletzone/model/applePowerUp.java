@@ -26,7 +26,7 @@ public class applePowerUp extends FieldEntity {
 
     @Override
     public String toString() {
-        return "W";
+        return "apple";
     }
 
     public int getPos(){

@@ -25,7 +25,7 @@ public class Hill extends FieldEntity {
 
     @Override
     public String toString() {
-        return "W";
+        return "Hill";
     }
 
     public int getPos(){
