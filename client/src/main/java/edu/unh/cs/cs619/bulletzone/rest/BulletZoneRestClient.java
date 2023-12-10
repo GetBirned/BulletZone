@@ -91,6 +91,9 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Post("/buildImprovement/{choice}/{tankId}")
     LongWrapper buildImprovement(@Path int choice,@Path long tankId);
 
+    @Post("/buildTrap/{choice}/{tankId}")
+    LongWrapper buildTrap(@Path int choice,@Path long tankId);
+
     @Get("/{tankId}/ejectPowerup/{isTank}")
     LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
 

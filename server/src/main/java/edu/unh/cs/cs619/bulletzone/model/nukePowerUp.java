@@ -25,7 +25,7 @@ public class nukePowerUp extends FieldEntity{
 
     @Override
     public String toString() {
-        return "W";
+        return "nuke";
     }
 
     public int getPos(){

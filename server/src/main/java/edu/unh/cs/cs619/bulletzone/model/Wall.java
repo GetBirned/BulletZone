@@ -34,7 +34,7 @@ public class Wall extends FieldEntity {
 
     @Override
     public String toString() {
-        return "W";
+        return "Wall";
     }
 
     public int getPos(){

@@ -26,7 +26,7 @@ public class HealthKit extends FieldEntity{
 
     @Override
     public String toString() {
-        return "W";
+        return "HealthKit";
     }
 
     public int getPos(){

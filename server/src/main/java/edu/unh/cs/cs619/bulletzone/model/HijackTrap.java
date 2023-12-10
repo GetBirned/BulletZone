@@ -1,35 +1,37 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-public class Rocky extends FieldEntity {
-    int pos;
-    int destructValue;
+import java.util.Timer;
 
-    public Rocky(){
-        pos = 1;
+public class HijackTrap extends FieldEntity{
+    int pos;
+
+    public HijackTrap(){
+        pos = 2345;
     }
 
-    public Rocky(int pos){
+    public HijackTrap(int pos){
         this.pos = pos;
     }
 
     @Override
     public int getIntValue() {
-        return 1;
+        return 2345;
     }
 
     @Override
     public FieldEntity copy() {
-        return new Hill();
+        return new HijackTrap();
     }
 
 
     @Override
     public String toString() {
-        return "Rocky";
+        return "HijackTrap";
     }
 
     public int getPos(){
         return pos;
     }
-}
 
+
+}

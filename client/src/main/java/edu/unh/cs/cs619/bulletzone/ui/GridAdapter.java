@@ -345,6 +345,8 @@ public class GridAdapter extends BaseAdapter {
                     }
                     numPlayers++;
                     // TODO: need to discern between friendly tank
+                    // problem is friendlyTank(val) isn't right value (from file works)
+                    Log.d("ID THANG", "ft " + friendlyTank(val) + ": from file " + getTankIDFromFile());
                     if (friendlyTank(val) == getTankIDFromFile()) {
                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
                     } else {
@@ -430,6 +432,13 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 70) {
                     hasPowerUp[row][col] = 12;
                     imageView.setImageResource(R.drawable.roadongrass);
+                } else if (val == 83030) {
+                    Log.d("MINE", "mine recieved gridadapter");
+                    hasPowerUp[row][col] = 13; // TODO: figure out why
+                    imageView.setImageResource(R.drawable.minegrass);
+                } else if (val == 2345) {
+                    hasPowerUp[row][col] = 14;
+                    imageView.setImageResource(R.drawable.hijackgrass);
                 }
             } else {
 
