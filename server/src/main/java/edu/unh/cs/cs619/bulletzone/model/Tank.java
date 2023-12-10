@@ -28,7 +28,7 @@ public class Tank extends FieldEntity implements Vehicle {
     public int numShield;
 
     private Direction direction;
-
+    private TankLocation tankLocation;
     private int isActive;
     public int ind;
     public Tank(long id, Direction direction, String ip, int isActive) {
@@ -193,6 +193,9 @@ public class Tank extends FieldEntity implements Vehicle {
         //TODO: revert buffs for the new powerups
     }
 
+
+    public void setTankLocation(TankLocation tl) {this.tankLocation = tl;}
+    public TankLocation getTankLocation() {return tankLocation;}
 
 }
 

@@ -27,6 +27,7 @@ public class Soldier extends FieldEntity implements Vehicle{
 
     private Direction direction;
     private int powerUpType;
+    private TankLocation tankLocation;
     public int ind;
     public boolean hasShield;
 
@@ -213,6 +214,8 @@ public class Soldier extends FieldEntity implements Vehicle{
     public void setAllowedNumberOfBullets(int allowedNumberOfBullets) {
         this.allowedNumberOfBullets = allowedNumberOfBullets;
     }
+    public void setTankLocation(TankLocation tl) {this.tankLocation = tl;}
+    public TankLocation getTankLocation() {return this.tankLocation;}
 
     public void revertBuffs(int type){
         if (type == 2) {

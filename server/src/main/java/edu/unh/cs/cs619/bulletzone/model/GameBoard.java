@@ -7,7 +7,7 @@ import java.util.Optional;
 public class GameBoard {
     private final int FIELD_DIM = 16;
     private final Object monitor = new Object();
-    public final ArrayList<FieldHolder> holderGrid = new ArrayList<>();
+    private final ArrayList<FieldHolder> holderGrid = new ArrayList<>();
     public GameBoard() {
         this.createFieldHolderGrid();
     }
