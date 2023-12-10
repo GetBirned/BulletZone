@@ -33,7 +33,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 public class ReplayTest {
     private ReplayActivity replayActivity;
-    private ClientActivity clientActivity;
+    private ClientController clientActivity;
     private ReplayRunner replayRunner;
     private ReplayGridAdapter rGA;
     @InjectMocks
@@ -54,7 +54,7 @@ public class ReplayTest {
     @Before
     public void setUp() {
         replayActivity = new ReplayActivity();
-        clientActivity = new ClientActivity();
+        clientActivity = new ClientController(restClient);
         restClient = clientActivity.restClient;
         replayActivity.replayAdapter = rGA;
 
