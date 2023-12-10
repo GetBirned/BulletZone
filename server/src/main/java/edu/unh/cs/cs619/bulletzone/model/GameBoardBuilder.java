@@ -83,6 +83,8 @@ public class GameBoardBuilder {
         gb.setEntity(6, 9, new HealthKit());
         gb.setEntity(13, 11, new Shield());
         gb.setEntity(3, 8, new Thingamajig());
+        gb.setEntity(3, 12, new nukePowerUp());
+        gb.setEntity(4, 4, new applePowerUp());
 
         gb.setEntity(1, 13, new Water());
         gb.setEntity(2, 13, new Water());

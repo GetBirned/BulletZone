@@ -331,7 +331,7 @@ public class GridAdapter extends BaseAdapter {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(finalVal), finalType, true);
+                                    restClient.setTankPowerup(friendlyTank(finalVal), finalType, 't');
                                     Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
 
 
@@ -379,7 +379,7 @@ public class GridAdapter extends BaseAdapter {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, false);
+                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, 's');
                                     Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
 
                                     return null;
@@ -392,6 +392,42 @@ public class GridAdapter extends BaseAdapter {
                     }
                 } else if (val >= 50000000 && val <= 60000000) {
                     setBuilder(imageView, direction, hasPowerUp[row][col]);
+//                    if(didEject) {
+//                        ejectPowerup(row, col);
+//                    }
+                    if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
+                            || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
+                        if(hasPowerUp[row][col] == 1){
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    Log.e("Sending money toRest", " Sending money toRest withVal: " + username);
+                                    System.out.println(" Sending money toRest withVal: " + username);
+                                    int rand = random.nextInt(196) + 5;
+                                    restClient.updateBalance(username, rand );
+
+
+                                    return null;
+                                }
+                            }.execute();
+                        }
+                        else if(hasPowerUp[row][col] != 1){
+                            int finalType = hasPowerUp[row][col];
+                            int finalVal1 = val;
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, 'b');
+                                    Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
+
+                                    return null;
+                                }
+                            }.execute();
+                        }
+                        mEntities[row][col] = 0;
+                        hasPowerUp[row][col] = 0;
+                        numItems--;
+                    }
                 } else if (val == 7) {
                     hasPowerUp[row][col] = 1;
                     //numItems++;

@@ -1,5 +1,6 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
+import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,6 +19,9 @@ public final class Game {
      * Field dimensions
      */
     private static final int FIELD_DIM = 16;
+    private static final int REPAIR_KIT_EFFECT_DURATION = 120; // 120 seconds
+    private static final int DEFLECTOR_SHIELD_DAMAGE_REDUCTION = 1; // Damage reduction per second
+
     private final long id;
     private long lastEjectionTime;
     private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
@@ -231,6 +235,34 @@ public final class Game {
                 bridge.setParent(null);
                 fieldElement.setFieldEntity(new Water());
                 return new LongWrapper(3);
+            } else if (fieldElement.getEntity() instanceof applePowerUp) { // ANTIGRAV - RETURN 300 CREDITS
+                applePowerUp apple = (applePowerUp) fieldElement.getEntity();
+                apple.getParent().clearField();
+                apple.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(4);
+            } else if (fieldElement.getEntity() instanceof nukePowerUp) { // FUSION - RETURN 400 CREDITS
+                nukePowerUp nuke = (nukePowerUp) fieldElement.getEntity();
+                nuke.getParent().clearField();
+                nuke.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(5);
+            } else if (fieldElement.getEntity() instanceof Shield) { // SHIELD - RETURN 300 CREDITS
+                Shield s = (Shield) fieldElement.getEntity();
+                if (!fieldElement.isPresent()) {
+                    fieldElement.setFieldEntity(s);
+                    s.setParent(fieldElement);
+                }
+                s.getParent().clearField();
+                s.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(6);
+            } else if (fieldElement.getEntity() instanceof HealthKit) { // TOOLKIT - RETURN 200 CREDITS
+                HealthKit h = (HealthKit) fieldElement.getEntity();
+                h.getParent().clearField();
+                h.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(7);
             } else {
                 throw new IllegalArgumentException("Improper remove request. Spot behind builder is not an improvement.");
             }
@@ -455,6 +487,14 @@ public final class Game {
         curr.revertBuffs(curr.pQ.peek());
         return curr.pQ.poll();
     }
+    public int getBuilderPowerup(long tankId) {
+        Builder curr = builders.get(tankId);
+        if (curr == null || curr.pQ.peek() == null) {
+            return -1;
+        }
+        curr.revertBuffs(curr.pQ.peek());
+        return curr.pQ.poll();
+    }
     public void setSoldierPowerup(long tankId, int powerupValue){
         getSoldier((int) tankId).setPowerUpType(powerupValue);
         Soldier curr = getSoldier((int) tankId);
@@ -467,6 +507,13 @@ public final class Game {
         if (powerupValue == 3) {
             curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        } //DEFLECTOR SHIELD
+        if (powerupValue == 9) {
+            deflectorShield(tankId,'s');
+        }
+        // REPAIR KIT
+        else if (powerupValue == 10) {
+            applyRepairKitEffect(tankId,'s');
         }
 
 
@@ -487,8 +534,81 @@ public final class Game {
             curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
         }
+        //DEFLECTOR SHIELD
+        if (powerupValue == 9) {
+            deflectorShield(tankId,'t');
+        }
+        // REPAIR KIT
+        else if (powerupValue == 10) {
+            applyRepairKitEffect(tankId,'t');
+        }
 
+    }
+    public void setBuilderPowerup(long tankId, int powerupValue) {
+        getTank(tankId).setPowerUpType(powerupValue);
+        Builder curr = getBuilder(tankId);
+        curr.pQ.add(powerupValue);
 
+        //FUSION
+        if (powerupValue == 2) {
+            curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
+            curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
+            curr.setAllowedFireInterval((int)curr.getAllowedFireInterval() / 2);
+        }
+        //ANTIGRAV
+        if (powerupValue == 3) {
+            curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
+            curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        }
+        //DEFLECTOR SHIELD
+        if (powerupValue == 9) {
+            deflectorShield(tankId,'b');
+        }
+        // REPAIR KIT
+        else if (powerupValue == 10) {
+            applyRepairKitEffect(tankId, 'b');
+        }
+
+    }
+    private void applyRepairKitEffect(long tankId, char type) {
+        Timer timer = new Timer();
+        final int[] elapsedTime = {0};
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Tank curr = getTank(tankId);
+                if (elapsedTime[0] < REPAIR_KIT_EFFECT_DURATION && curr.getLife() < 100) {
+                    curr.setLife(curr.getLife() + 1); // Heal by 1 point
+                    elapsedTime[0]++;
+                } else {
+                    timer.cancel();
+                    timer.purge();
+                }
+            }
+        }, 0, 1000);
+    }
+
+    private void deflectorShield(long tankId, char type) {
+        final int[] remainingAbsorption = {50};
+        Tank curr = getTank(tankId);
+        if(type != 't'){
+
+        }
+        curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
+        int origLife = curr.getLife();
+        curr.setLife(curr.getLife() + 50);
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (remainingAbsorption[0] > 0 && curr.getLife() > origLife) {
+                    curr.setLife(curr.getLife() - DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
+                    remainingAbsorption[0]--;
+                } else {
+                    cancel();
+                }
+            }
+        }, 1000, 1000);
     }
 
 

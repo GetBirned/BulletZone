@@ -1,6 +1,8 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Builder extends FieldEntity implements Vehicle{
 
@@ -9,8 +11,6 @@ public class Builder extends FieldEntity implements Vehicle{
     private final long id;
 
     private String ip;
-    public ArrayList<Integer> powerupList = new ArrayList<>(10);
-
 
     private long lastMoveTime;
     private int allowedMoveInterval;
@@ -29,7 +29,8 @@ public class Builder extends FieldEntity implements Vehicle{
     private Direction direction;
     private int powerUpType;
     private int isActive;
-    public int ind;
+    public Queue<Integer> pQ = new LinkedList<>();
+
 
     public Builder(long id, Direction direction, String ip, int isActive) {
         this.id = id;
@@ -42,18 +43,9 @@ public class Builder extends FieldEntity implements Vehicle{
         allowedFireInterval = 250; // Shoot 250ms
         lastMoveTime = 0;
         allowedMoveInterval = 250; // 1 second between move
-        setArrList();
-        ind = 0;
-    }
-    public void setArrList(){
-        for (int i = 0; i < 100; i++) {
-            powerupList.add(0);
-        }
     }
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
-        powerupList.set(ind, powerupValue);
-        this.ind++;
     }
 
     public int getPowerUpType(){
@@ -219,4 +211,17 @@ public class Builder extends FieldEntity implements Vehicle{
         this.isActive = isActive;
     }
 
+    public void revertBuffs(int type){
+        if (type == 2) {
+            this.setAllowedFireInterval((int) (this.getAllowedFireInterval() * 2));
+            this.setAllowedNumberOfBullets(this.getAllowedNumberOfBullets() / 2);
+            this.setAllowedMoveInterval((int) (this.getAllowedMoveInterval() / 1.25));
+        } else if (type == 3){
+            this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
+            this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
+        }
+
+
+        //TODO: revert buffs for the new powerups
+    }
 }

@@ -23,7 +23,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+@Rest(rootUrl = "http://10.21.122.233:61900/games",
 //@Rest(rootUrl = "http://10.21.168.185:6197/games",
 
 
@@ -55,8 +55,8 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Put("/{tankId}/fire/1")
     BooleanWrapper fire(@Path long tankId);
 
-    @Post("/setTankPowerup/{tankId}/{powerupValue}/{isTank}")
-    void setTankPowerup(@Path long tankId, @Path int powerupValue, @Path boolean isTank);
+    @Post("/setTankPowerup/{tankId}/{powerupValue}/{type}")
+    void setTankPowerup(@Path long tankId, @Path int powerupValue, @Path char type);
 
     @Delete("/{tankId}/leave")
     BooleanWrapper leave(@Path long tankId);
@@ -91,8 +91,11 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Post("/buildImprovement/{choice}/{tankId}")
     LongWrapper buildImprovement(@Path int choice,@Path long tankId);
 
-    @Get("/{tankId}/ejectPowerup/{isTank}")
-    LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
+    @Get("/{tankId}/ejectPowerup/{type}")
+    LongWrapper ejectPowerup(@Path long tankId, @Path char type);
+
+    @Post("/{tankId}/giveCredit/{type}")
+    void giveCredit (@Path long tankId, @Path char type);
 
     @Post("/account/updateBalance/{username}/{amount}")
     BooleanWrapper updateBalance(@Path String username, @Path double amount);

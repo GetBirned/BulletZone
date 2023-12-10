@@ -53,8 +53,6 @@ public class Tank extends FieldEntity implements Vehicle {
         return this.powerUpType;
     }
 
-
-
     @Override
     public FieldEntity copy() {
         return new Tank(id, direction, ip, isActive);

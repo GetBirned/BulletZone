@@ -176,10 +176,12 @@ public class ClientActivity extends Activity {
 
 
         if (isSoldierDeployed) {
-            result = restClient.ejectPowerup(tankId, false);
+            result = restClient.ejectPowerup(tankId, 's');
             Log.d("EJECTPOWERUP ------> ", "SOLDIER IS DEPLOYED ");
-        } else {
-            result = restClient.ejectPowerup(tankId, true);
+        } else if(controllingTank == 1) {
+            result = restClient.ejectPowerup(tankId, 't');
+        } else{
+            result = restClient.ejectPowerup(tankId, 'b');
         }
         if (result == null) {
             Log.d(TAG, "ejectPowerupAsync: Result is NULL");
@@ -660,6 +662,22 @@ public class ClientActivity extends Activity {
                         Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
                         restClient.updateBalance(receivedTankID, 80);
                         Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 4) {
+                        Log.d(TAG, "AntiGrav properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 300);
+                        Log.d(TAG, "300 (AntiGrav) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 5) {
+                        Log.d(TAG, "Fusion properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 400);
+                        Log.d(TAG, "400 (Fusion) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 6) {
+                        Log.d(TAG, "Shield properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 300);
+                        Log.d(TAG, "300 (Shield) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 7) {
+                        Log.d(TAG, "ToolKit properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 200);
+                        Log.d(TAG, "200 (Toolkit) credits returned to BankAccount with ID: " + builderId + "\n");
                     }
                    updateBankAccountAsync(receivedTankID);
                 } else {
