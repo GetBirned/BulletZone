@@ -5,28 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.content.Intent;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.squareup.otto.Subscribe;
-
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -56,11 +43,8 @@ import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
-import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
-import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
 import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
-import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 
@@ -122,6 +106,10 @@ public class ClientActivity extends Activity {
     private int tankIsActive;
 
     public String receivedTankID;
+
+    public int calledMove;
+
+    public int calledTurn;
 
 
     @Override
@@ -331,35 +319,37 @@ public class ClientActivity extends Activity {
     byte tempDirection;
     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})
     protected void onButtonMove(View view) {
-        final int viewId = view.getId();
-        byte direction = 0;
-        final Object lock = new Object();
+        calledMove = 1;
+        if (currentlyBuilding == 0) {
+            final int viewId = view.getId();
+            byte direction = 0;
+            final Object lock = new Object();
 
-        switch (viewId) {
-            case R.id.buttonUp:
-                direction = 0;
-                tempDirection = 0;
-                //    tankId = 0;
-                break;
-            case R.id.buttonDown:
-                direction = 4;
-                tempDirection = 4;
-                //   tankId = 4;
-                break;
-            case R.id.buttonLeft:
-                direction = 6;
-                tempDirection = 6;
-                //   tankId = 6;
-                break;
-            case R.id.buttonRight:
-                direction = 2;
-                tempDirection = 2;
-                // tankId = 2;
-                break;
-            default:
-                Log.e(TAG, "Unknown movement button id: " + viewId);
-                break;
-        }
+            switch (viewId) {
+                case R.id.buttonUp:
+                    direction = 0;
+                    tempDirection = 0;
+                    //    tankId = 0;
+                    break;
+                case R.id.buttonDown:
+                    direction = 4;
+                    tempDirection = 4;
+                    //   tankId = 4;
+                    break;
+                case R.id.buttonLeft:
+                    direction = 6;
+                    tempDirection = 6;
+                    //   tankId = 6;
+                    break;
+                case R.id.buttonRight:
+                    direction = 2;
+                    tempDirection = 2;
+                    // tankId = 2;
+                    break;
+                default:
+                    Log.e(TAG, "Unknown movement button id: " + viewId);
+                    break;
+            }
             if (controllingTank == 1) {
                 if (previousTankDirection == direction) {
                     previousTankDirection = tempDirection;
@@ -405,6 +395,7 @@ public class ClientActivity extends Activity {
                     }
                 }
             }
+        }
     }
 
     @Background
@@ -569,7 +560,8 @@ public class ClientActivity extends Activity {
     @Background
     void buildBridge() {
         if (curBalance >= 80) {
-            buildImprovement(3, tankId);
+            startBuildTimer(3);
+            //buildImprovement(3, tankId);
         } else {
             Log.d(TAG, "Bridge could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 80 credits.\n");
@@ -580,7 +572,8 @@ public class ClientActivity extends Activity {
     @Background
     void buildRoad() {
         if (curBalance >= 40) {
-            buildImprovement(2 , tankId);
+            startBuildTimer(2);
+            //buildImprovement(2 , tankId);
         } else {
             Log.d(TAG, "Road could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 40 credits.\n");
@@ -591,11 +584,99 @@ public class ClientActivity extends Activity {
     @Background
     void buildWall() {
         if (curBalance >= 100) {
-            buildImprovement(1, tankId);
+            startBuildTimer(1);
+            //buildImprovement(1, tankId);
         } else {
             Log.d(TAG, "Wall could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 100 credits.\n");
         }
+    }
+
+    public long getBuildTime(long tankId) {
+        LongWrapper buildTime = restClient.getBuildTime(tankId);
+
+        if (buildTime == null) {
+            Log.e(TAG, "buildTime could not be received from server.");
+        } else {
+            return buildTime.getResult();
+        }
+        return 0;
+    }
+
+    int currentlyBuilding;
+
+    public void startBuildTimer(int choice) {
+        currentlyBuilding = 1;
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                // Check if calledMove is still 0, otherwise, exit the task
+                    try {
+                        // Ensure UI updates are done on the UI thread
+                        buildImprovement(choice, tankId);
+                        Log.d(TAG, "buildImprovement executed successfully.\n");
+                        currentlyBuilding = 0;
+                    } catch (Exception e) {
+                        // Handle exceptions if necessary
+                        Log.e(TAG, "Error during UI update or buildImprovement", e);
+                    } finally {
+                        // Optionally, you can cancel the timer task after executing buildImprovement
+                        cancel();
+                    }
+            }
+        };
+
+        long buildTime = getBuildTime(tankId);
+        if (buildTime != 2000) {
+            buildTime = 1000;
+        }
+        // Schedule the task to run after 2 seconds
+        timer.schedule(timerTask, buildTime);
+        Log.d(TAG, "Timer started. Waiting to build for " + buildTime + " milliseconds or until calledMove is set to 1...\n");
+    }
+
+    public long getDismantleTime(long tankId) {
+        LongWrapper dismantleTime = restClient.getDismantleTime(tankId);
+        if (dismantleTime == null) {
+            Log.e(TAG, "dismantleTime could not be received from server.");
+        } else {
+            return dismantleTime.getResult();
+        }
+        return 0;
+    }
+
+    public void startDismantleTimer() {
+        calledMove = 0;
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                // Check if calledMove is still 0, otherwise, exit the task
+                if (calledMove == 0) {
+                    try {
+                        // Ensure UI updates are done on the UI thread
+                        dismantleImprovementAsync(tankId);
+                    } catch (Exception e) {
+                        // Handle exceptions if necessary
+                        Log.e(TAG, "Error during UI update or dismantleImprovement", e);
+                    } finally {
+                        // Optionally, you can cancel the timer task after executing buildImprovement
+                        cancel();
+                    }
+                } else {
+                    Log.d(TAG, "Timer aborted due to calledMove being set to 1.");
+                }
+            }
+        };
+
+        long buildTime = getDismantleTime(tankId);
+        //if (buildTime != 2000) {
+          //  buildTime = 1000;
+        //}
+        // Schedule the task to run after 2 seconds
+        timer.schedule(timerTask, buildTime);
+        Log.d(TAG, "Timer started. Waiting to dismantle for " + buildTime + " milliseconds or until calledMove is set to 1...");
     }
 
     public void buildImprovement(int choice, long builderId) {
@@ -640,7 +721,7 @@ public class ClientActivity extends Activity {
     @Click(R.id.dismantleImprovement)
     @Background
     void dismantleImprovement() { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
-        dismantleImprovementAsync(tankId);
+        startDismantleTimer();
     }
 
     void dismantleImprovementAsync(long builderId) { // REMOVE THE IMPROVEMENT LEFT OF BUILDER

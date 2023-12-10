@@ -1,10 +1,7 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Optional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -201,29 +198,72 @@ public final class Game {
         }
     }
 
+    public LongWrapper getBuildTime(long builderId) {
+        Builder builder = getBuilders().get(builderId);
+        if (builder != null) {
+            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
+            if (fieldElement.getEntity() instanceof Water) {
+                return new LongWrapper(1000);
+            } else if (fieldElement.getEntity() instanceof Hill || fieldElement.getEntity() instanceof Rocky
+                    || fieldElement.getEntity() instanceof Forest) {
+                return new LongWrapper(2000);
+            }
+        } else {
+            throw new IllegalArgumentException("Builder associated with Id: " + builderId + " not found.");
+        }
+        return new LongWrapper(1000);
+    }
+
+    public LongWrapper getDismantleTime(long builderId) {
+        Builder builder = getBuilders().get(builderId);
+        if (builder != null) {
+
+            int[] specialPositions = {
+                    50, 66, 82, 98,
+                    51, 67, 83, 99,
+                    149, 165, 181, 197,
+                    150, 166, 182, 198,
+                    202, 218, 203, 219,
+                    58, 74, 90, 106,
+                    59, 75, 91, 107
+            };
+
+            int result = getPosition(builder, builderId);
+            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(result); // find the FieldHolder of element behind builder
+            if (fieldElement.getEntity() instanceof Bridge) {
+                return new LongWrapper(1000);
+            }
+        } else {
+            throw new IllegalArgumentException("Builder associated with Id: " + builderId + " not found.");
+        }
+        return new LongWrapper(1000);
+    }
+
+    public int getPosition(Builder builder, long builderId) {
+        TankLocation builderLocation = findBuilder(builder, builderId);
+        int x = builderLocation.getRow();
+        int y = builderLocation.getColumn();
+        int direction = (builder.getIntValue() % 10);
+        int[] offset = getOffsetForDirection(direction);
+
+        int newX = x + offset[0];
+        int newY = y + offset[1];
+        return newX * FIELD_DIM + newY;
+    }
+
     public LongWrapper dismantleImprovement(long builderId) {
         Builder builder = getBuilders().get(builderId);
         if (builder != null) {
-            TankLocation builderLocation = findBuilder(builder, builderId);
-            int x = builderLocation.getRow();
-            int y = builderLocation.getColumn();
-            int direction = (builder.getIntValue() % 10);
-            int[] offset = getOffsetForDirection(direction);
-
-            int newX = x + offset[0];
-            int newY = y + offset[1];
-            FieldHolder fieldElement = getHolderGrid().get(newX * FIELD_DIM + newY); // find the FieldHolder of element behind builder
+            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof Wall) { // WALL - RETURN 100 CREDITS
                 Wall wall = (Wall) fieldElement.getEntity();
                 wall.getParent().clearField();
                 wall.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(1);
             } else if (fieldElement.getEntity().getIntValue() == 70) { // ROAD - RETURN 40 CREDITS
                 Road road = (Road) fieldElement.getEntity();
                 road.getParent().clearField();
                 road.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(2);
             } else if (fieldElement.getEntity().getIntValue() == 60) { // BRIDGE - RETURN 80 CREDITS
                 Bridge bridge = (Bridge) fieldElement.getEntity();
@@ -249,22 +289,16 @@ public final class Game {
 
             int newX = x + offset[0];
             int newY = y + offset[1];
-            FieldHolder fieldElement = getHolderGrid().get(newX * FIELD_DIM + newY);
-
-            /**
-            long buildTime = System.currentTimeMillis(); // DEPLOYMENT TIMES
-
-            long buildDuration = (fieldElement.getEntity() instanceof Hill || fieldElement.getEntity() instanceof Rocky
-                    || fieldElement.getEntity() instanceof Forest) ? 2000 : 1000;
-
-            while (System.currentTimeMillis() - buildTime <= buildDuration) {
-                if
-            }
-             */
+            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(newX * FIELD_DIM + newY);
 
             if (choice == 1) { // WALL - COSTS 100 CREDITS
                 Wall wall = new Wall();
-                if (!fieldElement.isPresent()) {
+                 if (!fieldElement.isPresent()) {
+                    fieldElement.setFieldEntity(wall);
+                    wall.setParent(fieldElement);
+                    return new LongWrapper(1);
+                }
+                if (!(fieldElement.getEntity() instanceof Wall)) {
                     fieldElement.setFieldEntity(wall);
                     wall.setParent(fieldElement);
                     return new LongWrapper(1);
@@ -272,6 +306,11 @@ public final class Game {
             } else if (choice == 2) { // ROAD - COSTS 40 CREDITS
                 Road road = new Road();
                 if (!fieldElement.isPresent()) {
+                    fieldElement.setFieldEntity(road);
+                    road.setParent(fieldElement);
+                    return new LongWrapper(2);
+                }
+                if (!(fieldElement.getEntity() instanceof Wall)) {
                     fieldElement.setFieldEntity(road);
                     road.setParent(fieldElement);
                     return new LongWrapper(2);

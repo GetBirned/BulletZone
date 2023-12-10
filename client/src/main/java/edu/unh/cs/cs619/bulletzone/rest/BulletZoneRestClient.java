@@ -23,8 +23,8 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
-//@Rest(rootUrl = "http://10.21.168.185:6197/games",
+@Rest(rootUrl = "http://10.21.113.247:6011/games",
+//@Rest(rootUrl = "http://10.21.113.247:6099/games",
 
 
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
@@ -99,4 +99,10 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Get("/account/getBalance/{username}")
     IntegerWrapper getBalance(@Path String username);
+
+    @Post("/buildTime/{tankId}")
+    LongWrapper getBuildTime(@Path long tankId);
+
+    @Post("/dismantleTime/{tankId}")
+    LongWrapper getDismantleTime(@Path long tankId);
 }

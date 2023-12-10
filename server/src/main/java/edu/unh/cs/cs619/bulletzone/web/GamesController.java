@@ -303,7 +303,27 @@ class GamesController {
         );
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/buildTime/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    ResponseEntity<LongWrapper> getBuildTime(@PathVariable long tankId) {
+        LongWrapper response = gameRepository.getBuildTime(tankId);
+        return new ResponseEntity<LongWrapper>(
+                new LongWrapper(response.getResult()),
+                HttpStatus.CREATED
+        );
+    }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/dismantleTime/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    ResponseEntity<LongWrapper> getDismantleTime(@PathVariable long tankId) {
+        LongWrapper response = gameRepository.getBuildTime(tankId);
+        return new ResponseEntity<LongWrapper>(
+                new LongWrapper(response.getResult()),
+                HttpStatus.CREATED
+        );
+    }
 
 
 
