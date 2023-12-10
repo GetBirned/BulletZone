@@ -10,6 +10,7 @@ import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Grass;
 import edu.unh.cs.cs619.bulletzone.model.HealthKit;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
+import edu.unh.cs.cs619.bulletzone.model.Road;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Shield;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
@@ -43,7 +44,7 @@ public class BulletMover {
 
 
                     if (nextField.isPresent()  && !(nextField.getEntity() instanceof Hill) && !(nextField.getEntity() instanceof Rocky)
-                            && !(nextField.getEntity() instanceof Water)) {
+                            && !(nextField.getEntity() instanceof Water) && (!(nextField.getEntity() instanceof Road))) {
                         // Something is there, hit it
                         nextField.getEntity().hit(bullet.getDamage());
 
