@@ -11,6 +11,8 @@ public class Builder extends FieldEntity implements Vehicle{
     private final long id;
 
     private String ip;
+    public ArrayList<Integer> powerupList = new ArrayList<>(10);
+
 
     private long lastMoveTime;
     private int allowedMoveInterval;
@@ -29,6 +31,8 @@ public class Builder extends FieldEntity implements Vehicle{
     private Direction direction;
     private int powerUpType;
     private int isActive;
+    private TankLocation tankLocation;
+    public int ind;
     public Queue<Integer> pQ = new LinkedList<>();
 
 
@@ -43,9 +47,18 @@ public class Builder extends FieldEntity implements Vehicle{
         allowedFireInterval = 250; // Shoot 250ms
         lastMoveTime = 0;
         allowedMoveInterval = 250; // 1 second between move
+        setArrList();
+        ind = 0;
+    }
+    public void setArrList(){
+        for (int i = 0; i < 100; i++) {
+            powerupList.add(0);
+        }
     }
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
+        powerupList.set(ind, powerupValue);
+        this.ind++;
     }
 
     public int getPowerUpType(){
@@ -105,7 +118,7 @@ public class Builder extends FieldEntity implements Vehicle{
     }
 
     public int getLife() {
-        return this.life;
+        return life;
     }
 
     public void setLife(int life) {
@@ -210,6 +223,8 @@ public class Builder extends FieldEntity implements Vehicle{
     public void setIsActive(int isActive) {
         this.isActive = isActive;
     }
+    public void setTankLocation(TankLocation tl) {this.tankLocation = tl;}
+    public TankLocation getTankLocation() {return tankLocation;}
 
     public void revertBuffs(int type){
         if (type == 2) {

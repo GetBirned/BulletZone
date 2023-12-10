@@ -18,6 +18,7 @@ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import edu.unh.cs.cs619.bulletzone.model.TankLocation;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 @Component
@@ -93,7 +94,7 @@ public class InMemoryGameRepository implements GameRepository {
                     break;
                 }
             }
-
+            tank.setTankLocation(new TankLocation(x, y));
             game.addTank(ip, tank);
             game.addBuilder(ip, builder);
 
