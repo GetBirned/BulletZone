@@ -3,14 +3,23 @@ package edu.unh.cs.cs619.bulletzone.model;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Builder extends FieldEntity implements Vehicle{
 
     private static final String TAG = "Builder";
+    private static final int REPAIR_KIT_EFFECT_DURATION = 120;
+    private static final int DEFLECTOR_SHIELD_DAMAGE_REDUCTION = 1;
+
+
 
     private final long id;
 
     private String ip;
+    Timer bTtimer2 = new Timer();
+    Timer bTimer = new Timer();
+
 
     private long lastMoveTime;
     private int allowedMoveInterval;
@@ -25,6 +34,8 @@ public class Builder extends FieldEntity implements Vehicle{
     private int allowedNumberOfBullets;
 
     private int life;
+    public int numShield;
+
 
     private Direction direction;
     private int powerUpType;
@@ -219,9 +230,50 @@ public class Builder extends FieldEntity implements Vehicle{
         } else if (type == 3){
             this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
             this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
+        }else if( type == 9){
+            bTimer.cancel();
+            bTimer.purge();
+        } else {
+            bTtimer2.cancel();
+            bTtimer2.purge();
         }
 
 
         //TODO: revert buffs for the new powerups
+    }
+    public void applyRepairKitEffect(long tankId) {
+
+        final int[] elapsedTime = {0};
+        Builder curr = this;
+        bTtimer2.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (elapsedTime[0] < REPAIR_KIT_EFFECT_DURATION && curr.getLife() < 50) {
+                    curr.setLife(curr.getLife() + 1); // Heal by 1 point
+                    elapsedTime[0]++;
+                } else {
+                    bTtimer2.cancel();
+                    bTtimer2.purge();
+                }
+            }
+        }, 0, 1000);
+    }
+    public void deflectorShield(long tankId) {
+        final int[] remainingAbsorption = {50};
+        Builder curr = this;
+        curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
+        int origLife = curr.getLife();
+        curr.setLife(curr.getLife() + 50);
+        bTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (remainingAbsorption[0] > 0 && curr.getLife() > origLife) {
+                    curr.setLife(curr.getLife() - DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
+                    remainingAbsorption[0]--;
+                } else {
+                    bTimer.cancel();
+                }
+            }
+        }, 1000, 1000);
     }
 }

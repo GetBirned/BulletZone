@@ -19,10 +19,7 @@ public final class Game {
      * Field dimensions
      */
     private static final int FIELD_DIM = 16;
-    private static final int REPAIR_KIT_EFFECT_DURATION = 120; // 120 seconds
-    private static final int DEFLECTOR_SHIELD_DAMAGE_REDUCTION = 1; // Damage reduction per second
-
-    private final long id;
+      private final long id;
     private long lastEjectionTime;
     private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
@@ -603,11 +600,12 @@ public final class Game {
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
         } //DEFLECTOR SHIELD
         if (powerupValue == 9) {
-            deflectorShield(tankId,'s');
+            curr.numShield++;
+            curr.deflectorShield(tankId);
         }
         // REPAIR KIT
         else if (powerupValue == 10) {
-            applyRepairKitEffect(tankId,'s');
+            curr.applyRepairKitEffect(tankId);
         }
 
 
@@ -630,11 +628,12 @@ public final class Game {
         }
         //DEFLECTOR SHIELD
         if (powerupValue == 9) {
-            deflectorShield(tankId,'t');
+            curr.numShield++;
+            curr.deflectorShield(tankId);
         }
         // REPAIR KIT
         else if (powerupValue == 10) {
-            applyRepairKitEffect(tankId,'t');
+            curr.applyRepairKitEffect(tankId);
         }
 
     }
@@ -656,54 +655,14 @@ public final class Game {
         }
         //DEFLECTOR SHIELD
         if (powerupValue == 9) {
-            deflectorShield(tankId,'b');
+            curr.numShield++;
+            curr.deflectorShield(tankId);
         }
         // REPAIR KIT
         else if (powerupValue == 10) {
-            applyRepairKitEffect(tankId, 'b');
+            curr.applyRepairKitEffect(tankId);
         }
 
     }
-    private void applyRepairKitEffect(long tankId, char type) {
-        Timer timer = new Timer();
-        final int[] elapsedTime = {0};
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Tank curr = getTank(tankId);
-                if (elapsedTime[0] < REPAIR_KIT_EFFECT_DURATION && curr.getLife() < 100) {
-                    curr.setLife(curr.getLife() + 1); // Heal by 1 point
-                    elapsedTime[0]++;
-                } else {
-                    timer.cancel();
-                    timer.purge();
-                }
-            }
-        }, 0, 1000);
-    }
-
-    private void deflectorShield(long tankId, char type) {
-        final int[] remainingAbsorption = {50};
-        Tank curr = getTank(tankId);
-        if(type != 't'){
-
-        }
-        curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
-        int origLife = curr.getLife();
-        curr.setLife(curr.getLife() + 50);
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (remainingAbsorption[0] > 0 && curr.getLife() > origLife) {
-                    curr.setLife(curr.getLife() - DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
-                    remainingAbsorption[0]--;
-                } else {
-                    cancel();
-                }
-            }
-        }, 1000, 1000);
-    }
-
 
 }

@@ -123,7 +123,7 @@ public class GridAdapter extends BaseAdapter {
         return row >= 0 && row < 16 && col >= 0 && col < 16 && mEntities[row][col] == 0 && hasPowerUp[row][col] == 0;
     }
     public void ejectPowerup(int row, int col) {
-        //FIND SOLDIER'S POSITION
+        //FIND SOLDIER'S/BUILDER'S POSITION
         if (convert(ejectedType) != -1) {
             int[][] offsets = {
                     {1, 1}, {1, 0}, {1, -1},
@@ -394,9 +394,9 @@ public class GridAdapter extends BaseAdapter {
                     }
                 } else if (val >= 50000000 && val <= 60000000) {
                     setBuilder(imageView, direction, hasPowerUp[row][col]);
-//                    if(didEject) {
-//                        ejectPowerup(row, col);
-//                    }
+                    if(didEject) {
+                        ejectPowerup(row, col);
+                    }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
                         if(hasPowerUp[row][col] == 1){
