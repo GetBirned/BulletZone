@@ -27,10 +27,6 @@ public class ClientController {
         }
     }
 
-    public LongWrapper ejectPowerup(long tankId, boolean res){
-        return restClient.ejectPowerup(tankId, res);
-    }
-
     public LongWrapper ejectPowerup(long tankId, char type) {
         return restClient.ejectPowerup(tankId, type);
     }

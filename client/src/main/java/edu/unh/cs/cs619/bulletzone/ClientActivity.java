@@ -164,7 +164,6 @@ public class ClientActivity extends Activity {
         LongWrapper result;
         int type = 0;
 
-
         if (isSoldierDeployed) {
             result = controller.ejectPowerup(tankId, 's');
             Log.d("EJECTPOWERUP ------> ", "SOLDIER IS DEPLOYED ");
@@ -173,15 +172,13 @@ public class ClientActivity extends Activity {
         } else{
             result = controller.ejectPowerup(tankId, 'b');
         }
-        if (result == null) {
+
+        if (result == null || result.getResult() == -1) {
             Log.d(TAG, "ejectPowerupAsync: Result is NULL");
+            noPowerupToEjectToast(this, "No powerup to eject!");
+
         } else {
             type = (int) result.getResult();
-        }
-
-
-        if (result == null || type == -1) {
-            noPowerupToEjectToast(this, "No Powerup To Eject!");
         }
         mGridAdapter.didEject = true;
         mGridAdapter.ejectedType = type;

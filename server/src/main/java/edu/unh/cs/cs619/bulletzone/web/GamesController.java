@@ -225,18 +225,14 @@ class GamesController {
             } else{
                 powerup = gameRepository.getBuilderPowerup(tankId);
             }
-
-
             if (powerup == -1) {
-                return new ResponseEntity<>((long) -1, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>((long) -1, HttpStatus.OK);
             }
             System.out.println("POWERUP TYPE IS ------------------> " + powerup);
-
-
             return new ResponseEntity<>(powerup, HttpStatus.OK);
+
         } catch (Exception e) {
             e.printStackTrace();
-
 
             return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
         }
