@@ -16,7 +16,10 @@ public class ButtonController extends Activity {
     Button deploySoldier;
     Button controlBuilder;
     Button controlTank;
+    Button dropMine;
+    Button dropHijack;
     Activity activity;
+
     public ButtonController(Activity activity) {
         this.activity = activity;
     }
@@ -29,6 +32,9 @@ public class ButtonController extends Activity {
         deploySoldier = activity.findViewById(R.id.deploySoldier);
         controlBuilder = activity.findViewById(R.id.controlBuilder);
         controlTank = activity.findViewById(R.id.controlTank);
+        dropHijack = activity.findViewById(R.id.buildHijackTrap);
+        dropMine = activity.findViewById(R.id.buildMine);
+
     }
 
     public void updateButtons(int controllingBuilder) {
@@ -50,6 +56,10 @@ public class ButtonController extends Activity {
                     controlBuilder.setAlpha(0.5f);
                     controlTank.setEnabled(true);
                     controlTank.setAlpha(1.0f);
+                    dropHijack.setEnabled(false);
+                    dropHijack.setAlpha(0.5f);
+                    dropMine.setEnabled(false);
+                    dropMine.setAlpha(0.5f);
                 } else { // Controlling tank, only show tank buttons
                     buildWall.setEnabled(false);
                     buildWall.setAlpha(0.5f);
@@ -65,6 +75,10 @@ public class ButtonController extends Activity {
                     controlBuilder.setAlpha(1.0f);
                     controlTank.setEnabled(false);
                     controlTank.setAlpha(0.5f);
+                    dropHijack.setEnabled(true);
+                    dropHijack.setAlpha(1.0f);
+                    dropMine.setEnabled(true);
+                    dropMine.setAlpha(1.0f);
                 }
             }
         });
