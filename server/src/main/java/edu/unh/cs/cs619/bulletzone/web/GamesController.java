@@ -150,18 +150,20 @@ class GamesController {
         );
     }
 
-    @PostMapping(value = "/setTankPowerup/{tankId}/{powerupValue}/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/setTankPowerup/{tankId}/{powerupValue}/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    void setTankPowerup(@PathVariable long tankId, @PathVariable int powerupValue, @PathVariable boolean isTank) {
+    void setTankPowerup(@PathVariable long tankId, @PathVariable int powerupValue, @PathVariable char type) {
         try {
             log.debug("setTankPowerup called with tankId: {} and powerupType: {}", tankId, powerupValue);
 
             // Call the method to set the tank's powerup
-            if(isTank) {
+            if(type == 't') {
                 gameRepository.setTankPowerup(tankId, powerupValue);
-            } else{
+            } else if (type == 's'){
                 gameRepository.setSoldierPowerup(tankId,powerupValue);
+            } else{
+                gameRepository.setBuilderPowerup(tankId,powerupValue);
             }
 
 
@@ -169,6 +171,7 @@ class GamesController {
             e.printStackTrace();
         }
     }
+
     @RequestMapping(method = RequestMethod.POST, value = "{tankId}/updateLife", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void setHealth(@PathVariable long tankId, boolean isTank, long offset) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException {
@@ -210,28 +213,26 @@ class GamesController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/ejectPowerup/{isTank}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/ejectPowerup/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<Long> ejectPowerup(@PathVariable long tankId, @PathVariable boolean isTank) {
+    public @ResponseBody ResponseEntity<Long> ejectPowerup(@PathVariable long tankId, @PathVariable char type) {
         try {
             long powerup;
-            if (isTank) {
+            if (type == 't') {
                 powerup = gameRepository.getTankPowerup(tankId);
-            } else {
+            } else if(type == 's'){
                 powerup = gameRepository.getSoldierPowerup(tankId);
+            } else{
+                powerup = gameRepository.getBuilderPowerup(tankId);
             }
-
-
             if (powerup == -1) {
-                return new ResponseEntity<>((long) -1, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>((long) -1, HttpStatus.OK);
             }
             System.out.println("POWERUP TYPE IS ------------------> " + powerup);
-
-
             return new ResponseEntity<>(powerup, HttpStatus.OK);
+
         } catch (Exception e) {
             e.printStackTrace();
-
 
             return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -78,6 +78,7 @@ public class ClientActivity extends Activity {
     @RestService
     BulletZoneRestClient restClient;
 
+
     @Bean
     BZRestErrorhandler bzRestErrorhandler;
     byte previousBuilderDirection = 0;
@@ -97,6 +98,7 @@ public class ClientActivity extends Activity {
     private Sensor mAccelerometer;
 
     ShakeDetector mShakeDetector;
+    ClientController controller = new ClientController();
     @ViewById(R.id.bank_balance)
     TextView bankBalanceTextView;
     int controllingTank;
@@ -115,7 +117,7 @@ public class ClientActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        controller.construct(restClient);
         buttonController = new ButtonController(this);
         // Establish shake/sensorManager. Will handle shakes.
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -162,22 +164,21 @@ public class ClientActivity extends Activity {
         LongWrapper result;
         int type = 0;
 
-
         if (isSoldierDeployed) {
-            result = restClient.ejectPowerup(tankId, false);
+            result = controller.ejectPowerup(tankId, 's');
             Log.d("EJECTPOWERUP ------> ", "SOLDIER IS DEPLOYED ");
-        } else {
-            result = restClient.ejectPowerup(tankId, true);
+        } else if(controllingTank == 1) {
+            result = controller.ejectPowerup(tankId, 't');
+        } else{
+            result = controller.ejectPowerup(tankId, 'b');
         }
-        if (result == null) {
+
+        if (result == null || result.getResult() == -1) {
             Log.d(TAG, "ejectPowerupAsync: Result is NULL");
+            noPowerupToEjectToast(this, "No powerup to eject!");
+
         } else {
             type = (int) result.getResult();
-        }
-
-
-        if (result == null || type == -1) {
-            noPowerupToEjectToast(this, "No Powerup To Eject!");
         }
         mGridAdapter.didEject = true;
         mGridAdapter.ejectedType = type;
@@ -248,7 +249,8 @@ public class ClientActivity extends Activity {
 
     @AfterInject
     void afterInject() {
-        restClient.setRestErrorHandler(bzRestErrorhandler);
+
+        controller.setErrorHandler(bzRestErrorhandler);
         busProvider.getEventBus().register(gridEventHandler);
         startHealthUpdateTimer();
     }
@@ -289,7 +291,7 @@ public class ClientActivity extends Activity {
     @Background
     void joinAsync() {
         try {
-            this.tankId = restClient.join().getResult();
+            this.tankId = controller.getResult();
             gridPollTask.doPoll();
             buttonController.initializeButtons();
             controllingTank = 1;
@@ -400,12 +402,12 @@ public class ClientActivity extends Activity {
 
     @Background
     void moveAsync(long tankId, byte direction) {
-        restClient.move(tankId, direction);
+        controller.moveAsync(tankId, direction);
     }
 
     @Background
     void turnAsync(long tankId, byte direction) {
-        restClient.turn(tankId, direction);
+        controller.turnAsync(tankId, direction);
     }
 
     @Click(R.id.deploySoldier)
@@ -428,7 +430,7 @@ public class ClientActivity extends Activity {
         try {
             //if (!isSoldierDeployed) {
             // Attempt to deploy a soldier
-            LongWrapper soldierWrapper = restClient.deploySoldier(tankId);
+            LongWrapper soldierWrapper = controller.deploySoldier(tankId);
 
             if (soldierWrapper != null) {
                 // Deployment successful
@@ -457,16 +459,16 @@ public class ClientActivity extends Activity {
     @Background
     void updateSoldierHealthAsync(long soldierId) {
         try {
-            // Call your restClient method to get the soldier's health
-            LongWrapper healthWrapper = restClient.getSoldierHealth(soldierId);
+            // Call your server method to get the soldier's health
+            LongWrapper healthWrapper = controller.getSoldierHealth(soldierId);
 
             if (healthWrapper != null) {
                 // Only update the health if it's not null
                 long health = healthWrapper.getResult();
                 updateSoldierHealth((int) health);
-                Log.e(TAG, "Received health from restClient.getSoldierHealth: " + health);
+                Log.e(TAG, "Received health from server.getSoldierHealth: " + health);
             } else {
-                Log.e(TAG, "Received null health from restClient.getSoldierHealth for soldierId: " + soldierId);
+                Log.e(TAG, "Received null health from server.getSoldierHealth for soldierId: " + soldierId);
             }
         } catch (Exception e) {
             // Handle the exception
@@ -492,7 +494,7 @@ public class ClientActivity extends Activity {
     @Click(R.id.buttonFire)
     @Background
     protected void onButtonFire() {
-        restClient.fire(tankId);
+        controller.fire(tankId);
     }
 
     @Click(R.id.buttonReplay)
@@ -511,7 +513,7 @@ public class ClientActivity extends Activity {
     public void performLeave() {
         System.out.println("leaveGame() called, tank ID: "+tankId);
         BackgroundExecutor.cancelAll("grid_poller_task", true);
-        restClient.leave(tankId);
+        controller.leave(tankId);
     }
 
     @UiThread
@@ -540,7 +542,7 @@ public class ClientActivity extends Activity {
     }
 
     protected void controlBuilderAsync() {
-       LongWrapper res = restClient.controlBuilder(tankId);
+       controller.controlBuilder(tankId);
     }
 
     @Click(R.id.controlTank)
@@ -553,7 +555,7 @@ public class ClientActivity extends Activity {
     }
 
     protected void controlTankAsync() {
-        LongWrapper res = restClient.controlTank(tankId);
+        controller.controlTank(tankId);
     }
 
     @Click(R.id.buildBridge)
@@ -593,7 +595,7 @@ public class ClientActivity extends Activity {
     }
 
     public long getBuildTime(long tankId) {
-        LongWrapper buildTime = restClient.getBuildTime(tankId);
+        LongWrapper buildTime = controller.getBuildTime(tankId);
 
         if (buildTime == null) {
             Log.e(TAG, "buildTime could not be received from server.");
@@ -637,7 +639,7 @@ public class ClientActivity extends Activity {
     }
 
     public long getDismantleTime(long tankId) {
-        LongWrapper dismantleTime = restClient.getDismantleTime(tankId);
+        LongWrapper dismantleTime = controller.getDismantleTime(tankId);
         if (dismantleTime == null) {
             Log.e(TAG, "dismantleTime could not be received from server.");
         } else {
@@ -681,17 +683,17 @@ public class ClientActivity extends Activity {
 
     public void buildImprovement(int choice, long builderId) {
         if (controllingBuilder == 1) {
-                LongWrapper res = restClient.buildImprovement(choice, tankId);
+                LongWrapper res = controller.buildImprovement(choice, tankId);
                 if (res != null) {
                     if (res.getResult() == 1) {
                         Log.d(TAG, "Wall properly built by ID: " + builderId + "\n");
-                        restClient.updateBalance(receivedTankID, -100);
+                        controller.updateBalance(receivedTankID, -100);
                     } else if (res.getResult() == 2) {
                         Log.d(TAG, "Road properly built by ID: " + builderId + "\n");
-                        restClient.updateBalance(receivedTankID, -40);
+                        controller.updateBalance(receivedTankID, -40);
                     } else if (res.getResult() == 3) {
                         Log.d(TAG, "Bridge properly built by ID: " + builderId + "\n");
-                        restClient.updateBalance(receivedTankID, -80);
+                        controller.updateBalance(receivedTankID, -80);
 
                     }
                     updateBankAccountAsync(receivedTankID);
@@ -728,14 +730,14 @@ public class ClientActivity extends Activity {
 
     public void buildTrap(int choice, long soldierId) {
         if (controllingTank == 1) {
-            LongWrapper res = restClient.buildTrap(choice, tankId);
+            LongWrapper res = controller.buildTrap(choice, tankId);
             if (res != null) {
                 if (res.getResult() == 1) {
                     Log.d(TAG, "Mine properly built by ID: " + tankId + "\n");
-                    restClient.updateBalance(receivedTankID, -20);
+                    controller.updateBalance(receivedTankID, -20);
                 } else if (res.getResult() == 2) {
                     Log.d(TAG, "Hijack Trap properly built by ID: " + tankId + "\n");
-                    restClient.updateBalance(receivedTankID, -40);
+                    controller.updateBalance(receivedTankID, -40);
                 }
                 updateBankAccountAsync(receivedTankID);
             } else {
@@ -775,20 +777,36 @@ public class ClientActivity extends Activity {
     void dismantleImprovementAsync(long builderId) { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
         if (controllingBuilder == 1) {
             if (builderId != -1) {
-                LongWrapper res = restClient.dismantleImprovement(builderId);
+                LongWrapper res = controller.dismantleImprovement(builderId);
                 if (res != null) {
                     if (res.getResult() == 1) {
                         Log.d(TAG, "Wall properly dismantled by: " + builderId + "\n");
-                        restClient.updateBalance(receivedTankID, 100);
+                        controller.updateBalance(receivedTankID, 100);
                         Log.d(TAG, "100 (Wall) credits returned to BankAccount with ID: " + builderId + "\n");
                     } else if (res.getResult() == 2) {
                         Log.d(TAG, "Road properly dismantled by: " + builderId + "\n");
-                        restClient.updateBalance(receivedTankID, 40);
+                        controller.updateBalance(receivedTankID, 40);
                         Log.d(TAG, "40 (Road) credits returned to BankAccount with ID: " + builderId + "\n");
                     } else if (res.getResult() == 3) {
                         Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
-                        restClient.updateBalance(receivedTankID, 80);
+                        controller.updateBalance(receivedTankID, 80);
                         Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 4) {
+                        Log.d(TAG, "AntiGrav properly dismantled by: " + builderId + "\n");
+                        controller.updateBalance(receivedTankID, 300);
+                        Log.d(TAG, "300 (AntiGrav) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 5) {
+                        Log.d(TAG, "Fusion properly dismantled by: " + builderId + "\n");
+                        controller.updateBalance(receivedTankID, 400);
+                        Log.d(TAG, "400 (Fusion) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 6) {
+                        Log.d(TAG, "Shield properly dismantled by: " + builderId + "\n");
+                        controller.updateBalance(receivedTankID, 300);
+                        Log.d(TAG, "300 (Shield) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 7) {
+                        Log.d(TAG, "ToolKit properly dismantled by: " + builderId + "\n");
+                        controller.updateBalance(receivedTankID, 200);
+                        Log.d(TAG, "200 (Toolkit) credits returned to BankAccount with ID: " + builderId + "\n");
                     }
                    updateBankAccountAsync(receivedTankID);
                 } else {
@@ -816,18 +834,18 @@ public class ClientActivity extends Activity {
     @Background
     void updateHealthAsync(long tankId) {
         try {
-            // Call your restClient method to get the tank's health
-            LongWrapper healthWrapper = restClient.getHealth(tankId);
+            // Call your server method to get the tank's health
+            LongWrapper healthWrapper = controller.getHealth(tankId);
 
             if (healthWrapper != null) {
                 // Only update the health if it's not null
                 Log.e(TAG, "HealthWrapper value: " + healthWrapper.getResult());
                 long health = healthWrapper.getResult();
                 updateTankHealth((int) health);
-                Log.e(TAG, "Received health from restClient.getHealth: " + health + "for tank id: " + tankId);
+                Log.e(TAG, "Received health from server.getHealth: " + health + "for tank id: " + tankId);
                 updateBankAccountAsync(receivedTankID);
             } else {
-                Log.e(TAG, "Received null health from restClient.getHealth for tankId: " + tankId);
+                Log.e(TAG, "Received null health from server.getHealth for tankId: " + tankId);
             }
         } catch (Exception e) {
             // Handle the exception
@@ -838,8 +856,8 @@ public class ClientActivity extends Activity {
     @Background
     void updateBankAccountAsync(String user) {
         try {
-            // Call your restClient method to update bank account
-            IntegerWrapper updateResult = restClient.getBalance(user);
+            // Call your server method to update bank account
+            IntegerWrapper updateResult = controller.getBalance(user);
             curBalance = updateResult.getValue();
             if (updateResult != null) {
                 // Log or handle the update result if needed
@@ -876,17 +894,17 @@ public class ClientActivity extends Activity {
     @Background
     void updateBuilderHealthAsync(long tankId) {
         try {
-            // Call your restClient method to get the tank's health
-            LongWrapper healthWrapper = restClient.getBuilderHealth(tankId);
+            // Call your server method to get the tank's health
+            LongWrapper healthWrapper = controller.getBuilderHealth(tankId);
 
             if (healthWrapper != null) {
                 // Only update the health if it's not null
                 Log.e(TAG, "HealthWrapper value: " + healthWrapper.getResult());
                 long health = healthWrapper.getResult();
                 updateBuilderHealth((int) health);
-                Log.e(TAG, "Received health from restClient.getHealth: " + health + "for Builder tank id: " + tankId);
+                Log.e(TAG, "Received health from server.getHealth: " + health + "for Builder tank id: " + tankId);
             } else {
-                Log.e(TAG, "Received null health from restClient.getHealth for Builder tankId: " + tankId);
+                Log.e(TAG, "Received null health from server.getHealth for Builder tankId: " + tankId);
             }
         } catch (Exception e) {
             // Handle the exception
@@ -899,7 +917,7 @@ public class ClientActivity extends Activity {
     void leaveAsync(long tankId) {
         System.out.println("Leave called, tank ID: " + tankId);
         BackgroundExecutor.cancelAll("grid_poller_task", true);
-        restClient.leave(tankId);
+        controller.leave(tankId);
     }
 }
 

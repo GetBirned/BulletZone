@@ -63,4 +63,10 @@ public interface GameRepository {
     public ArrayList<Integer> getTankPowerups(long tankId);
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
     public int getBuilderHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
+
+
+    void setBuilderPowerup(long tankId, int powerupValue);
+
+    long getBuilderPowerup(long tankId);
 }
+

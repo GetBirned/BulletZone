@@ -23,10 +23,8 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  * Created by simon on 10/1/14.
  */
 //
-@Rest(rootUrl = "http://10.21.113.247:6011/games",
-//@Rest(rootUrl = "http://10.21.113.247:6099/games",
-
-
+//@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+@Rest(rootUrl = "http://http://stman1.cs.unh.edu:61907/games",
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
         // TODO: disable intercepting and logging
         // , interceptors = { HttpLoggerInterceptor.class }
@@ -55,8 +53,8 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Put("/{tankId}/fire/1")
     BooleanWrapper fire(@Path long tankId);
 
-    @Post("/setTankPowerup/{tankId}/{powerupValue}/{isTank}")
-    void setTankPowerup(@Path long tankId, @Path int powerupValue, @Path boolean isTank);
+    @Post("/setTankPowerup/{tankId}/{powerupValue}/{type}")
+    void setTankPowerup(@Path long tankId, @Path int powerupValue, @Path char type);
 
     @Delete("/{tankId}/leave")
     BooleanWrapper leave(@Path long tankId);
@@ -96,6 +94,11 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
 
     @Get("/{tankId}/ejectPowerup/{isTank}")
     LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
+    @Get("/{tankId}/ejectPowerup/{type}")
+    LongWrapper ejectPowerup(@Path long tankId, @Path char type);
+
+    @Post("/{tankId}/giveCredit/{type}")
+    void giveCredit (@Path long tankId, @Path char type);
 
     @Post("/account/updateBalance/{username}/{amount}")
     BooleanWrapper updateBalance(@Path String username, @Path double amount);

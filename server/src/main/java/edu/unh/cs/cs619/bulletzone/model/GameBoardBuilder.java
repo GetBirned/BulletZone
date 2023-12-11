@@ -1,23 +1,24 @@
 package edu.unh.cs.cs619.bulletzone.model;
-public class GameBoardBuilder {
+public class GameBoardBuilder implements BoardBuilder {
 
-    public GameBoard gameBoard = null;
+    private GameBoard gameBoard = null;
     private final Object monitor = new Object();
 
-    public GameBoardBuilder(GameBoard gameBoard) {
-        this.create(gameBoard);
+    public GameBoardBuilder() {}
+
+    public GameBoard build() {
+        synchronized (this.monitor) {
+            gameBoard = new GameBoard();
+            this.set(gameBoard);
+            return gameBoard;
+        }
     }
 
-    public GameBoard create(GameBoard gb) {
-        if (gb != null) {
-            gameBoard = gb;
-            return gb;
-        }
+    public GameBoard build(FieldEntity terrain) {
         synchronized (this.monitor) {
-            gb = new GameBoard();
-            this.set(gb);
-            gameBoard = gb;
-            return gb;
+            gameBoard = new GameBoard();
+            this.set(gameBoard);
+            return gameBoard;
         }
     }
 
@@ -25,7 +26,14 @@ public class GameBoardBuilder {
         return gameBoard;
     }
 
-
+    private GameBoard set(GameBoard gb, FieldEntity terrain) {
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) {
+                gb.setEntity(j, i, terrain);
+            }
+        }
+        return gb;
+    }
 
     private GameBoard set(GameBoard gb) {
 
@@ -83,6 +91,8 @@ public class GameBoardBuilder {
         gb.setEntity(6, 9, new HealthKit());
         gb.setEntity(13, 11, new Shield());
         gb.setEntity(3, 8, new Thingamajig());
+        gb.setEntity(3, 12, new nukePowerUp());
+        gb.setEntity(4, 4, new applePowerUp());
 
         gb.setEntity(1, 13, new Water());
         gb.setEntity(2, 13, new Water());

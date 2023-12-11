@@ -28,7 +28,7 @@ public class FieldHolder {
     }
 
     public FieldEntity getEntity() {
-        return entityHolder.get();
+        return entityHolder.orElse(null);
     }
 
     public void setFieldEntity(FieldEntity entity) {

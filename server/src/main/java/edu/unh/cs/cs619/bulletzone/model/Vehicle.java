@@ -55,4 +55,6 @@ public interface Vehicle {
     long getId();
 
     boolean reenterTank(Tank tank);
+    void setTankLocation(TankLocation tankLocation);
+    TankLocation getTankLocation();
 }

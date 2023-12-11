@@ -18,6 +18,7 @@ import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import edu.unh.cs.cs619.bulletzone.model.TankLocation;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 @Component
@@ -82,7 +83,7 @@ public class InMemoryGameRepository implements GameRepository {
                     break;
                 }
             }
-
+            tank.setTankLocation(new TankLocation(x, y));
             for (; ; ) {
                 x = random.nextInt(FIELD_DIM);
                 y = random.nextInt(FIELD_DIM);
@@ -93,6 +94,7 @@ public class InMemoryGameRepository implements GameRepository {
                     break;
                 }
             }
+            builder.setTankLocation(new TankLocation(x, y));
 
             game.addTank(ip, tank);
             game.addBuilder(ip, builder);
@@ -205,19 +207,10 @@ public class InMemoryGameRepository implements GameRepository {
         game.setTankPowerup(tankId,powerupValue);
     }
 
+
     @Override
     public void setSoldierPowerup(long tankId, int powerupValue) {
         game.setSoldierPowerup(tankId,powerupValue);
-    }
-
-    @Override
-    public ArrayList<Integer> getTankPowerups(long tankId) {
-        return null;
-    }
-    @Override
-    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
-        return null;
-
     }
     public Stack<GridEvent> getCommandHistory() {
         return aci.getCommandHistory();
@@ -242,6 +235,16 @@ public class InMemoryGameRepository implements GameRepository {
         return res;
     }
 
+    @Override
+    public void setBuilderPowerup(long tankId, int powerupValue) {
+        game.setBuilderPowerup(tankId,powerupValue);
+    }
+
+    @Override
+    public long getBuilderPowerup(long tankId) {
+        return game.getBuilderPowerup(tankId);
+    }
+
     public LongWrapper getDismantleTime(long tankId) {
         return game.getDismantleTime(tankId);
     }
@@ -249,6 +252,16 @@ public class InMemoryGameRepository implements GameRepository {
 
     public LongWrapper controlBuilder(long tankId) {
         return game.controlBuilder(tankId);
+    }
+
+    @Override
+    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Integer> getTankPowerups(long tankId) {
+        return null;
     }
 
     public LongWrapper controlTank(long tankId) {
@@ -290,5 +303,7 @@ public class InMemoryGameRepository implements GameRepository {
     public int getTankPowerup(long tankId) {
         return game.getTankPowerup(tankId);
     }
+
+
 }
 

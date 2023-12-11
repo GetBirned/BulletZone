@@ -1,5 +1,9 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
+import java.awt.Toolkit;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
@@ -7,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
+import edu.unh.cs.cs619.bulletzone.model.Mine;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 public final class Game {
@@ -15,7 +19,7 @@ public final class Game {
      * Field dimensions
      */
     private static final int FIELD_DIM = 16;
-    private final long id;
+      private final long id;
     private long lastEjectionTime;
     private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
@@ -33,9 +37,11 @@ public final class Game {
 
     public void initiialize() {
         if (gbb != null) {
+            gb = gbb.build();
             return;
         }
-        gbb = new GameBoardBuilder(gb);
+        gbb = new GameBoardBuilder();
+        gb = gbb.build();
     }
 
     @JsonIgnore
@@ -45,7 +51,7 @@ public final class Game {
 
     @JsonIgnore
     public ArrayList<FieldHolder> getHolderGrid() {
-        return gbb.getBoard().getHolderGrid();
+        return gb.getHolderGrid();
     }
 
     public void addTank(String ip, Tank tank) {
@@ -81,11 +87,11 @@ public final class Game {
         }
     }
     public List<Optional<FieldEntity>> getGrid() {
-        synchronized (gbb.getBoard().getHolderGrid()) {
+        synchronized (gb.getHolderGrid()) {
             List<Optional<FieldEntity>> entities = new ArrayList<Optional<FieldEntity>>();
 
             FieldEntity entity;
-            for (FieldHolder holder : gbb.getBoard().getHolderGrid()) {
+            for (FieldHolder holder : gb.getHolderGrid()) {
                 if (holder.isPresent()) {
                     entity = holder.getEntity();
                     entity = entity.copy();
@@ -101,11 +107,11 @@ public final class Game {
     public int[][] getGrid2D() {
         int[][] grid = new int[FIELD_DIM][FIELD_DIM];
 
-        synchronized (gbb.getBoard().getHolderGrid()) {
+        synchronized (gb.getHolderGrid()) {
             FieldHolder holder;
             for (int i = 0; i < FIELD_DIM; i++) {
                 for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
+                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
                     if (holder.isPresent()) {
                         //System.out.print(holder.getEntity().toString() + ", ");
                         grid[i][j] = holder.getEntity().getIntValue(); // changing to 2345 turns everything into mines
@@ -120,59 +126,124 @@ public final class Game {
         return grid;
     }
     public TankLocation findTank(Tank tank, long tankID) {
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            FieldHolder holder;
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
-                    if (holder.isPresent() && holder.getEntity() instanceof Tank) {
-                        Tank currentTank = (Tank) holder.getEntity();
-                        if (currentTank.getId() == tankID) {
-                            return new TankLocation(i, j);
+        if (tanks.containsKey(tankID)) {
+            if (tanks.get(tankID).getTankLocation() == null) {
+                synchronized (gb.getHolderGrid()) {
+                    FieldHolder holder;
+
+                    for (int i = 0; i < FIELD_DIM; i++) {
+                        for (int j = 0; j < FIELD_DIM; j++) {
+                            holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+                            if (holder.isPresent() && holder.getEntity() instanceof Tank) {
+                                Tank currentTank = (Tank) holder.getEntity();
+                                if (currentTank.getId() == tankID) {
+                                    tanks.get(tankID).setTankLocation(new TankLocation(i, j));
+                                }
+                            }
                         }
                     }
                 }
             }
+            return tanks.get(tankID).getTankLocation();
+        } else {
+            return null;
         }
-        return null;
+//        synchronized (gb.getHolderGrid()) {
+//            FieldHolder holder;
+//
+//            for (int i = 0; i < FIELD_DIM; i++) {
+//                for (int j = 0; j < FIELD_DIM; j++) {
+//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+//                    if (holder.isPresent() && holder.getEntity() instanceof Tank) {
+//                        Tank currentTank = (Tank) holder.getEntity();
+//                        if (currentTank.getId() == tankID) {
+//                            return new TankLocation(i, j);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return null;
     }
-    public TankLocation findSoldier(Soldier soldier, long SoldierID) {
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            FieldHolder holder;
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
-                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
-                        Soldier currentSoldier = (Soldier) holder.getEntity();
-                        if (currentSoldier.getId() == SoldierID) {
-                            return new TankLocation(i, j);
+    public TankLocation findSoldier(Soldier soldier, long soldierID) {
+        if (soldiers.containsKey(soldierID)) {
+            if(soldiers.get(soldierID).getTankLocation() == null) {
+                synchronized (gb.getHolderGrid()) {
+                    FieldHolder holder;
+                    for (int i = 0; i < FIELD_DIM; i++) {
+                        for (int j = 0; j < FIELD_DIM; j++) {
+                            holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+                            if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
+                                Soldier currentSoldier = (Soldier) holder.getEntity();
+                                if (currentSoldier.getId() == soldierID) {
+                                    soldiers.get(soldierID).setTankLocation(new TankLocation(i, j));
+                                }
+                            }
                         }
                     }
                 }
             }
+            return soldiers.get(soldierID).getTankLocation();
+        } else {
+            return null;
         }
-        return null;
+//        synchronized (gb.getHolderGrid()) {
+//            FieldHolder holder;
+//            for (int i = 0; i < FIELD_DIM; i++) {
+//                for (int j = 0; j < FIELD_DIM; j++) {
+//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+//                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
+//                        Soldier currentSoldier = (Soldier) holder.getEntity();
+//                        if (currentSoldier.getId() == soldierID) {
+//                            return new TankLocation(i, j);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return null;
     }
 
-    public TankLocation findBuilder(Builder builder, long builderId) {
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            FieldHolder holder;
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
-                    if (holder.isPresent() && holder.getEntity() instanceof Builder) {
-                        Builder currentSoldier = (Builder) holder.getEntity();
-                        if (currentSoldier.getId() == builderId) {
-                            return new TankLocation(i, j);
+    public TankLocation findBuilder(Builder builder, long builderID) {
+        if (builders.containsKey(builderID)) {
+            if (builders.get(builderID).getTankLocation() == null) {
+                synchronized (gb.getHolderGrid()) {
+                    FieldHolder holder;
+                    for (int i = 0; i < FIELD_DIM; i++) {
+                        for (int j = 0; j < FIELD_DIM; j++) {
+                            holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+                            if (holder.isPresent() && holder.getEntity() instanceof Builder) {
+                                Builder currentSoldier = (Builder) holder.getEntity();
+                                if (currentSoldier.getId() == builderID) {
+                                    builders.get(builderID).setTankLocation(new TankLocation(i, j));
+                                }
+                            }
                         }
                     }
                 }
             }
+            return builders.get(builderID).getTankLocation();
+        } else {
+            return null;
         }
-        return null;
+//        synchronized (gb.getHolderGrid()) {
+//            FieldHolder holder;
+//            for (int i = 0; i < FIELD_DIM; i++) {
+//                for (int j = 0; j < FIELD_DIM; j++) {
+//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+//                    if (holder.isPresent() && holder.getEntity() instanceof Builder) {
+//                        Builder currentSoldier = (Builder) holder.getEntity();
+//                        if (currentSoldier.getId() == builderID) {
+//                            return new TankLocation(i, j);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return null;
     }
     public GameBoard getGameBoard() {
-        return this.gbb.getBoard();
+        return this.gb;
     }
 
     public void startEjectionCooldown() {
@@ -273,6 +344,34 @@ public final class Game {
                 bridge.setParent(null);
                 fieldElement.setFieldEntity(new Water());
                 return new LongWrapper(3);
+            } else if (fieldElement.getEntity() instanceof applePowerUp) { // ANTIGRAV - RETURN 300 CREDITS
+                applePowerUp apple = (applePowerUp) fieldElement.getEntity();
+                apple.getParent().clearField();
+                apple.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(4);
+            } else if (fieldElement.getEntity() instanceof nukePowerUp) { // FUSION - RETURN 400 CREDITS
+                nukePowerUp nuke = (nukePowerUp) fieldElement.getEntity();
+                nuke.getParent().clearField();
+                nuke.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(5);
+            } else if (fieldElement.getEntity() instanceof Shield) { // SHIELD - RETURN 300 CREDITS
+                Shield s = (Shield) fieldElement.getEntity();
+                if (!fieldElement.isPresent()) {
+                    fieldElement.setFieldEntity(s);
+                    s.setParent(fieldElement);
+                }
+                s.getParent().clearField();
+                s.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(6);
+            } else if (fieldElement.getEntity() instanceof HealthKit) { // TOOLKIT - RETURN 200 CREDITS
+                HealthKit h = (HealthKit) fieldElement.getEntity();
+                h.getParent().clearField();
+                h.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
+                return new LongWrapper(7);
             } else {
                 throw new IllegalArgumentException("Improper remove request. Spot behind builder is not an improvement.");
             }
@@ -412,6 +511,7 @@ public final class Game {
                                 if (isValidPosition(newX, newY) && !getHolderGrid().get(newX * FIELD_DIM + newY).isPresent()) {
                                     x = newX;
                                     y = newY;
+                                    soldier.setTankLocation(new TankLocation(y, x));
                                     break;
                                 }
                             }
@@ -546,6 +646,14 @@ public final class Game {
         curr.revertBuffs(curr.pQ.peek());
         return curr.pQ.poll();
     }
+    public int getBuilderPowerup(long tankId) {
+        Builder curr = builders.get(tankId);
+        if (curr == null || curr.pQ.peek() == null) {
+            return -1;
+        }
+        curr.revertBuffs(curr.pQ.peek());
+        return curr.pQ.poll();
+    }
     public void setSoldierPowerup(long tankId, int powerupValue){
         getSoldier((int) tankId).setPowerUpType(powerupValue);
         Soldier curr = getSoldier((int) tankId);
@@ -558,6 +666,15 @@ public final class Game {
         if (powerupValue == 3) {
             curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        } //DEFLECTOR SHIELD
+        if (powerupValue == 9) {
+            curr.numShield++;
+            curr.deflectorShield(tankId);
+
+        }
+        // REPAIR KIT
+        else if (powerupValue == 10) {
+            curr.applyRepairKitEffect(tankId);
         }
 
 
@@ -578,9 +695,43 @@ public final class Game {
             curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
         }
-
+        //DEFLECTOR SHIELD
+        if (powerupValue == 9) {
+            curr.numShield++;
+            curr.deflectorShield(tankId);
+        }
+        // REPAIR KIT
+        else if (powerupValue == 10) {
+            curr.applyRepairKitEffect(tankId);
+        }
 
     }
+    public void setBuilderPowerup(long tankId, int powerupValue) {
+        getTank(tankId).setPowerUpType(powerupValue);
+        Builder curr = getBuilder(tankId);
+        curr.pQ.add(powerupValue);
 
+        //FUSION
+        if (powerupValue == 2) {
+            curr.setAllowedMoveInterval((int) (curr.getAllowedMoveInterval() * 1.25));
+            curr.setAllowedNumberOfBullets(curr.getAllowedNumberOfBullets() * 2);
+            curr.setAllowedFireInterval((int)curr.getAllowedFireInterval() / 2);
+        }
+        //ANTIGRAV
+        if (powerupValue == 3) {
+            curr.setAllowedMoveInterval((int) curr.getAllowedMoveInterval() / 2);
+            curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
+        }
+        //DEFLECTOR SHIELD
+        if (powerupValue == 9) {
+            curr.numShield++;
+            curr.deflectorShield(tankId);
+        }
+        // REPAIR KIT
+        else if (powerupValue == 10) {
+            curr.applyRepairKitEffect(tankId);
+        }
+
+    }
 
 }

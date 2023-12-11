@@ -4,14 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class Tank extends FieldEntity implements Vehicle {
+    private static final int REPAIR_KIT_EFFECT_DURATION = 120;
+    private static final int DEFLECTOR_SHIELD_DAMAGE_REDUCTION = 1; // Damage reduction per second
+
 
     private static final String TAG = "Tank";
 
     private final long id;
     private int powerUpType;
+    Timer tTimer2 = new Timer();
+    Timer tTimer = new Timer();
 
     private final String ip;
     public Queue<Integer> pQ = new LinkedList<>();
@@ -23,12 +30,12 @@ public class Tank extends FieldEntity implements Vehicle {
 
     public int numberOfBullets;
     public int allowedNumberOfBullets;
-
+    public int mockTimer;
     private int life;
     public int numShield;
 
     private Direction direction;
-
+    private TankLocation tankLocation;
     private int isActive;
     public int ind;
     public Tank(long id, Direction direction, String ip, int isActive) {
@@ -43,7 +50,7 @@ public class Tank extends FieldEntity implements Vehicle {
         lastMoveTime = 0;
         allowedMoveInterval = 500;
         numShield = 0;
-        ind = 0;
+        mockTimer = 0;
     }
 
     public void setPowerUpType(int powerupValue) {
@@ -52,8 +59,6 @@ public class Tank extends FieldEntity implements Vehicle {
     public int getPowerUpType(){
         return this.powerUpType;
     }
-
-
 
     @Override
     public FieldEntity copy() {
@@ -164,6 +169,9 @@ public class Tank extends FieldEntity implements Vehicle {
     public int getLife() {
         return life;
     }
+    public void checker(){
+
+    }
 
     public void setLife(int life) {
         this.life = life;
@@ -189,12 +197,60 @@ public class Tank extends FieldEntity implements Vehicle {
         } else if (type == 3){
             this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
             this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
+        } else if(type == 9){
+            tTimer.cancel();
+            tTimer.purge();
+        } else {
+            tTimer2.cancel();
+            tTimer2.purge();
         }
 
 
         //TODO: revert buffs for the new powerups
     }
 
+    public void applyRepairKitEffect(long tankId) {
+        final int[] elapsedTime = {0};
+        Tank curr = this;
+        tTimer2.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (elapsedTime[0] < REPAIR_KIT_EFFECT_DURATION && curr.getLife() < 100) {
+                    curr.setLife(curr.getLife() + 1); // Heal by 1 point
+                    elapsedTime[0]++;
+                    mockTimer++;
+                }  if(mockTimer == REPAIR_KIT_EFFECT_DURATION) {
+                    tTimer2.cancel();
+                    tTimer2.purge();
+                }
+            }
+        }, 0, 1000);
+        mockTimer = 0;
+    }
+
+    public void deflectorShield(long tankId) {
+        final int[] remainingAbsorption = {50};
+        Tank curr = this;
+        curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
+        int origLife = curr.getLife();
+        //curr.setLife(curr.getLife() + 50);
+        tTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (remainingAbsorption[0] > 0 && curr.getLife() < origLife) {
+                    curr.setLife(curr.getLife() + DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
+                    remainingAbsorption[0]--;
+                } else {
+                    tTimer.cancel();
+                    tTimer.purge();
+                }
+            }
+        }, 1000, 1000);
+    }
+
+
+    public void setTankLocation(TankLocation tl) {this.tankLocation = tl;}
+    public TankLocation getTankLocation() {return tankLocation;}
 
 }
 
