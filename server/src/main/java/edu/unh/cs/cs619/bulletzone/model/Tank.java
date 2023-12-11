@@ -30,7 +30,7 @@ public class Tank extends FieldEntity implements Vehicle {
 
     public int numberOfBullets;
     public int allowedNumberOfBullets;
-
+    public int mockTimer;
     private int life;
     public int numShield;
 
@@ -50,7 +50,7 @@ public class Tank extends FieldEntity implements Vehicle {
         lastMoveTime = 0;
         allowedMoveInterval = 500;
         numShield = 0;
-        ind = 0;
+        mockTimer = 0;
     }
 
     public void setPowerUpType(int powerupValue) {
@@ -169,6 +169,9 @@ public class Tank extends FieldEntity implements Vehicle {
     public int getLife() {
         return life;
     }
+    public void checker(){
+
+    }
 
     public void setLife(int life) {
         this.life = life;
@@ -215,12 +218,14 @@ public class Tank extends FieldEntity implements Vehicle {
                 if (elapsedTime[0] < REPAIR_KIT_EFFECT_DURATION && curr.getLife() < 100) {
                     curr.setLife(curr.getLife() + 1); // Heal by 1 point
                     elapsedTime[0]++;
-                } else {
+                    mockTimer++;
+                }  if(mockTimer == REPAIR_KIT_EFFECT_DURATION) {
                     tTimer2.cancel();
                     tTimer2.purge();
                 }
             }
         }, 0, 1000);
+        mockTimer = 0;
     }
 
     public void deflectorShield(long tankId) {

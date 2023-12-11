@@ -13,8 +13,9 @@ public class Soldier extends FieldEntity implements Vehicle{
     private static final int DEFLECTOR_SHIELD_DAMAGE_REDUCTION = 1;
 
     private final long id;
-    Timer sTtimer2 = new Timer();
+    Timer sTimer2 = new Timer();
     Timer sTimer = new Timer();
+    int mockTimer;
 
     private String ip;
     private long lastMoveTime;
@@ -50,7 +51,7 @@ public class Soldier extends FieldEntity implements Vehicle{
         lastMoveTime = 0;
         allowedMoveInterval = 1000; // 1 second between move
         hasShield = false;
-        ind = 0;
+        mockTimer = 0;
     }
 
 
@@ -239,21 +240,22 @@ public class Soldier extends FieldEntity implements Vehicle{
         //TODO: revert buffs for the new powerups
     }
     public void applyRepairKitEffect(long tankId) {
-
         final int[] elapsedTime = {0};
         Soldier curr = this;
-        sTtimer2.scheduleAtFixedRate(new TimerTask() {
+        sTimer2.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 if (elapsedTime[0] < REPAIR_KIT_EFFECT_DURATION && curr.getLife() < 25) {
                     curr.setLife(curr.getLife() + 1); // Heal by 1 point
                     elapsedTime[0]++;
-                } else {
-                    sTtimer2.cancel();
-                    sTtimer2.purge();
+                    mockTimer++;
+                }  if(mockTimer == REPAIR_KIT_EFFECT_DURATION) {
+                    sTimer2.cancel();
+                    sTimer2.purge();
                 }
             }
         }, 0, 1000);
+        mockTimer = 0;
     }
     public void deflectorShield(long tankId) {
         final int[] remainingAbsorption = {50};

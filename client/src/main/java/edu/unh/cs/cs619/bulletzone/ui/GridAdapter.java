@@ -357,7 +357,9 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val >= 40000000 && val <= 50000000) {
                     setSoldier(imageView, direction, hasPowerUp[row][col]);
                     if(didEject) {
-                        ejectPowerup(row, col);
+                        if(convert(ejectedType) != 3141) {
+                            ejectPowerup(row, col);
+                        }
                     }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
@@ -395,7 +397,9 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val >= 50000000 && val <= 60000000) {
                     setBuilder(imageView, direction, hasPowerUp[row][col]);
                     if(didEject) {
-                        ejectPowerup(row, col);
+                        if(convert(ejectedType) != 3141) {
+                            ejectPowerup(row, col);
+                        }
                     }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {

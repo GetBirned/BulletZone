@@ -15,9 +15,10 @@ public class Builder extends FieldEntity implements Vehicle{
 
 
     private final long id;
+    int mockTimer;
 
     private String ip;
-    Timer bTtimer2 = new Timer();
+    Timer bTimer2 = new Timer();
     Timer bTimer = new Timer();
 
 
@@ -56,6 +57,7 @@ public class Builder extends FieldEntity implements Vehicle{
         allowedFireInterval = 250; // Shoot 250ms
         lastMoveTime = 0;
         allowedMoveInterval = 250; // 1 second between move
+        mockTimer = 0;
     }
     public void setPowerUpType(int powerupValue) {
         this.powerUpType = powerupValue;
@@ -238,29 +240,30 @@ public class Builder extends FieldEntity implements Vehicle{
             bTimer.cancel();
             bTimer.purge();
         } else {
-            bTtimer2.cancel();
-            bTtimer2.purge();
+            bTimer2.cancel();
+            bTimer2.purge();
         }
 
 
         //TODO: revert buffs for the new powerups
     }
     public void applyRepairKitEffect(long tankId) {
-
         final int[] elapsedTime = {0};
         Builder curr = this;
-        bTtimer2.scheduleAtFixedRate(new TimerTask() {
+        bTimer2.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 if (elapsedTime[0] < REPAIR_KIT_EFFECT_DURATION && curr.getLife() < 50) {
                     curr.setLife(curr.getLife() + 1); // Heal by 1 point
                     elapsedTime[0]++;
-                } else {
-                    bTtimer2.cancel();
-                    bTtimer2.purge();
+                    mockTimer++;
+                }  if(mockTimer == REPAIR_KIT_EFFECT_DURATION) {
+                    bTimer2.cancel();
+                    bTimer2.purge();
                 }
             }
         }, 0, 1000);
+        mockTimer = 0;
     }
     public void deflectorShield(long tankId) {
         final int[] remainingAbsorption = {50};
