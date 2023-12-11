@@ -35,7 +35,7 @@ public class Tank extends FieldEntity implements Vehicle {
     public int numShield;
 
     private Direction direction;
-
+    private TankLocation tankLocation;
     private int isActive;
     public int ind;
     public Tank(long id, Direction direction, String ip, int isActive) {
@@ -243,6 +243,9 @@ public class Tank extends FieldEntity implements Vehicle {
         }, 1000, 1000);
     }
 
+
+    public void setTankLocation(TankLocation tl) {this.tankLocation = tl;}
+    public TankLocation getTankLocation() {return tankLocation;}
 
 }
 

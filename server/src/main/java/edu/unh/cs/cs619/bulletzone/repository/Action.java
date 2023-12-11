@@ -24,6 +24,7 @@ import edu.unh.cs.cs619.bulletzone.model.Shield;
 import edu.unh.cs.cs619.bulletzone.model.Soldier;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
+import edu.unh.cs.cs619.bulletzone.model.TankLocation;
 import edu.unh.cs.cs619.bulletzone.model.Thingamajig;
 import edu.unh.cs.cs619.bulletzone.model.Vehicle;
 import edu.unh.cs.cs619.bulletzone.model.Wall;
@@ -206,7 +207,7 @@ public class Action {
             }
         } else if(nextField.getEntity() instanceof Tank && v instanceof Builder) {
             return false;
-        }else {
+        } else {
             if (nextField.getEntity() instanceof Wall) {
                 if(((Wall) nextField.getEntity()).destructValue == 1000){
                     v.takeDamage(10);
@@ -223,9 +224,37 @@ public class Action {
             }
             isCompleted = false;
         }
+        updateLocation(v, Direction.toByte(direction));
         return true;
     }
-
+    private void updateLocation(Vehicle v, byte direction) {
+        TankLocation tl = v.getTankLocation();
+        if (direction == 0) {
+            if (tl.getRow() == 0) {
+                v.setTankLocation(new TankLocation(15, tl.getColumn()));
+            } else {
+                v.setTankLocation(new TankLocation(tl.getRow() - 1, tl.getColumn()));
+            }
+        } else if (direction == 2) {
+            if (tl.getColumn() == 15) {
+                v.setTankLocation(new TankLocation(tl.getRow(), 0));
+            } else {
+                v.setTankLocation(new TankLocation(tl.getRow(), tl.getColumn() + 1));
+            }
+        } else if (direction == 4) {
+            if (tl.getRow() == 15) {
+                v.setTankLocation(new TankLocation(0, tl.getColumn()));
+            } else {
+                v.setTankLocation(new TankLocation(tl.getRow() + 1, tl.getColumn()));
+            }
+        } else if (direction == 6) {
+            if (tl.getColumn() == 0) {
+                v.setTankLocation(new TankLocation(tl.getRow(), 15));
+            } else {
+                v.setTankLocation(new TankLocation(tl.getRow(), tl.getColumn() - 1));
+            }
+        }
+    }
 
     public boolean fire(long tankId, int bulletType)
             throws TankDoesNotExistException, LimitExceededException {

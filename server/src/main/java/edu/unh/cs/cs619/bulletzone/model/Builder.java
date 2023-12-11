@@ -40,6 +40,8 @@ public class Builder extends FieldEntity implements Vehicle{
     private Direction direction;
     private int powerUpType;
     private int isActive;
+    private TankLocation tankLocation;
+    public int ind;
     public Queue<Integer> pQ = new LinkedList<>();
 
 
@@ -221,6 +223,8 @@ public class Builder extends FieldEntity implements Vehicle{
     public void setIsActive(int isActive) {
         this.isActive = isActive;
     }
+    public void setTankLocation(TankLocation tl) {this.tankLocation = tl;}
+    public TankLocation getTankLocation() {return tankLocation;}
 
     public void revertBuffs(int type){
         if (type == 2) {

@@ -37,9 +37,11 @@ public final class Game {
 
     public void initiialize() {
         if (gbb != null) {
+            gb = gbb.build();
             return;
         }
-        gbb = new GameBoardBuilder(gb);
+        gbb = new GameBoardBuilder();
+        gb = gbb.build();
     }
 
     @JsonIgnore
@@ -49,7 +51,7 @@ public final class Game {
 
     @JsonIgnore
     public ArrayList<FieldHolder> getHolderGrid() {
-        return gbb.getBoard().getHolderGrid();
+        return gb.getHolderGrid();
     }
 
     public void addTank(String ip, Tank tank) {
@@ -85,11 +87,11 @@ public final class Game {
         }
     }
     public List<Optional<FieldEntity>> getGrid() {
-        synchronized (gbb.getBoard().getHolderGrid()) {
+        synchronized (gb.getHolderGrid()) {
             List<Optional<FieldEntity>> entities = new ArrayList<Optional<FieldEntity>>();
 
             FieldEntity entity;
-            for (FieldHolder holder : gbb.getBoard().getHolderGrid()) {
+            for (FieldHolder holder : gb.getHolderGrid()) {
                 if (holder.isPresent()) {
                     entity = holder.getEntity();
                     entity = entity.copy();
@@ -105,11 +107,11 @@ public final class Game {
     public int[][] getGrid2D() {
         int[][] grid = new int[FIELD_DIM][FIELD_DIM];
 
-        synchronized (gbb.getBoard().getHolderGrid()) {
+        synchronized (gb.getHolderGrid()) {
             FieldHolder holder;
             for (int i = 0; i < FIELD_DIM; i++) {
                 for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
+                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
                     if (holder.isPresent()) {
                         //System.out.print(holder.getEntity().toString() + ", ");
                         grid[i][j] = holder.getEntity().getIntValue(); // changing to 2345 turns everything into mines
@@ -124,59 +126,74 @@ public final class Game {
         return grid;
     }
     public TankLocation findTank(Tank tank, long tankID) {
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            FieldHolder holder;
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
-                    if (holder.isPresent() && holder.getEntity() instanceof Tank) {
-                        Tank currentTank = (Tank) holder.getEntity();
-                        if (currentTank.getId() == tankID) {
-                            return new TankLocation(i, j);
-                        }
-                    }
-                }
-            }
+        if (tanks.containsKey(tankID)) {
+            return tanks.get(tankID).getTankLocation();
+        } else {
+            return null;
         }
-        return null;
+//        synchronized (gb.getHolderGrid()) {
+//            FieldHolder holder;
+//
+//            for (int i = 0; i < FIELD_DIM; i++) {
+//                for (int j = 0; j < FIELD_DIM; j++) {
+//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+//                    if (holder.isPresent() && holder.getEntity() instanceof Tank) {
+//                        Tank currentTank = (Tank) holder.getEntity();
+//                        if (currentTank.getId() == tankID) {
+//                            return new TankLocation(i, j);
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
-    public TankLocation findSoldier(Soldier soldier, long SoldierID) {
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            FieldHolder holder;
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
-                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
-                        Soldier currentSoldier = (Soldier) holder.getEntity();
-                        if (currentSoldier.getId() == SoldierID) {
-                            return new TankLocation(i, j);
-                        }
-                    }
-                }
-            }
+    public TankLocation findSoldier(Soldier soldier, long soldierID) {
+        if (soldiers.containsKey(soldierID)) {
+            return soldiers.get(soldierID).getTankLocation();
+        } else {
+            return null;
         }
-        return null;
+//        synchronized (gb.getHolderGrid()) {
+//            FieldHolder holder;
+//            for (int i = 0; i < FIELD_DIM; i++) {
+//                for (int j = 0; j < FIELD_DIM; j++) {
+//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+//                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
+//                        Soldier currentSoldier = (Soldier) holder.getEntity();
+//                        if (currentSoldier.getId() == SoldierID) {
+//                            return new TankLocation(i, j);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return null;
     }
 
-    public TankLocation findBuilder(Builder builder, long builderId) {
-        synchronized (gbb.getBoard().getHolderGrid()) {
-            FieldHolder holder;
-            for (int i = 0; i < FIELD_DIM; i++) {
-                for (int j = 0; j < FIELD_DIM; j++) {
-                    holder = gbb.getBoard().getHolderGrid().get(i * FIELD_DIM + j);
-                    if (holder.isPresent() && holder.getEntity() instanceof Builder) {
-                        Builder currentSoldier = (Builder) holder.getEntity();
-                        if (currentSoldier.getId() == builderId) {
-                            return new TankLocation(i, j);
-                        }
-                    }
-                }
-            }
+    public TankLocation findBuilder(Builder builder, long builderID) {
+        if (soldiers.containsKey(builderID)) {
+            return soldiers.get(builderID).getTankLocation();
+        } else {
+            return null;
         }
-        return null;
+//        synchronized (gb.getHolderGrid()) {
+//            FieldHolder holder;
+//            for (int i = 0; i < FIELD_DIM; i++) {
+//                for (int j = 0; j < FIELD_DIM; j++) {
+//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+//                    if (holder.isPresent() && holder.getEntity() instanceof Builder) {
+//                        Builder currentSoldier = (Builder) holder.getEntity();
+//                        if (currentSoldier.getId() == builderID) {
+//                            return new TankLocation(i, j);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return null;
     }
     public GameBoard getGameBoard() {
-        return this.gbb.getBoard();
+        return this.gb;
     }
 
     public void startEjectionCooldown() {
