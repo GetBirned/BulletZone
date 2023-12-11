@@ -83,7 +83,7 @@ public class InMemoryGameRepository implements GameRepository {
                     break;
                 }
             }
-
+            tank.setTankLocation(new TankLocation(x, y));
             for (; ; ) {
                 x = random.nextInt(FIELD_DIM);
                 y = random.nextInt(FIELD_DIM);
@@ -94,7 +94,8 @@ public class InMemoryGameRepository implements GameRepository {
                     break;
                 }
             }
-            tank.setTankLocation(new TankLocation(x, y));
+            builder.setTankLocation(new TankLocation(x, y));
+
             game.addTank(ip, tank);
             game.addBuilder(ip, builder);
 
