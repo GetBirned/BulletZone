@@ -190,10 +190,24 @@ public class GridAdapter extends BaseAdapter {
             oldMEntities = mEntities;
             try {
                 String grid_string = "";
+                int i = 0;
                 for (int[] nested_arr : mEntities) {
+                    int k = 0;
                     for (int val : nested_arr) {
+                        /*
+                            check against powerup thing
+
+                        if (hasPowerUp[i][k] != 0) {
+                            grid_string += String.valueOf(hasPowerUp[i][k]) + " ";
+                        } else {
+                            grid_string += String.valueOf(val) + " ";
+                        }
+                        grid_string += String.valueOf(val) + " ";
+                        k++;
+                         */
                         grid_string += String.valueOf(val) + " ";
                     }
+                    i++;
                 }
                 //String result = ts + " " + grid_string;
                 String result = grid_string;

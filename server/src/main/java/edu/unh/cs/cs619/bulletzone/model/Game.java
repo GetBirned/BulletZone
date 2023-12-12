@@ -699,13 +699,28 @@ public final class Game {
         //DEFLECTOR SHIELD
         if (powerupValue == 9) {
             curr.numShield++;
-            curr.deflectorShield(tankId);
+            curr.deflectorShield();
         }
         // REPAIR KIT
         else if (powerupValue == 10) {
             curr.applyRepairKitEffect(tankId);
         }
 
+    }
+    public ArrayList<Integer> retrieveTankPowerups(long tankId) {
+        Tank curr = getTank(tankId);
+        return new ArrayList<>(curr.pQ);
+
+    }
+
+    public ArrayList<Integer> retrieveSoldierPowerups(long tankId) {
+        Soldier curr = getSoldier(tankId);
+        return new ArrayList<>(curr.pQ);
+    }
+
+    public ArrayList<Integer> retrieveBuilderPowerups(long tankId) {
+        Builder curr = getBuilder(tankId);
+        return new ArrayList<>(curr.pQ);
     }
     public void setBuilderPowerup(long tankId, int powerupValue) {
         getTank(tankId).setPowerUpType(powerupValue);
