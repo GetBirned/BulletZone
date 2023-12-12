@@ -31,7 +31,11 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -710,7 +714,7 @@ public class ClientActivity extends Activity {
     void buildMine() {
         if (curBalance >= 20) {
             Log.d("MINE", "set mine");
-            buildTrap(1, tankId);
+            buildTrap(1, tankId, getTankIDFromFile());
         } else {
             Log.d(TAG, "Mine could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 20 credits.\n");
@@ -721,16 +725,43 @@ public class ClientActivity extends Activity {
     @Background
     void buildHijackTrap() {
         if (curBalance >= 40) {
-            buildTrap(2 , tankId);
+            buildTrap(2 , tankId, getTankIDFromFile());
         } else {
             Log.d(TAG, "HijackTrap could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 40 credits.\n");
         }
     }
 
-    public void buildTrap(int choice, long soldierId) {
+    public int getTankIDFromFile() {
+        try {
+            InputStream inputStream = this.openFileInput(receivedTankID + ".txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String receiveString = bufferedReader.readLine();
+                int tankID = Integer.parseInt(receiveString);
+                //Log.d("Sending", "tankID from file is " + tankID);
+
+                inputStream.close();
+                return tankID;
+            } else {
+                Log.d("ERROR", "Could not parse file");
+                return -1;
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("TANKID FILE", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("TANKID FILE", "Can not read file: " + e.toString());
+        }
+        return -1;
+    }
+
+    public void buildTrap(int choice, long soldierId, int userID) {
         if (controllingTank == 1) {
-            LongWrapper res = controller.buildTrap(choice, tankId);
+            LongWrapper res = controller.buildTrap(choice, tankId, userID);
             if (res != null) {
                 if (res.getResult() == 1) {
                     Log.d(TAG, "Mine properly built by ID: " + tankId + "\n");

@@ -86,8 +86,8 @@ public class ClientController {
         restClient.updateBalance(receivedTankID, amount);
     }
 
-    public LongWrapper buildTrap(int choice, long tankId) {
-        return restClient.buildTrap(choice, tankId);
+    public LongWrapper buildTrap(int choice, long tankId, int userID) {
+        return restClient.buildTrap(choice, tankId, userID);
     }
 
     public LongWrapper dismantleImprovement(long builderId) {

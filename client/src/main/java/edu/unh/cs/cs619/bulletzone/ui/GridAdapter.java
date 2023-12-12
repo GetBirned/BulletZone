@@ -472,13 +472,31 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 70) {
                     hasPowerUp[row][col] = 12;
                     imageView.setImageResource(R.drawable.roadongrass);
-                } else if (val == 83030) {
-                    Log.d("MINE", "mine recieved gridadapter");
-                    hasPowerUp[row][col] = 13; // TODO: figure out why
-                    imageView.setImageResource(R.drawable.minegrass);
-                } else if (val == 2345) {
-                    hasPowerUp[row][col] = 14;
-                    imageView.setImageResource(R.drawable.hijackgrass);
+                } else {
+                    String val_str_base = String.valueOf(val);
+                    // Getting trap type
+                    String val_str = val_str_base.substring(0, val_str_base.length()-1);
+                    // Stripping the tankID last num off of val
+                    String val_tankid = val_str_base.substring(val_str_base.length()-1, val_str_base.length());
+
+                    Log.d("TRAP", val_str + " : " + val_tankid);
+                    if (val_str.equals("83030")) {
+                        Log.d("TRAP", "mine recieved gridadapter");
+                        hasPowerUp[row][col] = 13; // TODO: figure out why
+                        if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
+                            imageView.setImageResource(R.drawable.minegrass);
+                        } else {
+                            Log.d("TRAP", "not a mine placed by user");
+                        }
+                    } else if (val_str.equals("2345")) {
+                        Log.d("TRAP", "hijack trap recieved gridadapter");
+                        hasPowerUp[row][col] = 14;
+                        if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
+                            imageView.setImageResource(R.drawable.hijackgrass);
+                        } else {
+                            Log.d("TRAP", "not a hijack trap placed by user");
+                        }
+                    }
                 }
             } else {
 
