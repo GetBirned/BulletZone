@@ -125,6 +125,7 @@ public final class Game {
         return grid;
     }
     public TankLocation findTank(Tank tank, long tankID) {
+        /**
         if (tanks.containsKey(tankID)) {
             if (tanks.get(tankID).getTankLocation() == null) {
                 synchronized (gb.getHolderGrid()) {
@@ -147,24 +148,26 @@ public final class Game {
         } else {
             return null;
         }
-//        synchronized (gb.getHolderGrid()) {
-//            FieldHolder holder;
-//
-//            for (int i = 0; i < FIELD_DIM; i++) {
-//                for (int j = 0; j < FIELD_DIM; j++) {
-//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
-//                    if (holder.isPresent() && holder.getEntity() instanceof Tank) {
-//                        Tank currentTank = (Tank) holder.getEntity();
-//                        if (currentTank.getId() == tankID) {
-//                            return new TankLocation(i, j);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return null;
+         */
+        synchronized (gb.getHolderGrid()) {
+            FieldHolder holder;
+
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+                    if (holder.isPresent() && holder.getEntity() instanceof Tank) {
+                        Tank currentTank = (Tank) holder.getEntity();
+                        if (currentTank.getId() == tankID) {
+                            return new TankLocation(i, j);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
     public TankLocation findSoldier(Soldier soldier, long soldierID) {
+        /**
         if (soldiers.containsKey(soldierID)) {
             if(soldiers.get(soldierID).getTankLocation() == null) {
                 synchronized (gb.getHolderGrid()) {
@@ -186,21 +189,22 @@ public final class Game {
         } else {
             return null;
         }
-//        synchronized (gb.getHolderGrid()) {
-//            FieldHolder holder;
-//            for (int i = 0; i < FIELD_DIM; i++) {
-//                for (int j = 0; j < FIELD_DIM; j++) {
-//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
-//                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
-//                        Soldier currentSoldier = (Soldier) holder.getEntity();
-//                        if (currentSoldier.getId() == soldierID) {
-//                            return new TankLocation(i, j);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return null;
+         */
+        synchronized (gb.getHolderGrid()) {
+            FieldHolder holder;
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
+                        Soldier currentSoldier = (Soldier) holder.getEntity();
+                        if (currentSoldier.getId() == soldierID) {
+                            return new TankLocation(i, j);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public TankLocation findBuilder(Builder builder, long builderID) {
@@ -333,11 +337,13 @@ public final class Game {
                 Wall wall = (Wall) fieldElement.getEntity();
                 wall.getParent().clearField();
                 wall.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(1);
             } else if (fieldElement.getEntity().getIntValue() == 70) { // ROAD - RETURN 40 CREDITS
                 Road road = (Road) fieldElement.getEntity();
                 road.getParent().clearField();
                 road.setParent(null);
+                fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(2);
             } else if (fieldElement.getEntity().getIntValue() == 60) { // BRIDGE - RETURN 80 CREDITS
                 Bridge bridge = (Bridge) fieldElement.getEntity();
