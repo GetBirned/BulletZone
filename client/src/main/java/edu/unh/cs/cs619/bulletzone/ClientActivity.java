@@ -48,6 +48,7 @@ import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
+import edu.unh.cs.cs619.bulletzone.ui.GridEventHandler;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
@@ -61,6 +62,7 @@ public class ClientActivity extends Activity {
     @Bean
     protected GridAdapter mGridAdapter;
 
+    private GridEventHandler gridEventHandler;
     private Timer healthUpdateTimer;
 
     @ViewById
@@ -193,7 +195,7 @@ public class ClientActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        busProvider.getEventBus().unregister(gridEventHandler);
+        gridEventHandler.unregister();
         sensorManager.unregisterListener(mShakeDetector);
         stopHealthUpdateTimer();
     }
@@ -209,6 +211,7 @@ public class ClientActivity extends Activity {
      * handle the events.
      */
     private GridWrapper currentGridWrapper;
+    /**
     private Object gridEventHandler = new Object()
     {
         @Subscribe
@@ -223,7 +226,7 @@ public class ClientActivity extends Activity {
             return currentGridWrapper;
         }
     };
-
+    **/
 
     @AfterViews
     protected void afterViewInjection() {
@@ -238,9 +241,7 @@ public class ClientActivity extends Activity {
 
     @AfterInject
     void afterInject() {
-
-        //controller.setErrorHandler(bzRestErrorhandler);
-        busProvider.getEventBus().register(gridEventHandler);
+        GridEventHandler gridEventHandler = new GridEventHandler(this, busProvider);
         startHealthUpdateTimer();
     }
 
