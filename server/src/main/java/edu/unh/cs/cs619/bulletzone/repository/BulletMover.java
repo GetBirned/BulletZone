@@ -3,6 +3,7 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.unh.cs.cs619.bulletzone.model.Builder;
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
@@ -55,6 +56,8 @@ public class BulletMover {
                                 t.getParent().clearField();
                                 t.setParent(null);
                                 game.removeTank(t.getId());
+                                currentField.clearField();
+                                bullet.setParent(null);
                             }
                         } else if (nextField.getEntity() instanceof Soldier) { // Soldier Hit
                             Soldier s = (Soldier) nextField.getEntity();
@@ -67,6 +70,18 @@ public class BulletMover {
                                 s.setParent(null);
                                 game.removeSoldier(s.getId());
                                 game.removeTank(t.getId());
+                                currentField.clearField();
+                                bullet.setParent(null);
+                            }
+                        } else if (nextField.getEntity() instanceof Builder) {
+                            Builder b = (Builder) nextField.getEntity();
+                            System.out.println("builder is hit, builder life: " + b.getLife());
+                            if (b.getLife() <= 0) {
+                                b.getParent().clearField();
+                                b.setParent(null);
+                                game.removeBuilder(b.getId());
+                                currentField.clearField();
+                                bullet.setParent(null);
                             }
                         } else if (nextField.getEntity() instanceof Wall) {
                             Wall w = (Wall) nextField.getEntity();
