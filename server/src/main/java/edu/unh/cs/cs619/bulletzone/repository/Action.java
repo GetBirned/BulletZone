@@ -234,7 +234,54 @@ public class Action {
             nextField.setFieldEntity((FieldEntity) v);
             v.setParent(nextField);
             return true;
+        } else if (nextField.getEntity() instanceof Wall && v instanceof Builder) {
+            Wall wall = (Wall) nextField.getEntity();
+            Builder b = (Builder) v;
+            double damageToWall = Math.ceil(v.getLife() * 0.05);
+            double damageToBuilder = Math.floor(wall.destructValue * 0.1);
+            b.hit((int)damageToBuilder);
+            wall.takeDamage((int)damageToWall);
+            if (b.getLife() < 0) {
+                b.getParent().clearField();
+                b.setParent(null);
+                game.removeBuilder(b.getId());
+            }
+            return false;
+        } else if (nextField.getEntity() instanceof Soldier && v instanceof Builder) {
+            Soldier s = (Soldier) nextField.getEntity();
+            Builder b = (Builder) v;
+            double damageToSoldier = Math.ceil(v.getLife() * 0.05);
+            double damageToBuilder = Math.floor(s.getLife() * 0.1);
+            b.hit((int)damageToBuilder);
+            s.hit((int) damageToSoldier);
+            if (b.getLife() < 0) {
+                b.getParent().clearField();
+                b.setParent(null);
+                game.removeBuilder(b.getId());
+            }
+            if (s.getLife() < 0) {
+                s.getParent().clearField();
+                s.setParent(null);
+                game.removeSoldier(s.getId());
+            }
+            return false;
         } else if(nextField.getEntity() instanceof Tank && v instanceof Builder) {
+            Tank t = (Tank) nextField.getEntity();
+            Builder b = (Builder) v;
+            double damageToTank = Math.ceil(b.getLife() * 0.05);
+            double damageToBuilder = Math.floor(t.getLife() * 0.1);
+            b.hit((int)damageToBuilder);
+            t.hit((int)damageToTank);
+            if (b.getLife() < 0) {
+                b.getParent().clearField();
+                b.setParent(null);
+                game.removeBuilder(b.getId());
+            }
+            if (t.getLife() < 0) {
+                t.getParent().clearField();
+                t.setParent(null);
+                game.removeTank(t.getId());
+            }
             return false;
         } else {
             if (nextField.getEntity() instanceof Wall) {

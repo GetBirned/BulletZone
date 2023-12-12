@@ -1,6 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Timer;
@@ -137,7 +136,7 @@ public class Builder extends FieldEntity implements Vehicle{
 
     @Override
     public void takeDamage(int othersArmor) {
-
+        this.hit(othersArmor);
     }
 
     @Override
