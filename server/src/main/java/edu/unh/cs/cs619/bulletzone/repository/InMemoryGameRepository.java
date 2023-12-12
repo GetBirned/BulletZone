@@ -297,8 +297,8 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     @Override
-    public LongWrapper buildTrap(int choice, long tankID) {
-        return game.buildTrap(choice, tankID);
+    public LongWrapper buildTrap(int choice, long tankID, int userID) {
+        return game.buildTrap(choice, tankID, userID);
     }
 
     @Override

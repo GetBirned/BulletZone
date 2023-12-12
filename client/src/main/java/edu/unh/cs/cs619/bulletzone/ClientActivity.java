@@ -9,6 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -31,7 +32,11 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -117,6 +122,7 @@ public class ClientActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        restClient.setRestErrorHandler(bzRestErrorhandler);
         controller.construct(restClient);
         buttonController = new ButtonController(this);
         // Establish shake/sensorManager. Will handle shakes.
@@ -151,37 +157,19 @@ public class ClientActivity extends Activity {
     }
 
     @Click(R.id.ejectPowerup)
+    @Background
     protected void ejectPowerup(){
-        ejectPowerupAsync();
+        int type = controller.ejectPowerupAsync(isSoldierDeployed, tankId, controllingTank);
+        if(type == -1) {
+            noPowerupToEjectToast(this, "No Powerup To Eject!");
+        }
+        mGridAdapter.didEject = true;
+        mGridAdapter.ejectedType = type;
     }
 
     @UiThread
     public void noPowerupToEjectToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-    @Background
-    protected void ejectPowerupAsync() {
-        LongWrapper result;
-        int type = 0;
-
-        if (isSoldierDeployed) {
-            result = controller.ejectPowerup(tankId, 's');
-            Log.d("EJECTPOWERUP ------> ", "SOLDIER IS DEPLOYED ");
-        } else if(controllingTank == 1) {
-            result = controller.ejectPowerup(tankId, 't');
-        } else{
-            result = controller.ejectPowerup(tankId, 'b');
-        }
-
-        if (result == null || result.getResult() == -1) {
-            Log.d(TAG, "ejectPowerupAsync: Result is NULL");
-            noPowerupToEjectToast(this, "No powerup to eject!");
-
-        } else {
-            type = (int) result.getResult();
-        }
-        mGridAdapter.didEject = true;
-        mGridAdapter.ejectedType = type;
     }
 
 
@@ -243,6 +231,7 @@ public class ClientActivity extends Activity {
         SystemClock.sleep(500);
         gridView.setAdapter(mGridAdapter);
         mGridAdapter.setRestClient(restClient);
+        mGridAdapter.setClientController(controller);
     }
 
     private Timer soldierHealthUpdateTimer;
@@ -250,7 +239,7 @@ public class ClientActivity extends Activity {
     @AfterInject
     void afterInject() {
 
-        controller.setErrorHandler(bzRestErrorhandler);
+        //controller.setErrorHandler(bzRestErrorhandler);
         busProvider.getEventBus().register(gridEventHandler);
         startHealthUpdateTimer();
     }
@@ -261,8 +250,12 @@ public class ClientActivity extends Activity {
             @Override
             public void run() {
                 // Call the method to update health information
-                updateHealthAsync(tankId);
-                updateBuilderHealthAsync(tankId);
+
+                int total = controller.updateBankAccountAsync(receivedTankID);
+                updateBalance(total);
+                curBalance = total;
+                updateTankHealth((int)controller.updateHealthAsync(tankId));
+                updateBuilderHealth(controller.updateBuilderHealthAsync(tankId));
                 //TODO: ADD builder health method here
             }
         }, 0, 1000); // Update health every 5 seconds (adjust the interval as needed)
@@ -272,7 +265,8 @@ public class ClientActivity extends Activity {
             public void run() {
                 // Call the method to update soldier's health information
                 if (isSoldierDeployed) {
-                    updateSoldierHealthAsync(soldierId);
+                    updateSoldierHealth(controller.updateSoldierHealthAsync(soldierId));
+
                 }
             }
         }, 0, 1000);
@@ -298,8 +292,11 @@ public class ClientActivity extends Activity {
             controllingBuilder = 0;
             buttonController.updateButtons(controllingBuilder);
             tankIsActive = 1;
-            updateHealthAsync(tankId);
-            updateBuilderHealthAsync(tankId);
+            updateTankHealth((int)controller.updateHealthAsync(tankId));
+            int total = controller.updateBankAccountAsync(receivedTankID);
+            updateBalance(total);
+            curBalance = total;
+            updateBuilderHealth(controller.updateBuilderHealthAsync(tankId));
         } catch (Exception e) {
             System.out.println("ERROR: joining game");
         }
@@ -320,6 +317,7 @@ public class ClientActivity extends Activity {
 
     byte tempDirection;
     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})
+    @Background
     protected void onButtonMove(View view) {
         calledMove = 1;
         if (currentlyBuilding == 0) {
@@ -355,66 +353,64 @@ public class ClientActivity extends Activity {
             if (controllingTank == 1) {
                 if (previousTankDirection == direction) {
                     previousTankDirection = tempDirection;
-                    this.moveAsync(tankId, direction);
+                    controller.moveAsync(tankId, direction);
                 } else {
                     if (previousTankDirection == 2 && direction == 6) {
                         previousTankDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else if (previousTankDirection == 6 && direction == 2) {
                         previousTankDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else if (previousTankDirection == 0 && direction == 4) {
                         previousTankDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else if (previousTankDirection == 4 && direction == 0) {
                         previousTankDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else {
                         previousTankDirection = tempDirection;
-                        this.turnAsync(tankId, direction);
+                        controller.turnAsync(tankId, direction);
                     }
                 }
             } else {
                 if (previousBuilderDirection == direction) {
                     previousBuilderDirection = tempDirection;
-                    this.moveAsync(tankId, direction);
+                    controller.moveAsync(tankId, direction);
                 } else {
                     if (previousBuilderDirection == 2 && direction == 6) {
                         previousBuilderDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else if (previousBuilderDirection == 6 && direction == 2) {
                         previousBuilderDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else if (previousBuilderDirection == 0 && direction == 4) {
                         previousBuilderDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else if (previousBuilderDirection == 4 && direction == 0) {
                         previousBuilderDirection = tempDirection;
-                        this.moveAsync(tankId, direction);
+                        controller.moveAsync(tankId, direction);
                     } else {
                         previousBuilderDirection = tempDirection;
-                        this.turnAsync(tankId, direction);
+                        controller.turnAsync(tankId, direction);
                     }
                 }
             }
         }
     }
 
-    @Background
-    void moveAsync(long tankId, byte direction) {
-        controller.moveAsync(tankId, direction);
-    }
-
-    @Background
-    void turnAsync(long tankId, byte direction) {
-        controller.turnAsync(tankId, direction);
-    }
-
     @Click(R.id.deploySoldier)
     @Background
     protected void deploySoldier() {
         if (controllingTank == 1) {
-            deploySoldierAsync();
+            long res = controller.deploySoldierAsync(tankId, soldierId, isSoldierDeployed);
+            if (res == -1) {
+                isSoldierDeployed = false;
+                soldierId = -1;
+            } else {
+                isSoldierDeployed = true;
+                soldierId = res;
+            }
+
         } else {
             showCannotDeployMessage();
         }
@@ -426,55 +422,7 @@ public class ClientActivity extends Activity {
     }
     private boolean isSoldierDeployed = false;
 
-    protected void deploySoldierAsync() {
-        try {
-            //if (!isSoldierDeployed) {
-            // Attempt to deploy a soldier
-            LongWrapper soldierWrapper = controller.deploySoldier(tankId);
 
-            if (soldierWrapper != null) {
-                // Deployment successful
-                soldierId = soldierWrapper.getResult();
-                isSoldierDeployed = true;
-
-                Log.d(TAG, "SoldierId is " + soldierId);
-
-                updateSoldierHealthAsync(soldierId);
-
-            } else {
-                Log.d(TAG, "SoldierId is " + soldierWrapper.getResult() + "\n");
-                // Handle other HTTP status codes if needed
-            }
-            /**
-             } else {
-             Log.d(TAG, "Soldier already deployed. Cannot deploy another.");
-             // Notify the user or handle accordingly
-             }
-             */
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Background
-    void updateSoldierHealthAsync(long soldierId) {
-        try {
-            // Call your server method to get the soldier's health
-            LongWrapper healthWrapper = controller.getSoldierHealth(soldierId);
-
-            if (healthWrapper != null) {
-                // Only update the health if it's not null
-                long health = healthWrapper.getResult();
-                updateSoldierHealth((int) health);
-                Log.e(TAG, "Received health from server.getSoldierHealth: " + health);
-            } else {
-                Log.e(TAG, "Received null health from server.getSoldierHealth for soldierId: " + soldierId);
-            }
-        } catch (Exception e) {
-            // Handle the exception
-            Log.e(TAG, "Error updating soldier health", e);
-        }
-    }
 
     @UiThread
     public void updateSoldierHealth(int health) {
@@ -538,11 +486,7 @@ public class ClientActivity extends Activity {
         controllingTank = 0;
         controllingBuilder = 1;
         buttonController.updateButtons(controllingBuilder);
-        controlBuilderAsync();
-    }
-
-    protected void controlBuilderAsync() {
-       controller.controlBuilder(tankId);
+        controller.controlBuilder(tankId);
     }
 
     @Click(R.id.controlTank)
@@ -551,10 +495,6 @@ public class ClientActivity extends Activity {
         controllingTank = 1;
         controllingBuilder = 0;
         buttonController.updateButtons(controllingBuilder);
-        controlTankAsync();
-    }
-
-    protected void controlTankAsync() {
         controller.controlTank(tankId);
     }
 
@@ -594,16 +534,6 @@ public class ClientActivity extends Activity {
         }
     }
 
-    public long getBuildTime(long tankId) {
-        LongWrapper buildTime = controller.getBuildTime(tankId);
-
-        if (buildTime == null) {
-            Log.e(TAG, "buildTime could not be received from server.");
-        } else {
-            return buildTime.getResult();
-        }
-        return 0;
-    }
 
     int currentlyBuilding;
 
@@ -616,7 +546,13 @@ public class ClientActivity extends Activity {
                 // Check if calledMove is still 0, otherwise, exit the task
                     try {
                         // Ensure UI updates are done on the UI thread
-                        buildImprovement(choice, tankId);
+                        if(controller.buildImprovement(choice, builderId, controllingBuilder, tankId, receivedTankID) == -1){
+                            showCannotBuildMessage();
+                        }
+
+                        int total = controller.updateBankAccountAsync(receivedTankID);
+                        updateBalance(total);
+                        curBalance = total;
                         Log.d(TAG, "buildImprovement executed successfully.\n");
                         currentlyBuilding = 0;
                     } catch (Exception e) {
@@ -629,7 +565,7 @@ public class ClientActivity extends Activity {
             }
         };
 
-        long buildTime = getBuildTime(tankId);
+        long buildTime = controller.getBuildTime(tankId);
         if (buildTime != 2000) {
             buildTime = 1000;
         }
@@ -658,7 +594,12 @@ public class ClientActivity extends Activity {
                 if (calledMove == 0) {
                     try {
                         // Ensure UI updates are done on the UI thread
-                        dismantleImprovementAsync(tankId);
+                        if(controller.dismantleImprovementAsync(builderId, receivedTankID,controllingBuilder) == false) {
+                            showCannotDismantleMessage();
+                        }
+                        int total = controller.updateBankAccountAsync(receivedTankID);
+                        updateBalance(total);
+                        curBalance = total;
                     } catch (Exception e) {
                         // Handle exceptions if necessary
                         Log.e(TAG, "Error during UI update or dismantleImprovement", e);
@@ -681,36 +622,19 @@ public class ClientActivity extends Activity {
         Log.d(TAG, "Timer started. Waiting to dismantle for " + buildTime + " milliseconds or until calledMove is set to 1...");
     }
 
-    public void buildImprovement(int choice, long builderId) {
-        if (controllingBuilder == 1) {
-                LongWrapper res = controller.buildImprovement(choice, tankId);
-                if (res != null) {
-                    if (res.getResult() == 1) {
-                        Log.d(TAG, "Wall properly built by ID: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, -100);
-                    } else if (res.getResult() == 2) {
-                        Log.d(TAG, "Road properly built by ID: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, -40);
-                    } else if (res.getResult() == 3) {
-                        Log.d(TAG, "Bridge properly built by ID: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, -80);
-
-                    }
-                    updateBankAccountAsync(receivedTankID);
-                } else {
-                    Log.d(TAG, "Build failed with ID: " + builderId + "\n");
-                }
-        } else {
-            showCannotBuildMessage();
-        }
-    }
 
     @Click(R.id.buildMine)
     @Background
     void buildMine() {
         if (curBalance >= 20) {
             Log.d("MINE", "set mine");
-            buildTrap(1, tankId);
+            if(controller.buildTrap(1, soldierId, controllingTank, tankId,  receivedTankID, getTankIDFromFile()) == -1) {
+                showCannotBuildTrapMessage();
+            }
+
+            int total = controller.updateBankAccountAsync(receivedTankID);
+            updateBalance(total);
+            curBalance = total;
         } else {
             Log.d(TAG, "Mine could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 20 credits.\n");
@@ -721,16 +645,50 @@ public class ClientActivity extends Activity {
     @Background
     void buildHijackTrap() {
         if (curBalance >= 40) {
-            buildTrap(2 , tankId);
+            if(controller.buildTrap(2, soldierId, controllingTank, tankId,  receivedTankID, getTankIDFromFile()) == -1) {
+                showCannotBuildTrapMessage();
+            }
+
+            int total = controller.updateBankAccountAsync(receivedTankID);
+            updateBalance(total);
+            curBalance = total;
         } else {
             Log.d(TAG, "HijackTrap could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 40 credits.\n");
         }
     }
 
-    public void buildTrap(int choice, long soldierId) {
+
+    public int getTankIDFromFile() {
+        try {
+            InputStream inputStream = this.openFileInput(receivedTankID + ".txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String receiveString = bufferedReader.readLine();
+                int tankID = Integer.parseInt(receiveString);
+                //Log.d("Sending", "tankID from file is " + tankID);
+
+                inputStream.close();
+                return tankID;
+            } else {
+                Log.d("ERROR", "Could not parse file");
+                return -1;
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("TANKID FILE", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("TANKID FILE", "Can not read file: " + e.toString());
+        }
+        return -1;
+    }
+
+    public void buildTrap(int choice, long soldierId, int userID) {
         if (controllingTank == 1) {
-            LongWrapper res = controller.buildTrap(choice, tankId);
+            LongWrapper res = controller.buildTrap(choice, tankId, userID);
             if (res != null) {
                 if (res.getResult() == 1) {
                     Log.d(TAG, "Mine properly built by ID: " + tankId + "\n");
@@ -739,7 +697,7 @@ public class ClientActivity extends Activity {
                     Log.d(TAG, "Hijack Trap properly built by ID: " + tankId + "\n");
                     controller.updateBalance(receivedTankID, -40);
                 }
-                updateBankAccountAsync(receivedTankID);
+                controller.updateBankAccountAsync(receivedTankID);
             } else {
                 Log.d(TAG, "Trap build failed with ID: " + tankId + "\n");
             }
@@ -770,53 +728,11 @@ public class ClientActivity extends Activity {
 
     @Click(R.id.dismantleImprovement)
     @Background
-    void dismantleImprovement() { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
+    void dismantleImprovement() {
         startDismantleTimer();
     }
 
-    void dismantleImprovementAsync(long builderId) { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
-        if (controllingBuilder == 1) {
-            if (builderId != -1) {
-                LongWrapper res = controller.dismantleImprovement(builderId);
-                if (res != null) {
-                    if (res.getResult() == 1) {
-                        Log.d(TAG, "Wall properly dismantled by: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, 100);
-                        Log.d(TAG, "100 (Wall) credits returned to BankAccount with ID: " + builderId + "\n");
-                    } else if (res.getResult() == 2) {
-                        Log.d(TAG, "Road properly dismantled by: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, 40);
-                        Log.d(TAG, "40 (Road) credits returned to BankAccount with ID: " + builderId + "\n");
-                    } else if (res.getResult() == 3) {
-                        Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, 80);
-                        Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
-                    } else if (res.getResult() == 4) {
-                        Log.d(TAG, "AntiGrav properly dismantled by: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, 300);
-                        Log.d(TAG, "300 (AntiGrav) credits returned to BankAccount with ID: " + builderId + "\n");
-                    } else if (res.getResult() == 5) {
-                        Log.d(TAG, "Fusion properly dismantled by: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, 400);
-                        Log.d(TAG, "400 (Fusion) credits returned to BankAccount with ID: " + builderId + "\n");
-                    } else if (res.getResult() == 6) {
-                        Log.d(TAG, "Shield properly dismantled by: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, 300);
-                        Log.d(TAG, "300 (Shield) credits returned to BankAccount with ID: " + builderId + "\n");
-                    } else if (res.getResult() == 7) {
-                        Log.d(TAG, "ToolKit properly dismantled by: " + builderId + "\n");
-                        controller.updateBalance(receivedTankID, 200);
-                        Log.d(TAG, "200 (Toolkit) credits returned to BankAccount with ID: " + builderId + "\n");
-                    }
-                   updateBankAccountAsync(receivedTankID);
-                } else {
-                    Log.d(TAG, "Dismantle failed with ID: " + builderId + "\n");
-                }
-            }
-        } else {
-            showCannotDismantleMessage();
-        }
-    }
+
 
     @UiThread
     protected void showCannotDismantleMessage() {
@@ -828,50 +744,6 @@ public class ClientActivity extends Activity {
         TextView tankHealthTextView = findViewById(R.id.tankHealth);
         tankHealthTextView.setText("" + health);
     }
-
-
-
-    @Background
-    void updateHealthAsync(long tankId) {
-        try {
-            // Call your server method to get the tank's health
-            LongWrapper healthWrapper = controller.getHealth(tankId);
-
-            if (healthWrapper != null) {
-                // Only update the health if it's not null
-                Log.e(TAG, "HealthWrapper value: " + healthWrapper.getResult());
-                long health = healthWrapper.getResult();
-                updateTankHealth((int) health);
-                Log.e(TAG, "Received health from server.getHealth: " + health + "for tank id: " + tankId);
-                updateBankAccountAsync(receivedTankID);
-            } else {
-                Log.e(TAG, "Received null health from server.getHealth for tankId: " + tankId);
-            }
-        } catch (Exception e) {
-            // Handle the exception
-            Log.e(TAG, "Error updating tank health", e);
-        }
-    }
-
-    @Background
-    void updateBankAccountAsync(String user) {
-        try {
-            // Call your server method to update bank account
-            IntegerWrapper updateResult = controller.getBalance(user);
-            curBalance = updateResult.getValue();
-            if (updateResult != null) {
-                // Log or handle the update result if needed
-                Log.d(TAG, "Bank account updated successfully for tank id: " + tankId);
-                updateBalance(updateResult.getValue());
-            } else {
-                Log.e(TAG, "Update bank account result is null for tankId: " + tankId);
-            }
-        } catch (Exception e) {
-            // Handle the exception
-            Log.e(TAG, "Error updating bank account", e);
-        }
-    }
-
     @UiThread
     public void updateBalance(int health) {
         TextView builderHealthTextView = findViewById(R.id.bank_balance);
@@ -890,34 +762,5 @@ public class ClientActivity extends Activity {
         }
     }
 
-
-    @Background
-    void updateBuilderHealthAsync(long tankId) {
-        try {
-            // Call your server method to get the tank's health
-            LongWrapper healthWrapper = controller.getBuilderHealth(tankId);
-
-            if (healthWrapper != null) {
-                // Only update the health if it's not null
-                Log.e(TAG, "HealthWrapper value: " + healthWrapper.getResult());
-                long health = healthWrapper.getResult();
-                updateBuilderHealth((int) health);
-                Log.e(TAG, "Received health from server.getHealth: " + health + "for Builder tank id: " + tankId);
-            } else {
-                Log.e(TAG, "Received null health from server.getHealth for Builder tankId: " + tankId);
-            }
-        } catch (Exception e) {
-            // Handle the exception
-            Log.e(TAG, "Error updating Builder health", e);
-        }
-    }
-
-
-    @Background
-    void leaveAsync(long tankId) {
-        System.out.println("Leave called, tank ID: " + tankId);
-        BackgroundExecutor.cancelAll("grid_poller_task", true);
-        controller.leave(tankId);
-    }
 }
 

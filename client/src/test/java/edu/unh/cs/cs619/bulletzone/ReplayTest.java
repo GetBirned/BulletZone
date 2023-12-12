@@ -54,7 +54,7 @@ public class ReplayTest {
     @Before
     public void setUp() {
         replayActivity = new ReplayActivity();
-        clientActivity = new ClientController(restClient);
+        clientActivity = new ClientController();
         restClient = clientActivity.restClient;
         replayActivity.replayAdapter = rGA;
 

@@ -23,10 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Random;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.rest.spring.annotations.RestService;
-
+import edu.unh.cs.cs619.bulletzone.ClientController;
 import edu.unh.cs.cs619.bulletzone.R;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 
@@ -60,11 +57,12 @@ public class GridAdapter extends BaseAdapter {
 
     @RestService
     BulletZoneRestClient restClient;
-    private static final int[] ITEM_RESOURCES = {
-            R.drawable.applepowerupgrass,
-            R.drawable.nukepowerupgrass,
-            R.drawable.coingrass
-    };
+
+    private ClientController controller;
+
+    public void setClientController(ClientController clientController) {
+        this.controller = clientController;
+    }
     public void setRestClient(BulletZoneRestClient restClient) {
         this.restClient = restClient;
     }
@@ -82,8 +80,7 @@ public class GridAdapter extends BaseAdapter {
     int tankCol;
     public int flag = 0;
     public int numCoins = 1000;
-    private static final String TAGFRIEND = "GridAdapter (Friendly):";
-    private static final String TAGENEMY = "GridAdapter (Enemy):";
+
 
 
     @Override
@@ -169,11 +166,6 @@ public class GridAdapter extends BaseAdapter {
         t.builderImage(imageView, direction, val);
     }
 
-
-    public void addSoldier(long soldierId) {
-        mEntities[tankRow + 1][tankCol] = (int) soldierId;
-        notifyDataSetChanged();
-    }
 
     public void getContext(Context context) {
         this.context = context;
@@ -314,10 +306,10 @@ public class GridAdapter extends BaseAdapter {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                   Log.e("Sending money toRest", " Sending money toRest withVal: " + username);
+                                    Log.e("Sending money toRest", " Sending money toRest withVal: " + username);
                                     System.out.println(" Sending money toRest withVal: " + username);
                                     int rand = random.nextInt(196) + 5;
-                                    restClient.updateBalance(username, rand );
+                                    controller.updateBalance(username, rand );
 
 
                                     return null;
@@ -331,7 +323,7 @@ public class GridAdapter extends BaseAdapter {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(finalVal), finalType, 't');
+                                    controller.setTankPowerup(friendlyTank(finalVal), finalType, 't');
                                     Log.e("Sending " + friendlyTank(finalVal) + " toRestClient", "withVal: " + finalType);
 
 
@@ -370,7 +362,7 @@ public class GridAdapter extends BaseAdapter {
                                     Log.e("Sending money toRest", " Sending money toRest withVal: " + username);
                                     System.out.println(" Sending money toRest withVal: " + username);
                                     int rand = random.nextInt(196) + 5;
-                                    restClient.updateBalance(username, rand );
+                                    controller.updateBalance(username, rand );
 
 
                                     return null;
@@ -383,7 +375,7 @@ public class GridAdapter extends BaseAdapter {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, 's');
+                                    controller.setTankPowerup(friendlyTank(finalVal1), finalType, 's');
                                     Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
 
                                     return null;
@@ -410,7 +402,7 @@ public class GridAdapter extends BaseAdapter {
                                     Log.e("Sending money toRest", " Sending money toRest withVal: " + username);
                                     System.out.println(" Sending money toRest withVal: " + username);
                                     int rand = random.nextInt(196) + 5;
-                                    restClient.updateBalance(username, rand );
+                                    controller.updateBalance(username, rand );
 
 
                                     return null;
@@ -423,7 +415,7 @@ public class GridAdapter extends BaseAdapter {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    restClient.setTankPowerup(friendlyTank(finalVal1), finalType, 'b');
+                                    controller.setTankPowerup(friendlyTank(finalVal1), finalType, 'b');
                                     Log.e("Solder #: " + friendlyTank(finalVal1) +  "toRestClient", "withVal: " + finalType);
 
                                     return null;
@@ -472,13 +464,31 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 70) {
                     hasPowerUp[row][col] = 12;
                     imageView.setImageResource(R.drawable.roadongrass);
-                } else if (val == 83030) {
-                    Log.d("MINE", "mine recieved gridadapter");
-                    hasPowerUp[row][col] = 13; // TODO: figure out why
-                    imageView.setImageResource(R.drawable.minegrass);
-                } else if (val == 2345) {
-                    hasPowerUp[row][col] = 14;
-                    imageView.setImageResource(R.drawable.hijackgrass);
+                } else {
+                    String val_str_base = String.valueOf(val);
+                    // Getting trap type
+                    String val_str = val_str_base.substring(0, val_str_base.length()-1);
+                    // Stripping the tankID last num off of val
+                    String val_tankid = val_str_base.substring(val_str_base.length()-1, val_str_base.length());
+
+                    Log.d("TRAP", val_str + " : " + val_tankid);
+                    if (val_str.equals("83030")) {
+                        Log.d("TRAP", "mine recieved gridadapter");
+                        hasPowerUp[row][col] = 13; // TODO: figure out why
+                        if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
+                            imageView.setImageResource(R.drawable.minegrass);
+                        } else {
+                            Log.d("TRAP", "not a mine placed by user");
+                        }
+                    } else if (val_str.equals("2345")) {
+                        Log.d("TRAP", "hijack trap recieved gridadapter");
+                        hasPowerUp[row][col] = 14;
+                        if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
+                            imageView.setImageResource(R.drawable.hijackgrass);
+                        } else {
+                            Log.d("TRAP", "not a hijack trap placed by user");
+                        }
+                    }
                 }
             } else {
 

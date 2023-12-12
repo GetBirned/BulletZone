@@ -24,7 +24,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
  */
 //
 //@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
-@Rest(rootUrl = "http://http://stman1.cs.unh.edu:61907/games",
+@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
         // TODO: disable intercepting and logging
         // , interceptors = { HttpLoggerInterceptor.class }
@@ -89,8 +89,8 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Post("/buildImprovement/{choice}/{tankId}")
     LongWrapper buildImprovement(@Path int choice,@Path long tankId);
 
-    @Post("/buildTrap/{choice}/{tankId}")
-    LongWrapper buildTrap(@Path int choice,@Path long tankId);
+    @Post("/buildTrap/{choice}/{tankId}/{userID}")
+    LongWrapper buildTrap(@Path int choice,@Path long tankId, @Path int userID);
 
     @Get("/{tankId}/ejectPowerup/{isTank}")
     LongWrapper ejectPowerup(@Path long tankId, @Path boolean isTank);
