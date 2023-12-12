@@ -344,9 +344,9 @@ public class ClientController {
     }
 
 
-    public int buildTrap(int choice, long soldierId, int controllingTank, long tankId, String receivedTankID) {
+    public int buildTrap(int choice, long soldierId, int controllingTank, long tankId, String receivedTankID, int tankIDFromFile) {
         if (controllingTank == 1) {
-            LongWrapper res = restClient.buildTrap(choice, tankId);
+            LongWrapper res = restClient.buildTrap(choice, tankId, tankIDFromFile);
             if (res != null) {
                 if (res.getResult() == 1) {
                     Log.d(TAG, "Mine properly built by ID: " + tankId + "\n");

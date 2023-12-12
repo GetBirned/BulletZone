@@ -628,7 +628,7 @@ public class ClientActivity extends Activity {
     void buildMine() {
         if (curBalance >= 20) {
             Log.d("MINE", "set mine");
-            if(controller.buildTrap(1, soldierId, controllingTank, tankId,  receivedTankID) == -1) {
+            if(controller.buildTrap(1, soldierId, controllingTank, tankId,  receivedTankID, getTankIDFromFile()) == -1) {
                 showCannotBuildTrapMessage();
             }
 
@@ -645,7 +645,7 @@ public class ClientActivity extends Activity {
     @Background
     void buildHijackTrap() {
         if (curBalance >= 40) {
-            if(controller.buildTrap(2, soldierId, controllingTank, tankId,  receivedTankID) == -1) {
+            if(controller.buildTrap(2, soldierId, controllingTank, tankId,  receivedTankID, getTankIDFromFile()) == -1) {
                 showCannotBuildTrapMessage();
             }
 
@@ -697,7 +697,7 @@ public class ClientActivity extends Activity {
                     Log.d(TAG, "Hijack Trap properly built by ID: " + tankId + "\n");
                     controller.updateBalance(receivedTankID, -40);
                 }
-                updateBankAccountAsync(receivedTankID);
+                controller.updateBankAccountAsync(receivedTankID);
             } else {
                 Log.d(TAG, "Trap build failed with ID: " + tankId + "\n");
             }
