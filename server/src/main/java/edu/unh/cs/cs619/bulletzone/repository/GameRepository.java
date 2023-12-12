@@ -50,7 +50,7 @@ public interface GameRepository {
     public LongWrapper dismantleImprovement(long builderId);
     public LongWrapper buildImprovement(int choice, long builderId);
 
-    public LongWrapper buildTrap(int choice, long tankID);
+    public LongWrapper buildTrap(int choice, long tankID, int userID);
 
     public LongWrapper controlTank(long tankId);
 

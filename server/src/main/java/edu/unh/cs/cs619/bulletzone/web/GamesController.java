@@ -225,18 +225,14 @@ class GamesController {
             } else{
                 powerup = gameRepository.getBuilderPowerup(tankId);
             }
-
-
             if (powerup == -1) {
-                return new ResponseEntity<>((long) -1, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>((long) -1, HttpStatus.OK);
             }
             System.out.println("POWERUP TYPE IS ------------------> " + powerup);
-
-
             return new ResponseEntity<>(powerup, HttpStatus.OK);
+
         } catch (Exception e) {
             e.printStackTrace();
-
 
             return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -308,11 +304,11 @@ class GamesController {
         );
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/buildTrap/{choice}/{tankId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "/buildTrap/{choice}/{tankId}/{userID}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    ResponseEntity<LongWrapper> buildTrap(@PathVariable int choice, @PathVariable long tankId) {
-        LongWrapper response = gameRepository.buildTrap(choice, tankId);
+    ResponseEntity<LongWrapper> buildTrap(@PathVariable int choice, @PathVariable long tankId, @PathVariable int userID) {
+        LongWrapper response = gameRepository.buildTrap(choice, tankId, userID);
         return new ResponseEntity<LongWrapper>(
                 new LongWrapper(response.getResult()),
                 HttpStatus.CREATED

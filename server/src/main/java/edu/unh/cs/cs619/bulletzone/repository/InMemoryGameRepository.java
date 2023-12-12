@@ -83,7 +83,7 @@ public class InMemoryGameRepository implements GameRepository {
                     break;
                 }
             }
-
+            tank.setTankLocation(new TankLocation(x, y));
             for (; ; ) {
                 x = random.nextInt(FIELD_DIM);
                 y = random.nextInt(FIELD_DIM);
@@ -94,7 +94,8 @@ public class InMemoryGameRepository implements GameRepository {
                     break;
                 }
             }
-            tank.setTankLocation(new TankLocation(x, y));
+            builder.setTankLocation(new TankLocation(x, y));
+
             game.addTank(ip, tank);
             game.addBuilder(ip, builder);
 
@@ -289,8 +290,8 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     @Override
-    public LongWrapper buildTrap(int choice, long tankID) {
-        return game.buildTrap(choice, tankID);
+    public LongWrapper buildTrap(int choice, long tankID, int userID) {
+        return game.buildTrap(choice, tankID, userID);
     }
 
     @Override

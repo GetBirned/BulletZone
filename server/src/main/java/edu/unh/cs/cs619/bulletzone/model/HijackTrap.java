@@ -9,13 +9,13 @@ public class HijackTrap extends FieldEntity{
         pos = 2345;
     }
 
-    public HijackTrap(int pos){
-        this.pos = pos;
+    public HijackTrap(int userID){
+        this.pos = Integer.parseInt("2345" + String.valueOf(userID));
     }
 
     @Override
     public int getIntValue() {
-        return 2345;
+        return this.pos;
     }
 
     @Override

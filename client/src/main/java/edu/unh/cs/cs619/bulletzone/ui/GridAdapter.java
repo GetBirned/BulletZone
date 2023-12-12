@@ -15,6 +15,8 @@ import org.androidannotations.rest.spring.annotations.RestService;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -72,6 +74,7 @@ public class GridAdapter extends BaseAdapter {
         }
     }
 
+    private int currentItemIndex = 0;
 
     int tankRow;
     int tankCol;
@@ -117,7 +120,7 @@ public class GridAdapter extends BaseAdapter {
         return row >= 0 && row < 16 && col >= 0 && col < 16 && mEntities[row][col] == 0 && hasPowerUp[row][col] == 0;
     }
     public void ejectPowerup(int row, int col) {
-        //FIND SOLDIER'S POSITION
+        //FIND SOLDIER'S/BUILDER'S POSITION
         if (convert(ejectedType) != -1) {
             int[][] offsets = {
                     {1, 1}, {1, 0}, {1, -1},
@@ -334,6 +337,8 @@ public class GridAdapter extends BaseAdapter {
                     }
                     numPlayers++;
                     // TODO: need to discern between friendly tank
+                    // problem is friendlyTank(val) isn't right value (from file works)
+                    Log.d("ID THANG", "ft " + friendlyTank(val) + ": from file " + getTankIDFromFile());
                     if (friendlyTank(val) == getTankIDFromFile()) {
                         setFriendlyTank(imageView, direction, hasPowerUp[row][col]); // Set proper friendly tank image
                     } else {
@@ -344,7 +349,9 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val >= 40000000 && val <= 50000000) {
                     setSoldier(imageView, direction, hasPowerUp[row][col]);
                     if(didEject) {
-                        ejectPowerup(row, col);
+                        if(convert(ejectedType) != 3141) {
+                            ejectPowerup(row, col);
+                        }
                     }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
@@ -381,9 +388,11 @@ public class GridAdapter extends BaseAdapter {
                     }
                 } else if (val >= 50000000 && val <= 60000000) {
                     setBuilder(imageView, direction, hasPowerUp[row][col]);
-//                    if(didEject) {
-//                        ejectPowerup(row, col);
-//                    }
+                    if(didEject) {
+                        if(convert(ejectedType) != 3141) {
+                            ejectPowerup(row, col);
+                        }
+                    }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
                             || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
                         if(hasPowerUp[row][col] == 1){
@@ -455,6 +464,31 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 70) {
                     hasPowerUp[row][col] = 12;
                     imageView.setImageResource(R.drawable.roadongrass);
+                } else {
+                    String val_str_base = String.valueOf(val);
+                    // Getting trap type
+                    String val_str = val_str_base.substring(0, val_str_base.length()-1);
+                    // Stripping the tankID last num off of val
+                    String val_tankid = val_str_base.substring(val_str_base.length()-1, val_str_base.length());
+
+                    Log.d("TRAP", val_str + " : " + val_tankid);
+                    if (val_str.equals("83030")) {
+                        Log.d("TRAP", "mine recieved gridadapter");
+                        hasPowerUp[row][col] = 13; // TODO: figure out why
+                        if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
+                            imageView.setImageResource(R.drawable.minegrass);
+                        } else {
+                            Log.d("TRAP", "not a mine placed by user");
+                        }
+                    } else if (val_str.equals("2345")) {
+                        Log.d("TRAP", "hijack trap recieved gridadapter");
+                        hasPowerUp[row][col] = 14;
+                        if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
+                            imageView.setImageResource(R.drawable.hijackgrass);
+                        } else {
+                            Log.d("TRAP", "not a hijack trap placed by user");
+                        }
+                    }
                 }
             } else {
 

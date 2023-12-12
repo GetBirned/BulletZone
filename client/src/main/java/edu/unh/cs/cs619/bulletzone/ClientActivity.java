@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,11 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
 import org.androidannotations.rest.spring.annotations.RestService;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,6 +49,7 @@ import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
 import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
+import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 
@@ -62,12 +68,17 @@ public class ClientActivity extends Activity {
 
     String file_timestamp;
 
+
+
+
     @Bean
     BusProvider busProvider;
 
     @NonConfigurationInstance
     @Bean
     GridPollerTask gridPollTask;
+
+    EditText editDirection;
 
     @RestService
     BulletZoneRestClient restClient;
@@ -105,6 +116,7 @@ public class ClientActivity extends Activity {
 
     public int calledMove;
 
+    public int calledTurn;
 
 
     @Override
@@ -290,6 +302,8 @@ public class ClientActivity extends Activity {
         }
     }
 
+
+
     public void updateGrid(GridWrapper gw) {
         if (gw != null) {
             mGridAdapter.updateList(gw.getGrid());
@@ -297,6 +311,9 @@ public class ClientActivity extends Activity {
             Log.e(TAG, "GridWrapper is null");
         }
     }
+
+
+
 
     byte tempDirection;
     @Click({R.id.buttonUp, R.id.buttonDown, R.id.buttonLeft, R.id.buttonRight})
@@ -380,7 +397,6 @@ public class ClientActivity extends Activity {
             }
         }
     }
-
 
     @Click(R.id.deploySoldier)
     @Background
@@ -473,8 +489,6 @@ public class ClientActivity extends Activity {
         controller.controlBuilder(tankId);
     }
 
-
-
     @Click(R.id.controlTank)
     @Background
     protected void controlTank() {
@@ -484,13 +498,11 @@ public class ClientActivity extends Activity {
         controller.controlTank(tankId);
     }
 
-
     @Click(R.id.buildBridge)
     @Background
     void buildBridge() {
         if (curBalance >= 80) {
             startBuildTimer(3);
-
             //buildImprovement(3, tankId);
         } else {
             Log.d(TAG, "Bridge could not be built. Bank Account associated to " +
@@ -503,7 +515,6 @@ public class ClientActivity extends Activity {
     void buildRoad() {
         if (curBalance >= 40) {
             startBuildTimer(2);
-
             //buildImprovement(2 , tankId);
         } else {
             Log.d(TAG, "Road could not be built. Bank Account associated to " +
@@ -516,7 +527,6 @@ public class ClientActivity extends Activity {
     void buildWall() {
         if (curBalance >= 100) {
             startBuildTimer(1);
-
             //buildImprovement(1, tankId);
         } else {
             Log.d(TAG, "Wall could not be built. Bank Account associated to " +
@@ -649,6 +659,52 @@ public class ClientActivity extends Activity {
     }
 
 
+    public int getTankIDFromFile() {
+        try {
+            InputStream inputStream = this.openFileInput(receivedTankID + ".txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String receiveString = bufferedReader.readLine();
+                int tankID = Integer.parseInt(receiveString);
+                //Log.d("Sending", "tankID from file is " + tankID);
+
+                inputStream.close();
+                return tankID;
+            } else {
+                Log.d("ERROR", "Could not parse file");
+                return -1;
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("TANKID FILE", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("TANKID FILE", "Can not read file: " + e.toString());
+        }
+        return -1;
+    }
+
+    public void buildTrap(int choice, long soldierId, int userID) {
+        if (controllingTank == 1) {
+            LongWrapper res = controller.buildTrap(choice, tankId, userID);
+            if (res != null) {
+                if (res.getResult() == 1) {
+                    Log.d(TAG, "Mine properly built by ID: " + tankId + "\n");
+                    controller.updateBalance(receivedTankID, -20);
+                } else if (res.getResult() == 2) {
+                    Log.d(TAG, "Hijack Trap properly built by ID: " + tankId + "\n");
+                    controller.updateBalance(receivedTankID, -40);
+                }
+                updateBankAccountAsync(receivedTankID);
+            } else {
+                Log.d(TAG, "Trap build failed with ID: " + tankId + "\n");
+            }
+        } else {
+            showCannotBuildTrapMessage();
+        }
+    }
 
     @UiThread
     protected void showCannotBuildTrapMessage() {
