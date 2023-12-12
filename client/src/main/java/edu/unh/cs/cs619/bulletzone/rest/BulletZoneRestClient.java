@@ -68,8 +68,8 @@ public interface BulletZoneRestClient extends RestClientErrorHandling {
     @Get("/{tankId}/getHealth")
     LongWrapper getHealth(@Path long tankId);
 
-    @Get("/{tankId}/getPowerups/{isTank}")
-    ArrayListWrapper getPowerups(@Path long tankId, @Path boolean isTank);
+    @Get("/{tankId}/getPowerups/{type}")
+    ArrayListWrapper getPowerups(@Path long tankId, @Path char type);
 
     @Get("/{tankId}/getSoldierHealth")
     LongWrapper getSoldierHealth(@Path long tankId);

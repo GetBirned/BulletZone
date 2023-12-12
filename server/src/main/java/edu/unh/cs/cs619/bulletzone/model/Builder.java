@@ -243,9 +243,6 @@ public class Builder extends FieldEntity implements Vehicle{
             bTimer2.cancel();
             bTimer2.purge();
         }
-
-
-        //TODO: revert buffs for the new powerups
     }
     public void applyRepairKitEffect(long tankId) {
         final int[] elapsedTime = {0};

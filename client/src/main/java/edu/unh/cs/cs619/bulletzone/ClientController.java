@@ -13,6 +13,7 @@ import org.androidannotations.rest.spring.annotations.RestService;
 import edu.unh.cs.cs619.bulletzone.rest.BZRestErrorhandler;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient_;
+import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
 import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 import org.androidannotations.rest.spring.annotations.RestService;
@@ -29,6 +30,10 @@ public class ClientController {
         this.restClient = restClient;
     }
 
+
+    public ArrayListWrapper getPowerups(long tankId, char type){
+        return restClient.getPowerups(tankId,type);
+    }
 
     public LongWrapper ejectPowerup(long tankId, char type) {
         return restClient.ejectPowerup(tankId, type);

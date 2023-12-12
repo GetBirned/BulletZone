@@ -234,10 +234,14 @@ public class Soldier extends FieldEntity implements Vehicle{
         } else if (type == 3){
             this.setAllowedMoveInterval((int) this.getAllowedMoveInterval() * 2);
             this.setAllowedFireInterval((int) this.getAllowedFireInterval() - 100);
+        } else if(type == 9){
+            sTimer.cancel();
+            sTimer.purge();
+        } else {
+            sTimer2.cancel();
+            sTimer2.purge();
         }
 
-
-        //TODO: revert buffs for the new powerups
     }
     public void applyRepairKitEffect(long tankId) {
         final int[] elapsedTime = {0};

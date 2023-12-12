@@ -254,14 +254,21 @@ public class InMemoryGameRepository implements GameRepository {
         return game.controlBuilder(tankId);
     }
 
+
     @Override
-    public ArrayList<Integer> getSoldierPowerups(long soldierId) {
-        return null;
+    public ArrayList<Integer> retrieveTankPowerups(long tankId) {
+        return game.retrieveTankPowerups(tankId);
+
     }
 
     @Override
-    public ArrayList<Integer> getTankPowerups(long tankId) {
-        return null;
+    public ArrayList<Integer> retrieveSoldierPowerups(long tankId) {
+        return game.retrieveSoldierPowerups(tankId);
+    }
+
+    @Override
+    public ArrayList<Integer> retrieveBuilderPowerups(long tankId) {
+        return game.retrieveBuilderPowerups(tankId);
     }
 
     public LongWrapper controlTank(long tankId) {
