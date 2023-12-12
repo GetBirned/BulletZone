@@ -37,6 +37,26 @@ public class TerrainUI {
         } else if (val == 6) {
             //NEED TO DO THIS!!!!!!!!!!!!!!!!!
             ;
+        } else if (val == 11) {
+            if (direction == 0) { // Bridge
+                imageView.setImageResource(R.drawable.friendlytankbridgeup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.friendlytankbridgeright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.friendlytankbridgedown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.friendlytankbridgeleft);
+            }
+        } else if (val == 12) {
+            if (direction == 0) { // Road
+                imageView.setImageResource(R.drawable.friendlytankroadup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.friendlytankroadright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.friendlytankroaddown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.friendlytankroadleft);
+            }
         } else {
             if (direction == 0) {
                 imageView.setImageResource(R.drawable.friendlytankup);
@@ -82,6 +102,26 @@ public class TerrainUI {
             } else if (direction == 6) {
                 imageView.setImageResource(R.drawable.soldierforestleft);
             }
+        } else if (val == 11) {
+            if (direction == 0) { // Bridge
+                imageView.setImageResource(R.drawable.soldierbridgeup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.soldierbridgeright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.soldierbridgedown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.soldierbridgeleft);
+            }
+        } else if (val == 12) {
+            if (direction == 0) { // Road
+                imageView.setImageResource(R.drawable.soldierroadup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.soldierroadright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.soldierroaddown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.soldierroadleft);
+            }
         } else {
             if (direction == 0) {
                 imageView.setImageResource(R.drawable.soldiergrassup);
@@ -119,7 +159,26 @@ public class TerrainUI {
             }
         } else if (val == 6) {
             //NEED TO DO THIS!!!!!!!!!!!!!!!!!
-
+        } else if (val == 11) {
+                if (direction == 0) { // Bridge
+                    imageView.setImageResource(R.drawable.enemytankbridgeup);
+                } else if (direction == 2) {
+                    imageView.setImageResource(R.drawable.enemytankbridgeright);
+                } else if (direction == 4) {
+                    imageView.setImageResource(R.drawable.enemytankbridgedown);
+                } else if (direction == 6) {
+                    imageView.setImageResource(R.drawable.enemytankbridgeleft);
+                }
+        } else if (val == 12) {
+            if (direction == 0) { // Road
+                imageView.setImageResource(R.drawable.enemytankroadup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.enemytankroadright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.enemytankroaddown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.enemytankroadleft);
+            }
         } else {
             if (direction == 0) {
                 imageView.setImageResource(R.drawable.enemytankup);
@@ -183,6 +242,16 @@ public class TerrainUI {
                 imageView.setImageResource(R.drawable.builderroaddown);
             } else if (direction == 6) {
                 imageView.setImageResource(R.drawable.builderroadleft);
+            }
+        } else if (val == 50) {
+            if (direction == 0) {
+                imageView.setImageResource(R.drawable.builderwaterup);
+            } else if (direction == 2) {
+                imageView.setImageResource(R.drawable.builderwaterright);
+            } else if (direction == 4) {
+                imageView.setImageResource(R.drawable.builderwaterdown);
+            } else if (direction == 6) {
+                imageView.setImageResource(R.drawable.builderwaterleft);
             }
         } else {
             if (direction == 0) {

@@ -1,9 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-import java.awt.Toolkit;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
@@ -11,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import edu.unh.cs.cs619.bulletzone.model.Mine;
+
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 public final class Game {
@@ -208,6 +204,7 @@ public final class Game {
     }
 
     public TankLocation findBuilder(Builder builder, long builderID) {
+        /**
         if (builders.containsKey(builderID)) {
             if (builders.get(builderID).getTankLocation() == null) {
                 synchronized (gb.getHolderGrid()) {
@@ -229,21 +226,22 @@ public final class Game {
         } else {
             return null;
         }
-//        synchronized (gb.getHolderGrid()) {
-//            FieldHolder holder;
-//            for (int i = 0; i < FIELD_DIM; i++) {
-//                for (int j = 0; j < FIELD_DIM; j++) {
-//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
-//                    if (holder.isPresent() && holder.getEntity() instanceof Builder) {
-//                        Builder currentSoldier = (Builder) holder.getEntity();
-//                        if (currentSoldier.getId() == builderID) {
-//                            return new TankLocation(i, j);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return null;
+         */
+        synchronized (gb.getHolderGrid()) {
+            FieldHolder holder;
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+                    if (holder.isPresent() && holder.getEntity() instanceof Builder) {
+                        Builder currentSoldier = (Builder) holder.getEntity();
+                        if (currentSoldier.getId() == builderID) {
+                            return new TankLocation(i, j);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
     public GameBoard getGameBoard() {
         return this.gb;
@@ -402,7 +400,7 @@ public final class Game {
                     wall.setParent(fieldElement);
                     return new LongWrapper(1);
                 }
-                if (!(fieldElement.getEntity() instanceof Wall)) {
+                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)) {
                     fieldElement.setFieldEntity(wall);
                     wall.setParent(fieldElement);
                     return new LongWrapper(1);
@@ -414,7 +412,7 @@ public final class Game {
                     road.setParent(fieldElement);
                     return new LongWrapper(2);
                 }
-                if (!(fieldElement.getEntity() instanceof Wall)) {
+                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)) {
                     fieldElement.setFieldEntity(road);
                     road.setParent(fieldElement);
                     return new LongWrapper(2);

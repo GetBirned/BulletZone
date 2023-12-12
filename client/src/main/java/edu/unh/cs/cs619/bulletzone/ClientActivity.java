@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-
-import com.squareup.otto.Subscribe;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -46,10 +43,9 @@ import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
 import edu.unh.cs.cs619.bulletzone.rest.BZRestErrorhandler;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
-import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
+import edu.unh.cs.cs619.bulletzone.ui.GridEventHandler;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
-import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 
@@ -61,6 +57,7 @@ public class ClientActivity extends Activity {
     @Bean
     protected GridAdapter mGridAdapter;
 
+    private GridEventHandler gridEventHandler;
     private Timer healthUpdateTimer;
 
     @ViewById
@@ -109,7 +106,8 @@ public class ClientActivity extends Activity {
     int controllingTank;
 
     int controllingBuilder;
-    ButtonController buttonController;
+    BuilderButtonController builderButtonController;
+    TankButtonController tankButtonController;
     private int tankIsActive;
 
     public String receivedTankID;
@@ -124,7 +122,8 @@ public class ClientActivity extends Activity {
         super.onCreate(savedInstanceState);
         restClient.setRestErrorHandler(bzRestErrorhandler);
         controller.construct(restClient);
-        buttonController = new ButtonController(this);
+        builderButtonController = new BuilderButtonController(this);
+        tankButtonController = new TankButtonController(this);
         // Establish shake/sensorManager. Will handle shakes.
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -193,7 +192,7 @@ public class ClientActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        busProvider.getEventBus().unregister(gridEventHandler);
+        gridEventHandler.unregister();
         sensorManager.unregisterListener(mShakeDetector);
         stopHealthUpdateTimer();
     }
@@ -209,6 +208,7 @@ public class ClientActivity extends Activity {
      * handle the events.
      */
     private GridWrapper currentGridWrapper;
+    /**
     private Object gridEventHandler = new Object()
     {
         @Subscribe
@@ -223,7 +223,7 @@ public class ClientActivity extends Activity {
             return currentGridWrapper;
         }
     };
-
+    **/
 
     @AfterViews
     protected void afterViewInjection() {
@@ -238,9 +238,7 @@ public class ClientActivity extends Activity {
 
     @AfterInject
     void afterInject() {
-
-        //controller.setErrorHandler(bzRestErrorhandler);
-        busProvider.getEventBus().register(gridEventHandler);
+        GridEventHandler gridEventHandler = new GridEventHandler(this, busProvider);
         startHealthUpdateTimer();
     }
 
@@ -287,10 +285,12 @@ public class ClientActivity extends Activity {
         try {
             this.tankId = controller.getResult();
             gridPollTask.doPoll();
-            buttonController.initializeButtons();
+            builderButtonController.initializeButtons();
+            tankButtonController.initializeButtons();
             controllingTank = 1;
             controllingBuilder = 0;
-            buttonController.updateButtons(controllingBuilder);
+            tankButtonController.updateButtons(controllingTank);
+            builderButtonController.updateButtons(controllingBuilder);
             tankIsActive = 1;
             updateTankHealth((int)controller.updateHealthAsync(tankId));
             int total = controller.updateBankAccountAsync(receivedTankID);
@@ -485,7 +485,12 @@ public class ClientActivity extends Activity {
     protected void controlBuilder() {
         controllingTank = 0;
         controllingBuilder = 1;
-        buttonController.updateButtons(controllingBuilder);
+        tankButtonController.updateButtons(controllingTank);
+        builderButtonController.updateButtons(controllingBuilder);
+        controlBuilderAsync();
+    }
+
+    protected void controlBuilderAsync() {
         controller.controlBuilder(tankId);
     }
 
@@ -494,7 +499,12 @@ public class ClientActivity extends Activity {
     protected void controlTank() {
         controllingTank = 1;
         controllingBuilder = 0;
-        buttonController.updateButtons(controllingBuilder);
+        tankButtonController.updateButtons(controllingTank);
+        builderButtonController.updateButtons(controllingBuilder);
+        controlTankAsync();
+    }
+
+    protected void controlTankAsync() {
         controller.controlTank(tankId);
     }
 
@@ -575,7 +585,7 @@ public class ClientActivity extends Activity {
     }
 
     public long getDismantleTime(long tankId) {
-        LongWrapper dismantleTime = controller.getDismantleTime(tankId);
+        LongWrapper dismantleTime = restClient.getDismantleTime(tankId);
         if (dismantleTime == null) {
             Log.e(TAG, "dismantleTime could not be received from server.");
         } else {
@@ -583,6 +593,36 @@ public class ClientActivity extends Activity {
         }
         return 0;
     }
+
+    void dismantleImprovementAsync(long builderId) { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
+        if (controllingBuilder == 1) {
+            if (builderId != -1) {
+                LongWrapper res = restClient.dismantleImprovement(builderId);
+                if (res != null) {
+                    if (res.getResult() == 1) {
+                        Log.d(TAG, "Wall properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 100);
+                        Log.d(TAG, "100 (Wall) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 2) {
+                        Log.d(TAG, "Road properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 40);
+                        Log.d(TAG, "40 (Road) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 3) {
+                        Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 80);
+                        Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
+                    }
+                    controller.updateBankAccountAsync(receivedTankID);
+                } else {
+                    Log.d(TAG, "Dismantle failed with ID: " + builderId + "\n");
+                }
+            }
+        } else {
+            showCannotDismantleMessage();
+        }
+    }
+
+
 
     public void startDismantleTimer() {
         calledMove = 0;
@@ -594,12 +634,7 @@ public class ClientActivity extends Activity {
                 if (calledMove == 0) {
                     try {
                         // Ensure UI updates are done on the UI thread
-                        if(controller.dismantleImprovementAsync(builderId, receivedTankID,controllingBuilder) == false) {
-                            showCannotDismantleMessage();
-                        }
-                        int total = controller.updateBankAccountAsync(receivedTankID);
-                        updateBalance(total);
-                        curBalance = total;
+                        dismantleImprovementAsync(tankId);
                     } catch (Exception e) {
                         // Handle exceptions if necessary
                         Log.e(TAG, "Error during UI update or dismantleImprovement", e);

@@ -7,7 +7,7 @@ package edu.unh.cs.cs619.bulletzone;
 import android.app.Activity;
 import android.widget.Button;
 
-public class ButtonController extends Activity {
+public class BuilderButtonController extends Activity implements ButtonStateInterface {
 
     Button buildWall;
     Button buildRoad;
@@ -20,7 +20,7 @@ public class ButtonController extends Activity {
     Button dropHijack;
     Activity activity;
 
-    public ButtonController(Activity activity) {
+    public BuilderButtonController(Activity activity) {
         this.activity = activity;
     }
 
