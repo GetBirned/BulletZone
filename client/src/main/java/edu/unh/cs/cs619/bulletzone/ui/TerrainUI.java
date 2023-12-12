@@ -72,7 +72,7 @@ public class TerrainUI {
     }
 
     public void soldierImage(ImageView imageView, int direction, int val) {
-        if (val == 4) {
+        if (val == 4 || val == 14 || val == 16) {
             if (direction == 0) {
                 imageView.setImageResource(R.drawable.hillysoldierup);
             } else if (direction == 2) {
