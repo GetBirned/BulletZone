@@ -15,17 +15,11 @@ import org.androidannotations.rest.spring.annotations.RestService;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Random;
-
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.rest.spring.annotations.RestService;
 
 import edu.unh.cs.cs619.bulletzone.R;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
@@ -282,6 +276,10 @@ public class GridAdapter extends BaseAdapter {
                 imageView.setImageResource(R.drawable.forestterrain);
             } else if (hasPowerUp[row][col] == 8) {
                 imageView.setImageResource(R.drawable.water);
+            } else if (hasPowerUp[row][col] == 11) {
+                imageView.setImageResource(R.drawable.waterwithbridge);
+            } else if (hasPowerUp[row][col] == 12) {
+                imageView.setImageResource(R.drawable.roadongrass);
             }
             if (val > 0) {
                 int direction = (val % 10);

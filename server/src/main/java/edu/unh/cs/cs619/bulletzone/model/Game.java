@@ -1,9 +1,5 @@
 package edu.unh.cs.cs619.bulletzone.model;
 
-import java.awt.Toolkit;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
@@ -11,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import edu.unh.cs.cs619.bulletzone.model.Mine;
+
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 public final class Game {
@@ -399,7 +395,7 @@ public final class Game {
                     wall.setParent(fieldElement);
                     return new LongWrapper(1);
                 }
-                if (!(fieldElement.getEntity() instanceof Wall)) {
+                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)) {
                     fieldElement.setFieldEntity(wall);
                     wall.setParent(fieldElement);
                     return new LongWrapper(1);
@@ -411,7 +407,7 @@ public final class Game {
                     road.setParent(fieldElement);
                     return new LongWrapper(2);
                 }
-                if (!(fieldElement.getEntity() instanceof Wall)) {
+                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)) {
                     fieldElement.setFieldEntity(road);
                     road.setParent(fieldElement);
                     return new LongWrapper(2);

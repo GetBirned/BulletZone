@@ -104,7 +104,8 @@ public class ClientActivity extends Activity {
     int controllingTank;
 
     int controllingBuilder;
-    ButtonController buttonController;
+    BuilderButtonController builderButtonController;
+    TankButtonController tankButtonController;
     private int tankIsActive;
 
     public String receivedTankID;
@@ -118,7 +119,8 @@ public class ClientActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         controller.construct(restClient);
-        buttonController = new ButtonController(this);
+        builderButtonController = new BuilderButtonController(this);
+        tankButtonController = new TankButtonController(this);
         // Establish shake/sensorManager. Will handle shakes.
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -293,10 +295,12 @@ public class ClientActivity extends Activity {
         try {
             this.tankId = controller.getResult();
             gridPollTask.doPoll();
-            buttonController.initializeButtons();
+            builderButtonController.initializeButtons();
+            tankButtonController.initializeButtons();
             controllingTank = 1;
             controllingBuilder = 0;
-            buttonController.updateButtons(controllingBuilder);
+            tankButtonController.updateButtons(controllingTank);
+            builderButtonController.updateButtons(controllingBuilder);
             tankIsActive = 1;
             updateHealthAsync(tankId);
             updateBuilderHealthAsync(tankId);
@@ -537,7 +541,8 @@ public class ClientActivity extends Activity {
     protected void controlBuilder() {
         controllingTank = 0;
         controllingBuilder = 1;
-        buttonController.updateButtons(controllingBuilder);
+        tankButtonController.updateButtons(controllingTank);
+        builderButtonController.updateButtons(controllingBuilder);
         controlBuilderAsync();
     }
 
@@ -550,7 +555,8 @@ public class ClientActivity extends Activity {
     protected void controlTank() {
         controllingTank = 1;
         controllingBuilder = 0;
-        buttonController.updateButtons(controllingBuilder);
+        tankButtonController.updateButtons(controllingTank);
+        builderButtonController.updateButtons(controllingBuilder);
         controlTankAsync();
     }
 

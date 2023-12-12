@@ -3,7 +3,6 @@ package edu.unh.cs.cs619.bulletzone.repository;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 import edu.unh.cs.cs619.bulletzone.model.Bridge;
 import edu.unh.cs.cs619.bulletzone.model.Builder;
@@ -31,7 +30,6 @@ import edu.unh.cs.cs619.bulletzone.model.Wall;
 import edu.unh.cs.cs619.bulletzone.model.Water;
 import edu.unh.cs.cs619.bulletzone.model.applePowerUp;
 import edu.unh.cs.cs619.bulletzone.model.nukePowerUp;
-import jdk.internal.org.jline.utils.Log;
 
 /*
     I believe this should ultimately be a command? pattern
@@ -140,7 +138,8 @@ public class Action {
                 || nextField.getEntity() instanceof Grass || nextField.getEntity() instanceof Road ||
                 nextField.getEntity() instanceof Bridge || nextField.getEntity() instanceof Forest ) {
             // If the next field is empty move the user
-
+            int walkedOnRoad = 0;
+            FieldHolder behindVehicle = v.getParent().getNeighbor(getOffsetForDirection(v.getDirection()));
 
 
             //Constraint to allow tanks on hills and rocky terrain and to slow them on hills
@@ -151,6 +150,8 @@ public class Action {
                     }
                 } else if (nextField.getEntity() instanceof Road) {
                     // Road logic : move speed to entire halved
+                    walkedOnRoad = 1;
+                    nextField.setFieldEntity(new Road());
                     if (!((parent.getEntity()) instanceof Hill)) {
                         v.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 2));
                     }
@@ -161,6 +162,12 @@ public class Action {
                 }
             }
 
+            int roadBehind, bridgeBehind = 0;
+            if (behindVehicle.getEntity() instanceof Bridge) {
+                bridgeBehind = 1;
+            } else if (behindVehicle.getEntity() instanceof Road) {
+                roadBehind = 1;
+            }
 
             parent.clearField();
 
@@ -188,9 +195,9 @@ public class Action {
 
             isCompleted = true;
         } else if (nextField.getEntity() instanceof Tank && v instanceof Soldier) {
-            Soldier soldier = (Soldier)v;
+            Soldier soldier = (Soldier) v;
             Tank t = (Tank) nextField.getEntity();
-            if (t.getId() == soldier.getId())  { // make sure soldier is attempting to join it's own tank
+            if (t.getId() == soldier.getId()) { // make sure soldier is attempting to join it's own tank
                 if (t.getLife() != 0) { // cannot enter tank if its dead
                     if (soldier.reenterTank(tank)) {
                         game.removeSoldier(tankId);
@@ -205,6 +212,24 @@ public class Action {
             } else {
                 return true;
             }
+        } else if (nextField.getEntity() instanceof Water && v instanceof Builder) {
+            Builder b = (Builder) v;
+            if (nextField.getEntity() instanceof Water) {
+                FieldHolder behindBuilder = v.getParent().getNeighbor(getOffsetForDirection(v.getDirection()));
+                if (parent.getEntity() instanceof Water) {
+                    v.setAllowedMoveInterval((int) (250));
+                    nextField.setFieldEntity(new Water());
+                    behindBuilder.setFieldEntity(new Water());
+                } else if (!(parent.getEntity() instanceof Water) && parent.getEntity() instanceof Water) {
+                    v.setAllowedMoveInterval((int) (b.getAllowedMoveInterval() * 2));
+                    parent.clearField();
+                }
+            }
+
+            parent.clearField();
+            nextField.setFieldEntity((FieldEntity) v);
+            v.setParent(nextField);
+            return true;
         } else if(nextField.getEntity() instanceof Tank && v instanceof Builder) {
             return false;
         } else {
@@ -363,6 +388,21 @@ public class Action {
         }
         System.out.println("soldier is null");
         return 0;
+    }
+
+    private Direction getOffsetForDirection(Direction direction) {
+        switch (direction) {
+            case Up:
+                return Direction.Down; // UP
+            case Down:
+                return Direction.Up; // DOWN
+            case Left:
+                return Direction.Right; // LEFT
+            case Right:
+                return Direction.Left; // RIGHT
+            default:
+                return null;
+        }
     }
 
 }
