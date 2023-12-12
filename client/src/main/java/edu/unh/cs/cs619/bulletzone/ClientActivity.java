@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-
-import com.squareup.otto.Subscribe;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -46,11 +43,9 @@ import edu.unh.cs.cs619.bulletzone.events.ShakeDetector;
 import edu.unh.cs.cs619.bulletzone.rest.BZRestErrorhandler;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619.bulletzone.rest.GridPollerTask;
-import edu.unh.cs.cs619.bulletzone.rest.GridUpdateEvent;
 import edu.unh.cs.cs619.bulletzone.ui.GridAdapter;
 import edu.unh.cs.cs619.bulletzone.ui.GridEventHandler;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
-import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 
 
@@ -590,7 +585,7 @@ public class ClientActivity extends Activity {
     }
 
     public long getDismantleTime(long tankId) {
-        LongWrapper dismantleTime = controller.getDismantleTime(tankId);
+        LongWrapper dismantleTime = restClient.getDismantleTime(tankId);
         if (dismantleTime == null) {
             Log.e(TAG, "dismantleTime could not be received from server.");
         } else {
@@ -598,6 +593,36 @@ public class ClientActivity extends Activity {
         }
         return 0;
     }
+
+    void dismantleImprovementAsync(long builderId) { // REMOVE THE IMPROVEMENT LEFT OF BUILDER
+        if (controllingBuilder == 1) {
+            if (builderId != -1) {
+                LongWrapper res = restClient.dismantleImprovement(builderId);
+                if (res != null) {
+                    if (res.getResult() == 1) {
+                        Log.d(TAG, "Wall properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 100);
+                        Log.d(TAG, "100 (Wall) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 2) {
+                        Log.d(TAG, "Road properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 40);
+                        Log.d(TAG, "40 (Road) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if (res.getResult() == 3) {
+                        Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 80);
+                        Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
+                    }
+                    controller.updateBankAccountAsync(receivedTankID);
+                } else {
+                    Log.d(TAG, "Dismantle failed with ID: " + builderId + "\n");
+                }
+            }
+        } else {
+            showCannotDismantleMessage();
+        }
+    }
+
+
 
     public void startDismantleTimer() {
         calledMove = 0;
@@ -609,12 +634,7 @@ public class ClientActivity extends Activity {
                 if (calledMove == 0) {
                     try {
                         // Ensure UI updates are done on the UI thread
-                        if(controller.dismantleImprovementAsync(builderId, receivedTankID,controllingBuilder) == false) {
-                            showCannotDismantleMessage();
-                        }
-                        int total = controller.updateBankAccountAsync(receivedTankID);
-                        updateBalance(total);
-                        curBalance = total;
+                        dismantleImprovementAsync(tankId);
                     } catch (Exception e) {
                         // Handle exceptions if necessary
                         Log.e(TAG, "Error during UI update or dismantleImprovement", e);
