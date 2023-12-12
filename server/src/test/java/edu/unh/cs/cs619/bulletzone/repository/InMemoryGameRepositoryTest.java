@@ -37,7 +37,7 @@ public class InMemoryGameRepositoryTest {
     @Before
     public void setUp() throws Exception {
         tank = repo.join("");
-        gbb = new GameBoardBuilder(gb);
+        gbb = new GameBoardBuilder();
     }
 
     //Milestone 1 Tests
