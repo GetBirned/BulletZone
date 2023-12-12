@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
+import java.util.ArrayList;
+import java.util.List;
+
+import java.lang.reflect.Array;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -236,6 +240,29 @@ class GamesController {
 
             return new ResponseEntity<>(0L, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getPowerups/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<Integer>> getPowerups(@PathVariable long tankId, @PathVariable char type) {
+        try {
+            List<Integer> powerups;
+            if(type == 't') {
+                 powerups = gameRepository.retrieveTankPowerups(tankId);
+            } else if(type == 's') {
+                 powerups = gameRepository.retrieveSoldierPowerups(tankId);
+            } else {
+                 powerups = gameRepository.retrieveBuilderPowerups(tankId);
+            }
+
+
+            return new ResponseEntity<>(powerups, HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getBuilderHealth", produces = MediaType.APPLICATION_JSON_VALUE)

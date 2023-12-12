@@ -204,9 +204,6 @@ public class Tank extends FieldEntity implements Vehicle {
             tTimer2.cancel();
             tTimer2.purge();
         }
-
-
-        //TODO: revert buffs for the new powerups
     }
 
     public void applyRepairKitEffect(long tankId) {
@@ -233,19 +230,21 @@ public class Tank extends FieldEntity implements Vehicle {
         Tank curr = this;
         curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
         int origLife = curr.getLife();
-        //curr.setLife(curr.getLife() + 50);
+        int armored = origLife + 50;
         tTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 if (remainingAbsorption[0] > 0 && curr.getLife() < origLife) {
                     curr.setLife(curr.getLife() + DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
                     remainingAbsorption[0]--;
+                    mockTimer++;
                 } else {
                     tTimer.cancel();
                     tTimer.purge();
                 }
             }
         }, 1000, 1000);
+        mockTimer = 0;
     }
 
 

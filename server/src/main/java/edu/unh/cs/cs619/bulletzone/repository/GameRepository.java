@@ -52,6 +52,12 @@ public interface GameRepository {
 
     public LongWrapper buildTrap(int choice, long tankID);
 
+    ArrayList<Integer> retrieveTankPowerups(long tankId);
+
+    ArrayList<Integer> retrieveSoldierPowerups(long tankId);
+
+    ArrayList<Integer> retrieveBuilderPowerups(long tankId);
+
     public LongWrapper controlTank(long tankId);
 
     public LongWrapper controlBuilder(long tankId);
@@ -59,8 +65,7 @@ public interface GameRepository {
     public LongWrapper getBuildTime(long tankId);
 
     public LongWrapper getDismantleTime(long tankId);
-    public ArrayList<Integer> getSoldierPowerups(long soldierId);
-    public ArrayList<Integer> getTankPowerups(long tankId);
+
     public void updateLife(long tankId, int newLife) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
     public int getBuilderHealth(long tankId) throws IllegalTransitionException, LimitExceededException, TankDoesNotExistException;
 
