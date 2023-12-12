@@ -88,12 +88,59 @@ public class ReplayRunner {
         }
 
         // max val in arraylist
-        Integer getMaxedValArrayList = getMaxArrayList(nums);
-        nums.remove(getMaxedValArrayList);
-        Integer second_max = getMaxArrayList(nums);
-        String second_filename = second_max.toString();
-        Log.d("Files", "Found filename is " + second_filename);
-        return second_filename;
+        //Integer getMaxedValArrayList = getMaxArrayList(nums);
+        while (checkNoMovesFile(nums.get(nums.size()-1))) {
+            // checkNoMovesFile returns true if the curr val is one move board
+            nums.remove(nums.size()-1);
+        }
+        //Integer second_max = getMaxArrayList(nums);
+        //String second_filename = second_max.toString();
+        //Log.d("Files", "Found filename is " + second_filename);
+        int last_filename = nums.get(nums.size()-1);
+        Log.d("Files", "Found filename is " + last_filename);
+        return String.valueOf(last_filename);
+    }
+
+    public boolean checkNoMovesFile(int num_arr_list) {
+        /*
+        This function will check if a file only has one state in it and remove it from nums if it does
+
+         */
+        String ret = "";
+
+        String filename = String.valueOf(num_arr_list);
+
+        try {
+            InputStream inputStream = context.openFileInput(filename + ".txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString).append("\n");
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("REPLAY FILE", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("REPLAY FILE", "Can not read file: " + e.toString());
+        }
+
+        String[] board_line_split = ret.split(" ");
+        Log.d("Files", "file " + num_arr_list + " has a size of " + board_line_split.length);
+        // includes null character ig so +1?
+        if (board_line_split.length <= 16*16+1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void getReplayStates(String filename) {

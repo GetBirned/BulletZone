@@ -134,6 +134,18 @@ public class ReplayGridAdapter extends BaseAdapter {
             imageView.setImageResource(R.drawable.waterwithbridge);
         } else if (cellValue == 70) {
             imageView.setImageResource(R.drawable.roadongrass);
+        } else {
+            // displaying traps
+            String str_val = String.valueOf(cellValue);
+            // TODO: decide if I want traps to be visible to everyone in replay
+            String trap_val = str_val.substring(0, str_val.length()-1);
+            if (trap_val.equals("83030")) {
+                // mine detected
+                imageView.setImageResource(R.drawable.minegrass);
+            } else if (trap_val.equals("2345")) {
+                // hijack trap detected
+                imageView.setImageResource(R.drawable.hijackgrass);
+            }
         }
         return imageView;
     }

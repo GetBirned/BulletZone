@@ -9,13 +9,13 @@ public class Mine extends FieldEntity{
         pos = 83030;
     }
 
-    public Mine(int pos){
-        this.pos = pos;
+    public Mine(int userID){
+        this.pos = Integer.parseInt("83030" + String.valueOf(userID));
     }
 
     @Override
     public int getIntValue() {
-        return 83030;
+        return this.pos;
     }
 
     @Override

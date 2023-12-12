@@ -15,7 +15,10 @@ public final class Game {
      * Field dimensions
      */
     private static final int FIELD_DIM = 16;
-      private final long id;
+    private static final int REPAIR_KIT_EFFECT_DURATION = 120; // 120 seconds
+    private static final int DEFLECTOR_SHIELD_DAMAGE_REDUCTION = 1; // Damage reduction per second
+
+    private final long id;
     private long lastEjectionTime;
     private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
@@ -428,7 +431,7 @@ public final class Game {
         return new LongWrapper(4);
     }
 
-    public LongWrapper buildTrap(int choice, long tankID) {
+    public LongWrapper buildTrap(int choice, long tankID, int userID) {
         System.out.println("SET TRAP SET TRAP SET TRAP");
         Soldier soldier = getSoldier(tankID);
         if (soldier != null) {
@@ -455,7 +458,7 @@ public final class Game {
 
             if (choice == 1) { // Mine -20 credits
                 System.out.println("SET MINE");
-                Mine mine = new Mine();
+                Mine mine = new Mine(userID);
                 if (!fieldElement.isPresent()) {
                     fieldElement.setFieldEntity(mine);
                     mine.setParent(fieldElement);
@@ -463,7 +466,7 @@ public final class Game {
                 }
             } else if (choice == 2) { // Hijack Trap -40 credits
                 System.out.println("SET HIJACK TRAP");
-                HijackTrap hijackTrap = new HijackTrap();
+                HijackTrap hijackTrap = new HijackTrap(userID);
                 if (!fieldElement.isPresent()) {
                     fieldElement.setFieldEntity(hijackTrap);
                     hijackTrap.setParent(fieldElement);
