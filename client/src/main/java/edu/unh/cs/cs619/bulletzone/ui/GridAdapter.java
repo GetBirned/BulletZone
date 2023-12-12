@@ -196,7 +196,7 @@ public class GridAdapter extends BaseAdapter {
                     for (int val : nested_arr) {
                         /*
                             check against powerup thing
-                         */
+
                         if (hasPowerUp[i][k] != 0) {
                             grid_string += String.valueOf(hasPowerUp[i][k]) + " ";
                         } else {
@@ -204,6 +204,8 @@ public class GridAdapter extends BaseAdapter {
                         }
                         grid_string += String.valueOf(val) + " ";
                         k++;
+                         */
+                        grid_string += String.valueOf(val) + " ";
                     }
                     i++;
                 }
