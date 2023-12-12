@@ -165,6 +165,7 @@ public final class Game {
 //        return null;
     }
     public TankLocation findSoldier(Soldier soldier, long soldierID) {
+        /*
         if (soldiers.containsKey(soldierID)) {
             if(soldiers.get(soldierID).getTankLocation() == null) {
                 synchronized (gb.getHolderGrid()) {
@@ -186,21 +187,22 @@ public final class Game {
         } else {
             return null;
         }
-//        synchronized (gb.getHolderGrid()) {
-//            FieldHolder holder;
-//            for (int i = 0; i < FIELD_DIM; i++) {
-//                for (int j = 0; j < FIELD_DIM; j++) {
-//                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
-//                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
-//                        Soldier currentSoldier = (Soldier) holder.getEntity();
-//                        if (currentSoldier.getId() == soldierID) {
-//                            return new TankLocation(i, j);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return null;
+         */
+        synchronized (gb.getHolderGrid()) {
+            FieldHolder holder;
+            for (int i = 0; i < FIELD_DIM; i++) {
+                for (int j = 0; j < FIELD_DIM; j++) {
+                    holder = gb.getHolderGrid().get(i * FIELD_DIM + j);
+                    if (holder.isPresent() && holder.getEntity() instanceof Soldier) {
+                        Soldier currentSoldier = (Soldier) holder.getEntity();
+                        if (currentSoldier.getId() == soldierID) {
+                            return new TankLocation(i, j);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public TankLocation findBuilder(Builder builder, long builderID) {

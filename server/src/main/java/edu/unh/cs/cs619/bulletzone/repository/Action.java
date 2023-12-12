@@ -2,6 +2,7 @@ package edu.unh.cs.cs619.bulletzone.repository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.awt.event.WindowStateListener;
 import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Bridge;
@@ -14,9 +15,11 @@ import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Grass;
 import edu.unh.cs.cs619.bulletzone.model.HealthKit;
+import edu.unh.cs.cs619.bulletzone.model.HijackTrap;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
+import edu.unh.cs.cs619.bulletzone.model.Mine;
 import edu.unh.cs.cs619.bulletzone.model.Road;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Shield;
@@ -136,7 +139,8 @@ public class Action {
                 || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp
                 || nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
                 || nextField.getEntity() instanceof Grass || nextField.getEntity() instanceof Road ||
-                nextField.getEntity() instanceof Bridge || nextField.getEntity() instanceof Forest ) {
+                nextField.getEntity() instanceof Bridge || nextField.getEntity() instanceof Forest
+                || nextField.getEntity() instanceof Mine || nextField.getEntity() instanceof HijackTrap) {
             // If the next field is empty move the user
             int walkedOnRoad = 0;
             FieldHolder behindVehicle = v.getParent().getNeighbor(getOffsetForDirection(v.getDirection()));
