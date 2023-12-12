@@ -701,7 +701,7 @@ public final class Game {
         //DEFLECTOR SHIELD
         if (powerupValue == 9) {
             curr.numShield++;
-            curr.deflectorShield(tankId);
+            curr.deflectorShield();
         }
         // REPAIR KIT
         else if (powerupValue == 10) {

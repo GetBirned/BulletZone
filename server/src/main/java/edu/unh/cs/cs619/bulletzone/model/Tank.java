@@ -19,21 +19,20 @@ public class Tank extends FieldEntity implements Vehicle {
     private int powerUpType;
     Timer tTimer2 = new Timer();
     Timer tTimer = new Timer();
+    public int shield;
+    public int origLife;
 
     private final String ip;
     public Queue<Integer> pQ = new LinkedList<>();
     private long lastMoveTime;
     public int allowedMoveInterval;
-
     private long lastFireTime;
     public int allowedFireInterval;
-
     public int numberOfBullets;
     public int allowedNumberOfBullets;
     public int mockTimer;
     private int life;
     public int numShield;
-
     private Direction direction;
     private TankLocation tankLocation;
     private int isActive;
@@ -51,6 +50,7 @@ public class Tank extends FieldEntity implements Vehicle {
         allowedMoveInterval = 500;
         numShield = 0;
         mockTimer = 0;
+        shield = 0;
     }
 
     public void setPowerUpType(int powerupValue) {
@@ -68,7 +68,14 @@ public class Tank extends FieldEntity implements Vehicle {
 
     @Override
     public void hit(int damage) {
-        life = life - damage;
+        if (shield > 0) {
+            shield -= damage;
+            if (shield < 0) {
+                shield = 0;
+            }
+        } else {
+            life = life - damage;
+        }
         System.out.println("Tank life: " + id + " : " + life);
 //		Log.d(TAG, "TankId: " + id + " hit -> life: " + life);
 
@@ -82,11 +89,12 @@ public class Tank extends FieldEntity implements Vehicle {
 
     public void takeDamage(int othersArmor) {
         int damageTaken = (int) Math.floor(othersArmor * .1);
-        this.setLife(this.getLife() - damageTaken);
+
+        this.hit(damageTaken);
     }
     public void takeDamagefromSoldier(int othersArmor) {
         int damage = (int) Math.ceil(othersArmor * .4);
-        this.life = this.life - damage;
+        this.hit(damage);
     }
 
     public long getLastMoveTime() {
@@ -167,7 +175,7 @@ public class Tank extends FieldEntity implements Vehicle {
     }
 
     public int getLife() {
-        return life;
+        return life + shield;
     }
     public void checker(){
 
@@ -225,26 +233,25 @@ public class Tank extends FieldEntity implements Vehicle {
         mockTimer = 0;
     }
 
-    public void deflectorShield(long tankId) {
-        final int[] remainingAbsorption = {50};
+    public void deflectorShield() {
         Tank curr = this;
+        if (life > 50) {
+            life = 50;
+        }
+        this.shield = 49;
+        origLife = curr.getLife();
         curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
-        int origLife = curr.getLife();
-        int armored = origLife + 50;
         tTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (remainingAbsorption[0] > 0 && curr.getLife() < origLife) {
-                    curr.setLife(curr.getLife() + DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
-                    remainingAbsorption[0]--;
-                    mockTimer++;
-                } else {
+                if (shield > 0 && shield < 50) {
+                    shield++;
+                } else if (shield <= 0) {
                     tTimer.cancel();
                     tTimer.purge();
                 }
             }
-        }, 1000, 1000);
-        mockTimer = 0;
+        }, 0, 1000);
     }
 
 
