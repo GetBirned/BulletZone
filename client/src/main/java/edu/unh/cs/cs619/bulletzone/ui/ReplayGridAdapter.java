@@ -81,16 +81,6 @@ public class ReplayGridAdapter extends BaseAdapter {
             imageView.setImageResource(R.drawable.waterwithbridge);
         } else if (cellValue == 1000 || (cellValue > 1000 && cellValue <= 2000)) {
             imageView.setImageResource(R.drawable.brick);
-        } else if (cellValue == 4) {
-        imageView.setImageResource(R.drawable.bullethilly);
-        } else if(cellValue == 5) {
-            imageView.setImageResource(R.drawable.bulletrocky);
-        } else if (cellValue == 8) {
-            imageView.setImageResource(R.drawable.bulletwater);
-        } else if (cellValue == 11) {
-            imageView.setImageResource(R.drawable.bulletbridge);
-        } else if (cellValue == 12) {
-            imageView.setImageResource(R.drawable.bulletroad);
         } else if (cellValue >= 2 * mill_scale && cellValue < 3 * mill_scale) {
             imageView.setImageResource(R.drawable.bulletgrass);
         } else if (cellValue >= 10 * mill_scale && cellValue < 20 * mill_scale) {

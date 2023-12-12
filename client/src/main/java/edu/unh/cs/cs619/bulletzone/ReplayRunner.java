@@ -216,32 +216,6 @@ public class ReplayRunner {
             // If we reached the end of the list, reset frame to 0
             frame = 0;
         }
-        int[][] frame_t = board_states.get(frame);
-        int[][] frame_next = board_states.get(frame+1);
-        int mill_scale = 1000000;
-        int i = 0;
-        for (int[] tt : frame_t) {
-            int k = 0;
-            //String lineline = "";
-            for (int ttt : tt) {
-                //lineline += ttt + " ";
-                if (ttt == 4) {
-                    frame_next[i][k] = 1;
-                } else if (ttt == 5) {
-                    frame_next[i][k] = 2;
-                } else if (ttt == 8) {
-                    frame_next[i][k] = 50;
-                } else if (ttt == 11) {
-                    frame_next[i][k] = 60;
-                } else if (ttt == 12) {
-                    frame_next[i][k] = 70;
-                } else if (ttt >= 2 * mill_scale && ttt < 3 * mill_scale) {
-                    frame_next[i][k] = 0;
-                }
-                k++;
-            }
-            i++;
-        }
         return board_states.get(frame);
     }
 }
