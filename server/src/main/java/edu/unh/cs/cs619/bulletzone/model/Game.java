@@ -167,7 +167,7 @@ public final class Game {
         return null;
     }
     public TankLocation findSoldier(Soldier soldier, long soldierID) {
-        /**
+        /*
         if (soldiers.containsKey(soldierID)) {
             if(soldiers.get(soldierID).getTankLocation() == null) {
                 synchronized (gb.getHolderGrid()) {
@@ -337,13 +337,11 @@ public final class Game {
                 Wall wall = (Wall) fieldElement.getEntity();
                 wall.getParent().clearField();
                 wall.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(1);
             } else if (fieldElement.getEntity().getIntValue() == 70) { // ROAD - RETURN 40 CREDITS
                 Road road = (Road) fieldElement.getEntity();
                 road.getParent().clearField();
                 road.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(2);
             } else if (fieldElement.getEntity().getIntValue() == 60) { // BRIDGE - RETURN 80 CREDITS
                 Bridge bridge = (Bridge) fieldElement.getEntity();
