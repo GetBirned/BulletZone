@@ -36,10 +36,10 @@ public final class Game {
 
     public Game() {
         this.id = 0;
-        this.initiialize();
+        this.initialize();
     }
 
-    public void initiialize() {
+    public void initialize() {
         if (gbb != null) {
             gb = gbb.build();
             return;
@@ -391,7 +391,7 @@ public final class Game {
     public LongWrapper getBuildTime(long builderId) {
         Builder builder = getBuilders().get(builderId);
         if (builder != null) {
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
+            FieldHolder fieldElement = gb.getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof Water) {
                 builder.setBuildTime(1000);
                 return new LongWrapper(1000);
@@ -421,7 +421,7 @@ public final class Game {
             };
 
             int result = getPosition(builder, builderId);
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(result); // find the FieldHolder of element behind builder
+            FieldHolder fieldElement = gb.getHolderGrid().get(result); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof Bridge) {
                 return new LongWrapper(1000);
             }
@@ -446,7 +446,7 @@ public final class Game {
     public LongWrapper dismantleImprovement(long builderId) {
         Builder builder = getBuilders().get(builderId);
         if (builder != null) {
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
+            FieldHolder fieldElement = gb.getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof BuilderWall) { // WALL - RETURN 100 CREDITS
                 BuilderWall wall = (BuilderWall) fieldElement.getEntity();
                 wall.getParent().clearField();
@@ -509,7 +509,7 @@ public final class Game {
 
             int newX = x + offset[0];
             int newY = y + offset[1];
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(newX * FIELD_DIM + newY);
+            FieldHolder fieldElement = gb.getHolderGrid().get(newX * FIELD_DIM + newY);
 
             if (choice == 1) { // WALL - COSTS 100 CREDITS
                 BuilderWall wall = new BuilderWall();
