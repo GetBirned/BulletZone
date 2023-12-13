@@ -2,13 +2,16 @@ package edu.unh.cs.cs619.bulletzone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
+import jdk.internal.org.jline.utils.Log;
 
 public final class Game {
     /**
@@ -20,6 +23,7 @@ public final class Game {
 
     private final long id;
     private long lastEjectionTime;
+    double chance;
     private final ConcurrentMap<Long, Soldier> soldiers = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Tank> tanks = new ConcurrentHashMap<>();
 
@@ -28,6 +32,7 @@ public final class Game {
     private final Object monitor = new Object();
     private GameBoardBuilder gbb = null;
     private GameBoard gb = null;
+    int numItems = 5;
 
     public Game() {
         this.id = 0;
@@ -105,7 +110,7 @@ public final class Game {
     }
     public int[][] getGrid2D() {
         int[][] grid = new int[FIELD_DIM][FIELD_DIM];
-
+        setPowerup();
         synchronized (gb.getHolderGrid()) {
             FieldHolder holder;
             for (int i = 0; i < FIELD_DIM; i++) {
@@ -124,6 +129,113 @@ public final class Game {
 
         return grid;
     }
+
+    // 0 grass, // 1 thingamajig //2 nuke //3 apple
+    //4 hill // 5 rocky // 6 forest // 7 soldier // 8 water
+    //9 deflector //10 repair kit // 11 bridge // 12 road
+
+    public void setPowerup() {
+        System.out.println("Made it here TO POWERUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+        int numPlayers = tanks.size();
+        numItems = countPowerUps();
+        if(numItems > 7) {
+            return;
+        }
+        double res1 = (double)numPlayers / (numItems + 1);
+        double res = (0.25 * res1);
+        System.out.println("VAL IS " + res);
+        System.out.println("there are this many tanks" + numPlayers + " and this many items " + numItems);
+        if (res > 0) {
+            System.out.println("Made it here");
+            // Determine whether to place a power-up
+
+            if(shouldPlacePowerUp()) {
+                int row = generateRandomNumber();
+                int col = generateRandomNumber();
+
+
+                FieldHolder holder = gb.get(row,col);
+
+                if (holder.getEntity() instanceof Road || holder.getEntity() instanceof Water || holder.getEntity() instanceof Bridge
+                        || holder.getEntity() instanceof Hill || holder.getEntity() instanceof Rocky || holder.getEntity() instanceof Wall
+                        || holder.getEntity() instanceof Forest || holder.getEntity() instanceof Tank || holder.getEntity() instanceof Soldier
+                        || holder.getEntity() instanceof Builder) {
+                    return;
+                } else {
+
+
+                    System.out.println("should place");
+                    // Check if the selected position is empty
+                    //if (!gb.getHolderGrid().get(row * FIELD_DIM + col).isPresent()) {
+                    int appear = new Random().nextInt(5);
+                    appear = appear + 1;
+                    System.out.println("Random value: " + appear);
+                    switch (appear) {
+                        case 1:
+                            gb.setEntity(row, col, new Thingamajig());
+                            System.out.println(" value: " + new Thingamajig().getIntValue());
+                            break;
+                        case 2:
+                            gb.setEntity(row, col, new nukePowerUp());
+                            System.out.println(" value: " + new nukePowerUp().getIntValue());
+                            break;
+                        case 3:
+                            gb.setEntity(row, col, new applePowerUp());
+                            System.out.println(" value: " + new applePowerUp().getIntValue());
+                            break;
+                        case 4:
+                            gb.setEntity(row, col, new Shield());
+                            System.out.println(" value: " + new Shield().getIntValue());
+                            break;
+                        case 5:
+                            gb.setEntity(row, col, new HealthKit());
+                            System.out.println(" value: " + new HealthKit().getIntValue());
+                            break;
+                    }
+
+                    //numItems++;
+                    //}
+                }
+            }
+        }
+    }
+
+
+    private static int generateRandomNumber() {
+        // Create an instance of the Random class
+        Random random = new Random();
+
+        // Generate a random number between 0 (inclusive) and 16 (exclusive)
+        int randomNumber = random.nextInt(16);
+
+        return randomNumber;
+    }
+
+    private int countPowerUps() {
+        int count = 0;
+        for (FieldHolder holder : gb.getHolderGrid()) {
+            if (holder.isPresent() && isPowerUp(holder.getEntity())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private boolean isPowerUp(FieldEntity entity) {
+        // Add conditions to check if the entity is a power-up
+        return entity instanceof Thingamajig
+                || entity instanceof nukePowerUp
+                || entity instanceof applePowerUp
+                || entity instanceof Shield
+                || entity instanceof HealthKit;
+    }
+
+    private boolean shouldPlacePowerUp() {
+        int randNum = new Random().nextInt(101);
+        return randNum <= (0.02 * 100);
+    }
+
+
     public TankLocation findTank(Tank tank, long tankID) {
         /**
         if (tanks.containsKey(tankID)) {

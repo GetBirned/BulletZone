@@ -292,6 +292,10 @@ public class GridAdapter extends BaseAdapter {
                 imageView.setImageResource(R.drawable.roadongrass);
             } else if (hasPowerUp[row][col] == 13 && val == 0) {
                 imageView.setImageResource(R.drawable.grass);
+            } else if (hasPowerUp[row][col] == 13 || hasPowerUp[row][col] == 15) {
+                imageView.setImageResource(R.drawable.grass);
+            } else if (hasPowerUp[row][col] == 14 || hasPowerUp[row][col] == 16) {
+                imageView.setImageResource(R.drawable.hillyterrain);
             }
             if (val > 0) {
                 int direction = (val % 10);
@@ -495,24 +499,38 @@ public class GridAdapter extends BaseAdapter {
                     Log.d("TRAP", val_str + " : " + val_tankid);
                     if (val_str.equals("83030")) {
                         Log.d("TRAP", "mine recieved gridadapter");
-                        hasPowerUp[row][col] = 13; // TODO: figure out why
                         if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
-                            imageView.setImageResource(R.drawable.minegrass);
+                            if (hasPowerUp[row][col] == 0 || hasPowerUp[row][col] == 13) {
+                                imageView.setImageResource(R.drawable.minegrass);
+                                hasPowerUp[row][col] = 13; // TODO: figure out why
+                            } else if (hasPowerUp[row][col] == 4 || hasPowerUp[row][col] == 14) {
+                                Log.d("TRAP", "was on hill");
+                                imageView.setImageResource(R.drawable.minehilly);
+                                hasPowerUp[row][col] = 14; // TODO: figure out why
+                            }
                         } else {
                             Log.d("TRAP", "not a mine placed by user");
                         }
                     } else if (val_str.equals("2345")) {
                         Log.d("TRAP", "hijack trap recieved gridadapter");
-                        hasPowerUp[row][col] = 14;
                         if (Integer.parseInt(val_tankid) == getTankIDFromFile()) {
-                            imageView.setImageResource(R.drawable.hijackgrass);
+                            if (hasPowerUp[row][col] == 0 || hasPowerUp[row][col] == 15) {
+                                imageView.setImageResource(R.drawable.hijackgrass);
+                                hasPowerUp[row][col] = 15; // TODO: figure out why
+                            } else if (hasPowerUp[row][col] == 4 || hasPowerUp[row][col] == 16) {
+                                Log.d("TRAP", "was on hill");
+                                imageView.setImageResource(R.drawable.hijackhilly);
+                                hasPowerUp[row][col] = 16; // TODO: figure out why
+                            }
                         } else {
                             Log.d("TRAP", "not a hijack trap placed by user");
                         }
                     }
                 }
             } else {
-
+                if(val == 0) {
+                    imageView.setImageResource(R.drawable.grass);
+                }
 
                 if (hasPowerUp[row][col] != 0) {
                     if (hasPowerUp[row][col] == 1) {
@@ -532,6 +550,7 @@ public class GridAdapter extends BaseAdapter {
                         imageView.setImageResource(R.drawable.toolsgrass);
                     }
                 } else {
+                    /**
                     if(0.25 * (numPlayers / (numItems + 1)) > 0) {
                         // Determine whether to place a power-up
                         if (shouldPlacePowerUp()) {
@@ -551,6 +570,7 @@ public class GridAdapter extends BaseAdapter {
                     } else {
                         imageView.setImageResource(R.drawable.grass);
                     }
+                     **/
                 }
             }
             if(hasPowerUp[row][col] == 4) {
