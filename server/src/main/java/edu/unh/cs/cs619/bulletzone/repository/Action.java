@@ -2,11 +2,11 @@ package edu.unh.cs.cs619.bulletzone.repository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.awt.event.WindowStateListener;
 import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Bridge;
 import edu.unh.cs.cs619.bulletzone.model.Builder;
+import edu.unh.cs.cs619.bulletzone.model.BuilderWall;
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldEntity;
@@ -293,6 +293,24 @@ public class Action {
                 game.removeTank(t.getId());
             }
             return false;
+
+        } else if(nextField.getEntity() instanceof BuilderWall && v instanceof Builder) {
+            BuilderWall bw = (BuilderWall) nextField.getEntity();
+            Builder b = (Builder) v;
+            double damageToWall = Math.ceil(b.getLife() * 0.05);
+            double damageToBuilder = Math.floor(bw.destructValue * 0.1);
+            b.hit((int)damageToBuilder);
+            bw.takeDamage((int)damageToWall);
+            if (b.getLife() < 0) {
+                b.getParent().clearField();
+                b.setParent(null);
+                game.removeBuilder(b.getId());
+            }
+            if (bw.destructValue < 0) {
+                nextField.clearField();
+                bw.setParent(null);
+            }
+            return false;
         } else {
             if (nextField.getEntity() instanceof Wall) {
                 if(((Wall) nextField.getEntity()).destructValue == 1000){
@@ -356,7 +374,7 @@ public class Action {
             }
             Bullet bullet = null;
             if (tank.getIsActive() == 1) {
-                bullet = bulletSetup(tank, bulletType, tankId);
+                bullet = bulletSetup(tank, bulletType, tankId, 30);
                 if (bullet == null) {
                     return false;
                 }
@@ -364,7 +382,7 @@ public class Action {
                 bulletMover.fireHelper(tank, bullet, monitor, game, trackActiveBullets);
             } else if (builder.getIsActive() == 1) { // Builder fire
                 Soldier soldier = game.getSoldiers().get(tankId);
-                bullet = bulletSetup(builder, bulletType, tankId);
+                bullet = bulletSetup(builder, bulletType, tankId, 10);
                 if (bullet == null) {
                     return false;
                 }
@@ -372,7 +390,7 @@ public class Action {
                 bulletMover.fireHelper(builder, bullet, monitor, game, trackActiveBullets);
             } else {
                 Soldier soldier = game.getSoldiers().get(tankId);
-                bullet = bulletSetup(soldier, bulletType, tankId);
+                bullet = bulletSetup(soldier, bulletType, tankId, 5);
                 if (bullet == null) {
                     return false;
                 }
@@ -383,7 +401,7 @@ public class Action {
         return true;
     }
 
-    private Bullet bulletSetup(Vehicle v, int bulletType, long tankId) {
+    private Bullet bulletSetup(Vehicle v, int bulletType, long tankId, int damage) {
         if (v.getNumberOfBullets() >= v.getAllowedNumberOfBullets())
             return null;
 
@@ -410,7 +428,7 @@ public class Action {
             bulletId = 1;
             trackActiveBullets[1] = 1;
         }
-        final Bullet bullet = new Bullet(tankId, direction, 30);
+        final Bullet bullet = new Bullet(tankId, direction, damage);
         // Set the same parent for the bullet.
         // This should be only a one way reference.
         bullet.setParent(parent);

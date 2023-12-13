@@ -287,6 +287,8 @@ public class GridAdapter extends BaseAdapter {
                 imageView.setImageResource(R.drawable.waterwithbridge);
             } else if (hasPowerUp[row][col] == 12) {
                 imageView.setImageResource(R.drawable.roadongrass);
+            } else if (hasPowerUp[row][col] == 13 && val == 0) {
+                imageView.setImageResource(R.drawable.grass);
             } else if (hasPowerUp[row][col] == 13 || hasPowerUp[row][col] == 15) {
                 imageView.setImageResource(R.drawable.grass);
             } else if (hasPowerUp[row][col] == 14 || hasPowerUp[row][col] == 16) {
@@ -467,6 +469,9 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 3) {
                     hasPowerUp[row][col] = 6;
                     imageView.setImageResource(R.drawable.forestterrain);
+                } else if (val == 14) {
+                    hasPowerUp[row][col] = 13;
+                    imageView.setImageResource(R.drawable.woodwall);
                 } else if (val == 50) {
                     hasPowerUp[row][col] = 8;
                     imageView.setImageResource(R.drawable.water);
