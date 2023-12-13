@@ -507,7 +507,9 @@ public class GridAdapter extends BaseAdapter {
                     }
                 }
             } else {
-
+                if(val == 0) {
+                    imageView.setImageResource(R.drawable.grass);
+                }
 
                 if (hasPowerUp[row][col] != 0) {
                     if (hasPowerUp[row][col] == 1) {
@@ -527,6 +529,7 @@ public class GridAdapter extends BaseAdapter {
                         imageView.setImageResource(R.drawable.toolsgrass);
                     }
                 } else {
+                    /**
                     if(0.25 * (numPlayers / (numItems + 1)) > 0) {
                         // Determine whether to place a power-up
                         if (shouldPlacePowerUp()) {
@@ -546,6 +549,7 @@ public class GridAdapter extends BaseAdapter {
                     } else {
                         imageView.setImageResource(R.drawable.grass);
                     }
+                     **/
                 }
             }
             if(hasPowerUp[row][col] == 4) {
