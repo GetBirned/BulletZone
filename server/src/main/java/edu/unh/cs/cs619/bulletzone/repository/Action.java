@@ -2,6 +2,7 @@ package edu.unh.cs.cs619.bulletzone.repository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.awt.event.WindowStateListener;
 import java.util.Timer;
 
 import edu.unh.cs.cs619.bulletzone.model.Bridge;
@@ -14,9 +15,11 @@ import edu.unh.cs.cs619.bulletzone.model.Forest;
 import edu.unh.cs.cs619.bulletzone.model.Game;
 import edu.unh.cs.cs619.bulletzone.model.Grass;
 import edu.unh.cs.cs619.bulletzone.model.HealthKit;
+import edu.unh.cs.cs619.bulletzone.model.HijackTrap;
 import edu.unh.cs.cs619.bulletzone.model.Hill;
 import edu.unh.cs.cs619.bulletzone.model.IllegalTransitionException;
 import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
+import edu.unh.cs.cs619.bulletzone.model.Mine;
 import edu.unh.cs.cs619.bulletzone.model.Road;
 import edu.unh.cs.cs619.bulletzone.model.Rocky;
 import edu.unh.cs.cs619.bulletzone.model.Shield;
@@ -136,7 +139,8 @@ public class Action {
                 || nextField.getEntity() instanceof Thingamajig || nextField.getEntity() instanceof applePowerUp || nextField.getEntity() instanceof nukePowerUp
                 || nextField.getEntity() instanceof Shield || nextField.getEntity() instanceof HealthKit
                 || nextField.getEntity() instanceof Grass || nextField.getEntity() instanceof Road ||
-                nextField.getEntity() instanceof Bridge || nextField.getEntity() instanceof Forest ) {
+                nextField.getEntity() instanceof Bridge || nextField.getEntity() instanceof Forest
+                || nextField.getEntity() instanceof Mine || nextField.getEntity() instanceof HijackTrap) {
             // If the next field is empty move the user
             int walkedOnRoad = 0;
             FieldHolder behindVehicle = v.getParent().getNeighbor(getOffsetForDirection(v.getDirection()));
@@ -155,6 +159,10 @@ public class Action {
                     if (!((parent.getEntity()) instanceof Hill)) {
                         v.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 2));
                     }
+                } else if (nextField.getEntity() instanceof Mine) {
+                    v.setLife(v.getLife() - 10);
+                } else if (nextField.getEntity() instanceof HijackTrap) {
+                    //
                 }
             } else {
                 if (parent.getEntity() instanceof Hill) {
@@ -230,7 +238,54 @@ public class Action {
             nextField.setFieldEntity((FieldEntity) v);
             v.setParent(nextField);
             return true;
+        } else if (nextField.getEntity() instanceof Wall && v instanceof Builder) {
+            Wall wall = (Wall) nextField.getEntity();
+            Builder b = (Builder) v;
+            double damageToWall = Math.ceil(v.getLife() * 0.05);
+            double damageToBuilder = Math.floor(wall.destructValue * 0.1);
+            b.hit((int)damageToBuilder);
+            wall.takeDamage((int)damageToWall);
+            if (b.getLife() < 0) {
+                b.getParent().clearField();
+                b.setParent(null);
+                game.removeBuilder(b.getId());
+            }
+            return false;
+        } else if (nextField.getEntity() instanceof Soldier && v instanceof Builder) {
+            Soldier s = (Soldier) nextField.getEntity();
+            Builder b = (Builder) v;
+            double damageToSoldier = Math.ceil(v.getLife() * 0.05);
+            double damageToBuilder = Math.floor(s.getLife() * 0.1);
+            b.hit((int)damageToBuilder);
+            s.hit((int) damageToSoldier);
+            if (b.getLife() < 0) {
+                b.getParent().clearField();
+                b.setParent(null);
+                game.removeBuilder(b.getId());
+            }
+            if (s.getLife() < 0) {
+                s.getParent().clearField();
+                s.setParent(null);
+                game.removeSoldier(s.getId());
+            }
+            return false;
         } else if(nextField.getEntity() instanceof Tank && v instanceof Builder) {
+            Tank t = (Tank) nextField.getEntity();
+            Builder b = (Builder) v;
+            double damageToTank = Math.ceil(b.getLife() * 0.05);
+            double damageToBuilder = Math.floor(t.getLife() * 0.1);
+            b.hit((int)damageToBuilder);
+            t.hit((int)damageToTank);
+            if (b.getLife() < 0) {
+                b.getParent().clearField();
+                b.setParent(null);
+                game.removeBuilder(b.getId());
+            }
+            if (t.getLife() < 0) {
+                t.getParent().clearField();
+                t.setParent(null);
+                game.removeTank(t.getId());
+            }
             return false;
         } else {
             if (nextField.getEntity() instanceof Wall) {
