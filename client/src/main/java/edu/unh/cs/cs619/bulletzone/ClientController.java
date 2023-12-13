@@ -18,6 +18,8 @@ import edu.unh.cs.cs619.bulletzone.util.IntegerWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 import org.androidannotations.rest.spring.annotations.RestService;
 
+import java.util.List;
+
 @EBean
 public class ClientController {
 
@@ -31,7 +33,7 @@ public class ClientController {
     }
 
 
-    public ArrayListWrapper getPowerups(long tankId, char type){
+    public List<Integer> getPowerups(long tankId, char type){
         return restClient.getPowerups(tankId,type);
     }
 

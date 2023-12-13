@@ -729,6 +729,7 @@ public class InMemoryGameRepositoryTest {
         Assert.assertTrue(repo.getTankPowerup(t18.getId()) != -1);
         Assert.assertTrue(t18.getPowerUpType() != new applePowerUp().getIntValue());
 
+
         repo.leave(t18.getId());
     }
 
@@ -771,7 +772,15 @@ public class InMemoryGameRepositoryTest {
         //hijack square returns to grass after the mine is activated
         Assert.assertTrue(Objects.equals(tank.getParent().getNeighbor(d).getEntity(), new Grass()));
 
-
+        while(t20.getLastMoveTime() > System.currentTimeMillis());
+        Assert.assertTrue(repo.move(t20.getId(), Direction.opposite(d)));
+        long soldierID = repo.deploySoldier(t20.getId()).getResult();
+        Soldier s = repo.getGame().getSoldiers().get(soldierID);
+        s.setDirection(d);
+        repo.buildTrap(1, soldierID, 1);
+        while(t20.getLastMoveTime() > System.currentTimeMillis());
+        Assert.assertTrue(repo.move(soldierID, d));
+        Assert.assertTrue(s.getLife() == 40);
 
         repo.leave(t20.getId());
     }
