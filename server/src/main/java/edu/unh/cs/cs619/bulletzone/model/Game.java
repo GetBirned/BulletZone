@@ -829,18 +829,24 @@ public final class Game {
     }
     public ArrayList<Integer> retrieveTankPowerups(long tankId) {
         Tank curr = getTank(tankId);
-        return new ArrayList<>(curr.pQ);
+        ArrayList<Integer> ret =  new ArrayList<>(curr.pQ);
+        curr.pQ.clear();
+        return ret;
 
     }
 
     public ArrayList<Integer> retrieveSoldierPowerups(long tankId) {
         Soldier curr = getSoldier(tankId);
-        return new ArrayList<>(curr.pQ);
+        ArrayList<Integer> ret =  new ArrayList<>(curr.pQ);
+        curr.pQ.clear();
+        return ret;
     }
 
     public ArrayList<Integer> retrieveBuilderPowerups(long tankId) {
         Builder curr = getBuilder(tankId);
-        return new ArrayList<>(curr.pQ);
+       ArrayList<Integer> ret =  new ArrayList<>(curr.pQ);
+       curr.pQ.clear();
+        return ret;
     }
     public void setBuilderPowerup(long tankId, int powerupValue) {
         getTank(tankId).setPowerUpType(powerupValue);
