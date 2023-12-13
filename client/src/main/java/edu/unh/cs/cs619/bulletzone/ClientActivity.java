@@ -109,7 +109,7 @@ public class ClientActivity extends Activity {
     TextView bankBalanceTextView;
     int controllingTank;
 
-    int controllingBuilder;
+    public int controllingBuilder;
     BuilderButtonController builderButtonController;
     TankButtonController tankButtonController;
     private int tankIsActive;
@@ -233,6 +233,7 @@ public class ClientActivity extends Activity {
     protected void afterViewInjection() {
         joinAsync();
         SystemClock.sleep(500);
+        mGridAdapter.setActivity(this);
         gridView.setAdapter(mGridAdapter);
         mGridAdapter.setRestClient(restClient);
         mGridAdapter.setClientController(controller);

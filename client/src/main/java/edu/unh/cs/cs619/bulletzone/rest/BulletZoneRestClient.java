@@ -27,7 +27,7 @@ import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
 //
 //@Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
     //10.21.146.129:61900
-    @Rest(rootUrl = "http://stman1.cs.unh.edu:61907/games",
+    @Rest(rootUrl = "http://stman1.cs.unh.edu:6191/games",
         converters = {StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class}
         // TODO: disable intercepting and logging
         // , interceptors = { HttpLoggerInterceptor.class }

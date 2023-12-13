@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Random;
 
+import edu.unh.cs.cs619.bulletzone.ClientActivity;
+import edu.unh.cs.cs619.bulletzone.ClientActivity_;
 import edu.unh.cs.cs619.bulletzone.ClientController;
 import edu.unh.cs.cs619.bulletzone.R;
 import edu.unh.cs.cs619.bulletzone.rest.BulletZoneRestClient;
@@ -108,6 +110,12 @@ public class GridAdapter extends BaseAdapter {
     int numItems;
     int numPlayers;
     double chance;
+
+    ClientActivity c;
+
+    public void setActivity(ClientActivity c) {
+        this.c = c;
+    }
 
     private static int[][] hasPowerUp = new int[16][16];
     // 0 grass, // 1 thingamajig //2 nuke //3 apple
@@ -251,10 +259,11 @@ public class GridAdapter extends BaseAdapter {
         }
         return -1;
     }
-
+public int ejected = 0;
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         flag = 0;
+
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.field_item, null);
         }
@@ -265,16 +274,38 @@ public class GridAdapter extends BaseAdapter {
         int val = mEntities[row][col];
         synchronized (monitor) {
 
-             if (hasPowerUp[row][col] == 3 && val == 0) {
+            if(c.controllingBuilder == 1) {
+                if (hasPowerUp[row][col] == 3 && val == 0 && ejected == 0) {
+                    hasPowerUp[row][col] = 0;
+                    imageView.setImageResource(R.drawable.grass);
+                } else if (hasPowerUp[row][col] == 2 && val == 0 ) {
+                    hasPowerUp[row][col] = 0;
+                    imageView.setImageResource(R.drawable.grass);
+                } else if (hasPowerUp[row][col] == 1 && val == 0) {
+                    hasPowerUp[row][col] = 0;
+                    imageView.setImageResource(R.drawable.grass);
+                } else if (hasPowerUp[row][col] == 9 && val == 0 ) {
+                    hasPowerUp[row][col] = 0;
+                    imageView.setImageResource(R.drawable.grass);
+                } else if (hasPowerUp[row][col] == 10 && val == 0) {
+                    hasPowerUp[row][col] = 0;
+                    imageView.setImageResource(R.drawable.grass);
+                } else if(hasPowerUp[row][col] == 12 && val ==0) {
+                    hasPowerUp[row][col] = 0;
+                    imageView.setImageResource(R.drawable.grass);
+                }
+            }
+            /**
+             if (hasPowerUp[row][col] == 3 && val == 0 && ejected == 0) {
                 hasPowerUp[row][col] = 0;
                 imageView.setImageResource(R.drawable.grass);
-            } else if (hasPowerUp[row][col] == 2 && val == 0) {
+            } else if (hasPowerUp[row][col] == 2 && val == 0 ) {
                 hasPowerUp[row][col] = 0;
                 imageView.setImageResource(R.drawable.grass);
             } else if (hasPowerUp[row][col] == 1 && val == 0) {
                  hasPowerUp[row][col] = 0;
                 imageView.setImageResource(R.drawable.grass);
-            } else if (hasPowerUp[row][col] == 9 && val == 0) {
+            } else if (hasPowerUp[row][col] == 9 && val == 0 ) {
                  hasPowerUp[row][col] = 0;
                 imageView.setImageResource(R.drawable.grass);
             } else if (hasPowerUp[row][col] == 10 && val == 0) {
@@ -284,7 +315,7 @@ public class GridAdapter extends BaseAdapter {
                  hasPowerUp[row][col] = 0;
                  imageView.setImageResource(R.drawable.grass);
              }
-
+**/
             if (hasPowerUp[row][col] == 4) {
                 mEntities[row][col] = 2;
             } else if (hasPowerUp[row][col] == 5) {
@@ -338,6 +369,7 @@ public class GridAdapter extends BaseAdapter {
                     if(didEject) {
                         if(convert(ejectedType) != 3141) {
                             ejectPowerup(row, col);
+
                         }
                     }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
@@ -431,6 +463,7 @@ public class GridAdapter extends BaseAdapter {
                         numItems--;
                     }
                 } else if (val >= 50000000 && val <= 60000000) {
+
                     setBuilder(imageView, direction, hasPowerUp[row][col]);
                     if(didEject) {
                         if(convert(ejectedType) != 3141) {
