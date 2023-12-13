@@ -116,7 +116,7 @@ public class Action {
     }
 
     private boolean moveHelper(Vehicle v, Direction direction, Tank tank, long tankId) {
-        if (Direction.toByte(direction) != Direction.toByte(v.getDirection()) && Direction.toByte(direction) != Direction.opposite(v.getDirection())) {
+        if (Direction.toByte(direction) != Direction.toByte(v.getDirection()) && Direction.toByte(direction) != Direction.opposite(Direction.toByte(v.getDirection()))) {
             return false;
         }
 
@@ -182,21 +182,27 @@ public class Action {
             if(v.getPowerUpType() == 4) {
                 System.out.println("Restoring terrain. Current entity type: hill");
                 parent.setFieldEntity(new Hill());
+                v.setPowerUpType(0);
             } else if(v.getPowerUpType() == 5) {
                 System.out.println("Restoring terrain. Current entity type: rock");
                 parent.setFieldEntity(new Rocky());
+                v.setPowerUpType(0);
             } else if(v.getPowerUpType() == 6) {
                 System.out.println("Restoring terrain. Current entity type: forest");
                 parent.setFieldEntity(new Forest());
+                v.setPowerUpType(0);
             } else if (v.getPowerUpType() == 8) {
                 System.out.println("Restoring terrain. Current entity type: water");
                 parent.setFieldEntity(new Water());
+                v.setPowerUpType(0);
             } else if (v.getPowerUpType() == 11) {
                 System.out.println("Restoring terrain. Current entity type: bridge");
                 parent.setFieldEntity(new Bridge());
+                v.setPowerUpType(0);
             } else if (v.getPowerUpType() == 12) {
                 System.out.println("Restoring terrain. Current entity type: road");
                 parent.setFieldEntity(new Road());
+                v.setPowerUpType(0);
             }
             nextField.setFieldEntity((FieldEntity) v);
             v.setParent(nextField);
@@ -216,6 +222,8 @@ public class Action {
                         // Re-entry failed, soldier is already in a tank
                         isCompleted = false;
                     }
+                } else if (nextField.getEntity() instanceof Mine) {
+                    v.setLife(v.getLife() - 10);
                 }
             } else {
                 return true;

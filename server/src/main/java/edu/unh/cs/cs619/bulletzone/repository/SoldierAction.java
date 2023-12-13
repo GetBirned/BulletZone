@@ -79,7 +79,7 @@ public class SoldierAction {
             }
 
             Soldier soldier = game.getSoldiers().get(tankId);
-            if (Direction.toByte(direction) != Direction.toByte(soldier.getDirection()) && Direction.toByte(direction) != Direction.opposite(soldier.getDirection())) {
+            if (Direction.toByte(direction) != Direction.toByte(soldier.getDirection()) && Direction.toByte(direction) != Direction.opposite(Direction.toByte(soldier.getDirection()))) {
                 return false;
             }
 

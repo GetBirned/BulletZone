@@ -249,6 +249,8 @@ class GamesController {
             List<Integer> powerups;
             if(type == 't') {
                  powerups = gameRepository.retrieveTankPowerups(tankId);
+                log.debug("POWERUPS: " + powerups);
+
             } else if(type == 's') {
                  powerups = gameRepository.retrieveSoldierPowerups(tankId);
             } else {

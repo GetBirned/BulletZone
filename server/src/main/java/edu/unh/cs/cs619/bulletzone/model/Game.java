@@ -36,10 +36,10 @@ public final class Game {
 
     public Game() {
         this.id = 0;
-        this.initiialize();
+        this.initialize();
     }
 
-    public void initiialize() {
+    public void initialize() {
         if (gbb != null) {
             gb = gbb.build();
             return;
@@ -391,11 +391,13 @@ public final class Game {
     public LongWrapper getBuildTime(long builderId) {
         Builder builder = getBuilders().get(builderId);
         if (builder != null) {
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
+            FieldHolder fieldElement = gb.getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof Water) {
+                builder.setBuildTime(1000);
                 return new LongWrapper(1000);
             } else if (fieldElement.getEntity() instanceof Hill || fieldElement.getEntity() instanceof Rocky
                     || fieldElement.getEntity() instanceof Forest) {
+                builder.setBuildTime(2000);
                 return new LongWrapper(2000);
             }
         } else {
@@ -419,7 +421,7 @@ public final class Game {
             };
 
             int result = getPosition(builder, builderId);
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(result); // find the FieldHolder of element behind builder
+            FieldHolder fieldElement = gb.getHolderGrid().get(result); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof Bridge) {
                 return new LongWrapper(1000);
             }
@@ -444,7 +446,7 @@ public final class Game {
     public LongWrapper dismantleImprovement(long builderId) {
         Builder builder = getBuilders().get(builderId);
         if (builder != null) {
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
+            FieldHolder fieldElement = gb.getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof BuilderWall) { // WALL - RETURN 100 CREDITS
                 BuilderWall wall = (BuilderWall) fieldElement.getEntity();
                 wall.getParent().clearField();
@@ -461,19 +463,19 @@ public final class Game {
                 bridge.setParent(null);
                 fieldElement.setFieldEntity(new Water());
                 return new LongWrapper(3);
-            } else if (fieldElement.getEntity() instanceof applePowerUp) { // ANTIGRAV - RETURN 300 CREDITS
+            } else if (fieldElement.getEntity() instanceof applePowerUp || fieldElement.getEntity().getIntValue() == 2002) { // ANTIGRAV - RETURN 300 CREDITS
                 applePowerUp apple = (applePowerUp) fieldElement.getEntity();
                 apple.getParent().clearField();
                 apple.setParent(null);
                 fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(4);
-            } else if (fieldElement.getEntity() instanceof nukePowerUp) { // FUSION - RETURN 400 CREDITS
+            } else if (fieldElement.getEntity() instanceof nukePowerUp|| fieldElement.getEntity().getIntValue() == 2003) { // FUSION - RETURN 400 CREDITS
                 nukePowerUp nuke = (nukePowerUp) fieldElement.getEntity();
                 nuke.getParent().clearField();
                 nuke.setParent(null);
                 fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(5);
-            } else if (fieldElement.getEntity() instanceof Shield) { // SHIELD - RETURN 300 CREDITS
+            } else if (fieldElement.getEntity() instanceof Shield|| fieldElement.getEntity().getIntValue() == 3131) { // SHIELD - RETURN 300 CREDITS
                 Shield s = (Shield) fieldElement.getEntity();
                 if (!fieldElement.isPresent()) {
                     fieldElement.setFieldEntity(s);
@@ -483,7 +485,7 @@ public final class Game {
                 s.setParent(null);
                 fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(6);
-            } else if (fieldElement.getEntity() instanceof HealthKit) { // TOOLKIT - RETURN 200 CREDITS
+            } else if (fieldElement.getEntity() instanceof HealthKit|| fieldElement.getEntity().getIntValue() == 3141) { // TOOLKIT - RETURN 200 CREDITS
                 HealthKit h = (HealthKit) fieldElement.getEntity();
                 h.getParent().clearField();
                 h.setParent(null);
@@ -507,7 +509,7 @@ public final class Game {
 
             int newX = x + offset[0];
             int newY = y + offset[1];
-            FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(newX * FIELD_DIM + newY);
+            FieldHolder fieldElement = gb.getHolderGrid().get(newX * FIELD_DIM + newY);
 
             if (choice == 1) { // WALL - COSTS 100 CREDITS
                 BuilderWall wall = new BuilderWall();
@@ -788,7 +790,7 @@ public final class Game {
         } //DEFLECTOR SHIELD
         if (powerupValue == 9) {
             curr.numShield++;
-            curr.deflectorShield(tankId);
+            curr.deflectorShield();
 
         }
         // REPAIR KIT
@@ -859,7 +861,7 @@ public final class Game {
         //DEFLECTOR SHIELD
         if (powerupValue == 9) {
             curr.numShield++;
-            curr.deflectorShield(tankId);
+            curr.deflectorShield();
         }
         // REPAIR KIT
         else if (powerupValue == 10) {
