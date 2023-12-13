@@ -116,7 +116,7 @@ public class Action {
     }
 
     private boolean moveHelper(Vehicle v, Direction direction, Tank tank, long tankId) {
-        if (Direction.toByte(direction) != Direction.toByte(v.getDirection()) && Direction.toByte(direction) != Direction.opposite(v.getDirection())) {
+        if (Direction.toByte(direction) != Direction.toByte(v.getDirection()) && Direction.toByte(direction) != Direction.opposite(Direction.toByte(v.getDirection()))) {
             return false;
         }
 
@@ -222,6 +222,8 @@ public class Action {
                         // Re-entry failed, soldier is already in a tank
                         isCompleted = false;
                     }
+                } else if (nextField.getEntity() instanceof Mine) {
+                    v.setLife(v.getLife() - 10);
                 }
             } else {
                 return true;

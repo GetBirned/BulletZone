@@ -49,18 +49,36 @@ public enum Direction {
         }
     }
 
-    public static byte opposite(Direction direction) {
+    public static byte opposite(byte direction) {
         switch (direction) {
-            case Down:
+            case 4:
                 return 0;
-            case Left:
+            case 6:
                 return 2;
-            case Right:
+            case 2:
                 return 6;
-            case Up:
+            case 0:
                 return 4;
             default:
                 return -1;
         }
+    }
+
+    public static Direction opposite(Direction direction) {
+        Direction d = null;
+
+        switch (direction) {
+            case Up:
+                d = Down;
+            case Right:
+                d = Left;
+            case Down:
+                d = Down;
+            case Left:
+                d = Right;
+            default:
+                break;
+        }
+        return d;
     }
 }

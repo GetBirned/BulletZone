@@ -238,7 +238,7 @@ public class Tank extends FieldEntity implements Vehicle {
         if (life > 50) {
             life = 50;
         }
-        this.shield = 49;
+        this.shield = 50;
         origLife = curr.getLife();
         curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
         tTimer.scheduleAtFixedRate(new TimerTask() {
