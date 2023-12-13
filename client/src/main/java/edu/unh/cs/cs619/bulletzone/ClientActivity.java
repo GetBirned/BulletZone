@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -464,27 +465,42 @@ public class ClientActivity extends Activity {
 //        }
 //    }
 
-    public void giveCredits(){
+    public void giveCredits() {
         try {
-            ArrayListWrapper result = controller.getPowerups(tankId, 't');
+            List<Integer> result = controller.getPowerups(tankId, 't');
 
-            if (result != null) {
-                ArrayList<Integer> arr = result.isResult();
-                if (arr != null) {
-                    Log.d(TAG, "giveCredits: " + arr);
-                    controller.updateBalance(receivedTankID, 1000);
-                } else {
-                    Log.d(TAG, "No powerups");
+            if (result != null && !result.isEmpty()) {
+                Log.d(TAG, "giveCredits: " + result);
+
+                // 0 grass, // 1 thingamajig //2 nuke //3 apple
+                //4 hill // 5 rocky // 6 forest // 7 soldier // 8 water
+                //9 deflector //10 repair kit // 11 bridge // 12 road
+                int nuke = 2;
+                int apple = 3;
+                int deflector = 9;
+                int kit = 10;
+
+                for (Integer powerup : result) {
+                    if (powerup.equals(nuke)) {
+                        controller.updateBalance(receivedTankID, 400);
+                    } else if(powerup.equals(apple)) {
+                        controller.updateBalance(receivedTankID, 300);
+                    }else if(powerup.equals(deflector)) {
+                        controller.updateBalance(receivedTankID, 300);
+                    } else if(powerup.equals(kit)) {
+                        controller.updateBalance(receivedTankID, 200);
+                    }
                 }
+
             } else {
-                // Handle the case where the result is null
-                Log.e(TAG, "Result is null");
+                Log.d(TAG, "No powerups");
             }
         } catch (Exception e) {
             // Handle other exceptions
             Log.e(TAG, "Exception: " + e.getMessage());
         }
     }
+
 
     @Click(R.id.buttonLeave)
     @Background
@@ -661,7 +677,9 @@ public class ClientActivity extends Activity {
                         restClient.updateBalance(receivedTankID, 300);
 
                     }
-                    controller.updateBankAccountAsync(receivedTankID);
+                    int total = controller.updateBankAccountAsync(receivedTankID);
+                    updateBalance(total);
+                    curBalance = total;
                 } else {
                     Log.d(TAG, "Dismantle failed with ID: " + builderId + "\n");
                 }
@@ -781,7 +799,9 @@ public class ClientActivity extends Activity {
                     Log.d(TAG, "Hijack Trap properly built by ID: " + tankId + "\n");
                     controller.updateBalance(receivedTankID, -40);
                 }
-                controller.updateBankAccountAsync(receivedTankID);
+                int total = controller.updateBankAccountAsync(receivedTankID);
+                updateBalance(total);
+                curBalance = total;
             } else {
                 Log.d(TAG, "Trap build failed with ID: " + tankId + "\n");
             }
