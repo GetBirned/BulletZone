@@ -393,9 +393,11 @@ public final class Game {
         if (builder != null) {
             FieldHolder fieldElement = gb.getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
             if (fieldElement.getEntity() instanceof Water) {
+                builder.setBuildTime(1000);
                 return new LongWrapper(1000);
             } else if (fieldElement.getEntity() instanceof Hill || fieldElement.getEntity() instanceof Rocky
                     || fieldElement.getEntity() instanceof Forest) {
+                builder.setBuildTime(2000);
                 return new LongWrapper(2000);
             }
         } else {
@@ -461,19 +463,19 @@ public final class Game {
                 bridge.setParent(null);
                 fieldElement.setFieldEntity(new Water());
                 return new LongWrapper(3);
-            } else if (fieldElement.getEntity() instanceof applePowerUp) { // ANTIGRAV - RETURN 300 CREDITS
+            } else if (fieldElement.getEntity() instanceof applePowerUp || fieldElement.getEntity().getIntValue() == 2002) { // ANTIGRAV - RETURN 300 CREDITS
                 applePowerUp apple = (applePowerUp) fieldElement.getEntity();
                 apple.getParent().clearField();
                 apple.setParent(null);
                 fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(4);
-            } else if (fieldElement.getEntity() instanceof nukePowerUp) { // FUSION - RETURN 400 CREDITS
+            } else if (fieldElement.getEntity() instanceof nukePowerUp|| fieldElement.getEntity().getIntValue() == 2003) { // FUSION - RETURN 400 CREDITS
                 nukePowerUp nuke = (nukePowerUp) fieldElement.getEntity();
                 nuke.getParent().clearField();
                 nuke.setParent(null);
                 fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(5);
-            } else if (fieldElement.getEntity() instanceof Shield) { // SHIELD - RETURN 300 CREDITS
+            } else if (fieldElement.getEntity() instanceof Shield|| fieldElement.getEntity().getIntValue() == 3131) { // SHIELD - RETURN 300 CREDITS
                 Shield s = (Shield) fieldElement.getEntity();
                 if (!fieldElement.isPresent()) {
                     fieldElement.setFieldEntity(s);
@@ -483,7 +485,7 @@ public final class Game {
                 s.setParent(null);
                 fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(6);
-            } else if (fieldElement.getEntity() instanceof HealthKit) { // TOOLKIT - RETURN 200 CREDITS
+            } else if (fieldElement.getEntity() instanceof HealthKit|| fieldElement.getEntity().getIntValue() == 3141) { // TOOLKIT - RETURN 200 CREDITS
                 HealthKit h = (HealthKit) fieldElement.getEntity();
                 h.getParent().clearField();
                 h.setParent(null);
@@ -787,7 +789,8 @@ public final class Game {
             curr.setAllowedFireInterval((int) curr.getAllowedFireInterval() + 100);
         } //DEFLECTOR SHIELD
         if (powerupValue == 9) {
-            curr.deflectorShield(tankId);
+            curr.numShield++;
+            curr.deflectorShield();
 
         }
         // REPAIR KIT
@@ -815,6 +818,7 @@ public final class Game {
         }
         //DEFLECTOR SHIELD
         if (powerupValue == 9) {
+            curr.numShield++;
             curr.deflectorShield();
         }
         // REPAIR KIT
@@ -856,7 +860,8 @@ public final class Game {
         }
         //DEFLECTOR SHIELD
         if (powerupValue == 9) {
-            curr.deflectorShield(tankId);
+            curr.numShield++;
+            curr.deflectorShield();
         }
         // REPAIR KIT
         else if (powerupValue == 10) {

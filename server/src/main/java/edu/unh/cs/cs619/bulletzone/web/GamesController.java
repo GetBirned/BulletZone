@@ -28,6 +28,7 @@ import edu.unh.cs.cs619.bulletzone.model.LimitExceededException;
 import edu.unh.cs.cs619.bulletzone.model.Tank;
 import edu.unh.cs.cs619.bulletzone.model.TankDoesNotExistException;
 import edu.unh.cs.cs619.bulletzone.repository.GameRepository;
+import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
 import edu.unh.cs.cs619.bulletzone.util.BooleanWrapper;
 import edu.unh.cs.cs619.bulletzone.util.GridWrapper;
 import edu.unh.cs.cs619.bulletzone.util.LongWrapper;
@@ -244,26 +245,26 @@ class GamesController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getPowerups/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<List<Integer>> getPowerups(@PathVariable long tankId, @PathVariable char type) {
+    public ResponseEntity<List<Integer>> getPowerups(@PathVariable long tankId, @PathVariable char type) {
         try {
             List<Integer> powerups;
-            if(type == 't') {
-                 powerups = gameRepository.retrieveTankPowerups(tankId);
-            } else if(type == 's') {
-                 powerups = gameRepository.retrieveSoldierPowerups(tankId);
+            if (type == 't') {
+                powerups = gameRepository.retrieveTankPowerups(tankId);
+                log.debug("POWERUPS: " + powerups);
+            } else if (type == 's') {
+                powerups = gameRepository.retrieveSoldierPowerups(tankId);
             } else {
-                 powerups = gameRepository.retrieveBuilderPowerups(tankId);
+                powerups = gameRepository.retrieveBuilderPowerups(tankId);
             }
-
 
             return new ResponseEntity<>(powerups, HttpStatus.OK);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
 
     @RequestMapping(method = RequestMethod.GET, value = "{tankId}/getBuilderHealth", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)

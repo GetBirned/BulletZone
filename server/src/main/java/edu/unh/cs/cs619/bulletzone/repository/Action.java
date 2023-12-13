@@ -159,7 +159,7 @@ public class Action {
                     if (!((parent.getEntity()) instanceof Hill)) {
                         v.setAllowedMoveInterval((int) (tank.getAllowedMoveInterval() / 2));
                     }
-                } else if (nextField.getEntity() instanceof Mine) {
+                } else if (nextField.getEntity() instanceof Mine && !(nextField.getEntity() instanceof Mine)) {
                     v.setLife(v.getLife() - 10);
                 } else if (nextField.getEntity() instanceof HijackTrap) {
                     //
