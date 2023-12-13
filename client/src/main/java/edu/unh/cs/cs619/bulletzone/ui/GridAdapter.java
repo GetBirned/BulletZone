@@ -264,6 +264,27 @@ public class GridAdapter extends BaseAdapter {
         int col = position % 16;
         int val = mEntities[row][col];
         synchronized (monitor) {
+
+             if (hasPowerUp[row][col] == 3 && val == 0) {
+                hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            } else if (hasPowerUp[row][col] == 2 && val == 0) {
+                hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            } else if (hasPowerUp[row][col] == 1 && val == 0) {
+                 hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            } else if (hasPowerUp[row][col] == 9 && val == 0) {
+                 hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            } else if (hasPowerUp[row][col] == 10 && val == 0) {
+                 hasPowerUp[row][col] = 0;
+                imageView.setImageResource(R.drawable.grass);
+            } else if(hasPowerUp[row][col] == 12 && val ==0) {
+                 hasPowerUp[row][col] = 0;
+                 imageView.setImageResource(R.drawable.grass);
+             }
+
             if (hasPowerUp[row][col] == 4) {
                 mEntities[row][col] = 2;
             } else if (hasPowerUp[row][col] == 5) {
@@ -273,6 +294,7 @@ public class GridAdapter extends BaseAdapter {
             } else if( hasPowerUp[row][col] == 8){
                 mEntities[row][col] = 50;
             }
+
             if(hasPowerUp[row][col] == 4) {
                 imageView.setImageResource(R.drawable.hillyterrain);
 
