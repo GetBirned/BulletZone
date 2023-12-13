@@ -15,12 +15,12 @@ public class Builder extends FieldEntity implements Vehicle{
 
     private final long id;
     int mockTimer;
+    public int origLife;
 
     private String ip;
     Timer bTimer2 = new Timer();
     Timer bTimer = new Timer();
-
-
+    private int buildTime;
     private long lastMoveTime;
     private int allowedMoveInterval;
 
@@ -43,6 +43,7 @@ public class Builder extends FieldEntity implements Vehicle{
     private TankLocation tankLocation;
     public int ind;
     public Queue<Integer> pQ = new LinkedList<>();
+    private int shield;
 
 
     public Builder(long id, Direction direction, String ip, int isActive) {
@@ -64,6 +65,14 @@ public class Builder extends FieldEntity implements Vehicle{
 
     public int getPowerUpType(){
         return this.powerUpType;
+    }
+
+    public void setBuildTime(int buildTime) {
+        this.buildTime = buildTime;
+    }
+
+    public int getBuildTime(){
+        return this.buildTime;
     }
 
     public long getId() {
@@ -261,22 +270,26 @@ public class Builder extends FieldEntity implements Vehicle{
         }, 0, 1000);
         mockTimer = 0;
     }
-    public void deflectorShield(long tankId) {
-        final int[] remainingAbsorption = {50};
+    public void deflectorShield() {
         Builder curr = this;
+        if (life > 50) {
+            life = 50;
+        }
+        this.shield = 50;
+        origLife = curr.getLife();
         curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
-        int origLife = curr.getLife();
-        curr.setLife(curr.getLife() + 50);
+        curr.setBuildTime((int) (curr.getBuildTime() * 1.5));
+
         bTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (remainingAbsorption[0] > 0 && curr.getLife() > origLife) {
-                    curr.setLife(curr.getLife() - DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
-                    remainingAbsorption[0]--;
-                } else {
+                if (shield > 0 && shield < 50) {
+                    shield++;
+                } else if (shield <= 0) {
                     bTimer.cancel();
+                    bTimer.purge();
                 }
             }
-        }, 1000, 1000);
+        }, 0, 1000);
     }
 }

@@ -39,6 +39,8 @@ public class Soldier extends FieldEntity implements Vehicle{
     public int ind;
     public int numShield;
     public boolean hasShield;
+    private int shield;
+    public int origLife;
 
     public Soldier(long id, Direction direction, String ip) {
         this.id = id;
@@ -261,24 +263,25 @@ public class Soldier extends FieldEntity implements Vehicle{
         }, 0, 1000);
         mockTimer = 0;
     }
-    public void deflectorShield(long tankId) {
-        final int[] remainingAbsorption = {50};
+    public void deflectorShield() {
         Soldier curr = this;
+        if (life > 50) {
+            life = 50;
+        }
+        this.shield = 50;
+        origLife = curr.getLife();
         curr.setAllowedFireInterval((int) (curr.getAllowedFireInterval() * 1.5));
-        int origLife = curr.getLife();
-        curr.setLife(curr.getLife() + 50);
         sTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (remainingAbsorption[0] > 0 && curr.getLife() > origLife) {
-                    curr.setLife(curr.getLife() - DEFLECTOR_SHIELD_DAMAGE_REDUCTION);
-                    remainingAbsorption[0]--;
-                } else {
+                if (shield > 0 && shield < 50) {
+                    shield++;
+                } else if (shield <= 0) {
                     sTimer.cancel();
                     sTimer.purge();
                 }
             }
-        }, 1000, 1000);
+        }, 0, 1000);
     }
 
 }

@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.unh.cs.cs619.bulletzone.util.ArrayListWrapper;
+
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -452,9 +455,41 @@ public class ClientActivity extends Activity {
         startActivity(intent);
     }
 
+//        public int numCreds(ArrayList<Integer> arr){
+//        int totalCreds = 0;
+//        for (Integer curr : arr) {
+//            if(curr == 1){
+//                //totalCreds +=
+//            }
+//        }
+//    }
+
+    public void giveCredits(){
+        try {
+            ArrayListWrapper result = controller.getPowerups(tankId, 't');
+
+            if (result != null) {
+                ArrayList<Integer> arr = result.isResult();
+                if (arr != null) {
+                    Log.d(TAG, "giveCredits: " + arr);
+                    controller.updateBalance(receivedTankID, 1000);
+                } else {
+                    Log.d(TAG, "No powerups");
+                }
+            } else {
+                // Handle the case where the result is null
+                Log.e(TAG, "Result is null");
+            }
+        } catch (Exception e) {
+            // Handle other exceptions
+            Log.e(TAG, "Exception: " + e.getMessage());
+        }
+    }
+
     @Click(R.id.buttonLeave)
     @Background
     void leaveGame() {
+        giveCredits();
         showConfirmationDialog();
     }
 
@@ -610,7 +645,21 @@ public class ClientActivity extends Activity {
                     } else if (res.getResult() == 3) {
                         Log.d(TAG, "Bridge properly dismantled by: " + builderId + "\n");
                         restClient.updateBalance(receivedTankID, 80);
-                        Log.d(TAG, "80 (Bridge) credits returned to BankAccount with ID: " + builderId + "\n");
+                        Log.d(TAG, "300 (Antigravity) credits returned to BankAccount with ID: " + builderId + "\n");
+                    } else if(res.getResult() == 4){
+                        Log.d(TAG, "Antigravity properly dismantled by: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 300);
+                        Log.d(TAG, "fuck you!!!!! 1: " + builderId + "\n");
+
+                    } else if(res.getResult() == 5){
+                        Log.d(TAG, "fuck you!!!!! 2: " + builderId + "\n");
+                        restClient.updateBalance(receivedTankID, 400);
+
+                    } else if(res.getResult() == 6){
+                        restClient.updateBalance(receivedTankID, 300);
+                    } else {
+                        restClient.updateBalance(receivedTankID, 300);
+
                     }
                     controller.updateBankAccountAsync(receivedTankID);
                 } else {
