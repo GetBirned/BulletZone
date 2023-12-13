@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.unh.cs.cs619.bulletzone.model.Builder;
+import edu.unh.cs.cs619.bulletzone.model.BuilderWall;
 import edu.unh.cs.cs619.bulletzone.model.Bullet;
 import edu.unh.cs.cs619.bulletzone.model.Direction;
 import edu.unh.cs.cs619.bulletzone.model.FieldHolder;
@@ -87,6 +88,13 @@ public class BulletMover {
                             Wall w = (Wall) nextField.getEntity();
                             if (w.getIntValue() > 1000 && w.getIntValue() <= 2000) {
                                 game.getHolderGrid().get(w.getPos()).clearField();
+                            }
+                        }else if (nextField.getEntity() instanceof BuilderWall) {
+                            BuilderWall bw = (BuilderWall) nextField.getEntity();
+                            bw.takeDamage(bullet.getDamage());
+                            if (bw.destructValue <= 0) {
+                                currentField.clearField();
+                                nextField.clearField();
                             }
                         } System.out.println("Before clearing field. Entity type: " + nextField.getEntity().getClass().getSimpleName());
 

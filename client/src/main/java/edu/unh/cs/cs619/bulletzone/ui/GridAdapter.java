@@ -236,7 +236,6 @@ public class GridAdapter extends BaseAdapter {
 
                 String receiveString = bufferedReader.readLine();
                 int tankID = Integer.parseInt(receiveString);
-                //Log.d("Sending", "tankID from file is " + tankID);
 
                 inputStream.close();
                 return tankID;
@@ -280,8 +279,6 @@ public class GridAdapter extends BaseAdapter {
 
             } else if(hasPowerUp[row][col] == 5) {
                 imageView.setImageResource(R.drawable.rockyterrain);
-
-
             } else if (hasPowerUp[row][col] == 6) {
                 imageView.setImageResource(R.drawable.forestterrain);
             } else if (hasPowerUp[row][col] == 8) {
@@ -290,6 +287,8 @@ public class GridAdapter extends BaseAdapter {
                 imageView.setImageResource(R.drawable.waterwithbridge);
             } else if (hasPowerUp[row][col] == 12) {
                 imageView.setImageResource(R.drawable.roadongrass);
+            } else if (hasPowerUp[row][col] == 13 && val == 0) {
+                imageView.setImageResource(R.drawable.grass);
             } else if (hasPowerUp[row][col] == 13 || hasPowerUp[row][col] == 15) {
                 imageView.setImageResource(R.drawable.grass);
             } else if (hasPowerUp[row][col] == 14 || hasPowerUp[row][col] == 16) {
@@ -320,7 +319,8 @@ public class GridAdapter extends BaseAdapter {
                         }
                     }
                     if (hasPowerUp[row][col] == 1 || hasPowerUp[row][col] == 2 || hasPowerUp[row][col] == 3
-                            || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10) {
+                            || hasPowerUp[row][col] == 9 || hasPowerUp[row][col] == 10|| hasPowerUp[row][col] == 4
+                            || hasPowerUp[row][col] == 5 || hasPowerUp[row][col] == 6 || hasPowerUp[row][col] == 8) {
                         if(hasPowerUp[row][col] == 1){
 
                             new AsyncTask<Void, Void, Void>() {
@@ -350,6 +350,8 @@ public class GridAdapter extends BaseAdapter {
                                     return null;
                                 }
                             }.execute();
+
+
                         }
                         mEntities[row][col] = 0;
                         hasPowerUp[row][col] = 0;
@@ -467,6 +469,9 @@ public class GridAdapter extends BaseAdapter {
                 } else if (val == 3) {
                     hasPowerUp[row][col] = 6;
                     imageView.setImageResource(R.drawable.forestterrain);
+                } else if (val == 14) {
+                    hasPowerUp[row][col] = 13;
+                    imageView.setImageResource(R.drawable.woodwall);
                 } else if (val == 50) {
                     hasPowerUp[row][col] = 8;
                     imageView.setImageResource(R.drawable.water);
@@ -523,7 +528,7 @@ public class GridAdapter extends BaseAdapter {
                     }
                 }
             } else {
-                if(val == 0) {
+                if(hasPowerUp[row][col] == 0) {
                     imageView.setImageResource(R.drawable.grass);
                 }
 
@@ -544,28 +549,6 @@ public class GridAdapter extends BaseAdapter {
                         numItems++;
                         imageView.setImageResource(R.drawable.toolsgrass);
                     }
-                } else {
-                    /**
-                    if(0.25 * (numPlayers / (numItems + 1)) > 0) {
-                        // Determine whether to place a power-up
-                        if (shouldPlacePowerUp()) {
-                            int appear = new Random().nextInt(5);
-                            hasPowerUp[row][col] = appear + 1;
-                            //powerups should have been vals 1 2 3 4 5 but theyre not and its too
-                            //late to change so for shield and health kit i changed them to their
-                            //respective vals
-                            if(hasPowerUp[row][col] == 4) {
-                                hasPowerUp[row][col] =9;
-                            } else if(hasPowerUp[row][col] == 5) {
-                                hasPowerUp[row][col] = 10;
-                            }
-                            numItems++;
-                            //setImageForPowerUp(imageView, hasPowerUp[row][col]);
-                        }
-                    } else {
-                        imageView.setImageResource(R.drawable.grass);
-                    }
-                     **/
                 }
             }
             if(hasPowerUp[row][col] == 4) {

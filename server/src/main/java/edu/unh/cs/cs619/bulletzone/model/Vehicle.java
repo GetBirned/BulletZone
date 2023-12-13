@@ -9,6 +9,7 @@ public interface Vehicle {
 
     public long getLastMoveTime();
 
+    public void setPowerUpType(int powerupValue);
     public void setLastMoveTime(long lastMoveTime);
 
     public long getAllowedMoveInterval();

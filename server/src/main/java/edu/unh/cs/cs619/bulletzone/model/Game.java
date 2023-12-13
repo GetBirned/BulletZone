@@ -447,12 +447,12 @@ public final class Game {
         Builder builder = getBuilders().get(builderId);
         if (builder != null) {
             FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
-            if (fieldElement.getEntity() instanceof Wall) { // WALL - RETURN 100 CREDITS
-                Wall wall = (Wall) fieldElement.getEntity();
+            if (fieldElement.getEntity() instanceof BuilderWall) { // WALL - RETURN 100 CREDITS
+                BuilderWall wall = (BuilderWall) fieldElement.getEntity();
                 wall.getParent().clearField();
                 wall.setParent(null);
                 return new LongWrapper(1);
-            } else if (fieldElement.getEntity().getIntValue() == 70) { // ROAD - RETURN 40 CREDITS
+            } else if (fieldElement.getEntity() instanceof Road) { // ROAD - RETURN 40 CREDITS
                 Road road = (Road) fieldElement.getEntity();
                 road.getParent().clearField();
                 road.setParent(null);
@@ -512,13 +512,14 @@ public final class Game {
             FieldHolder fieldElement = gbb.getBoard().getHolderGrid().get(newX * FIELD_DIM + newY);
 
             if (choice == 1) { // WALL - COSTS 100 CREDITS
-                Wall wall = new Wall();
+                BuilderWall wall = new BuilderWall();
                  if (!fieldElement.isPresent()) {
                     fieldElement.setFieldEntity(wall);
                     wall.setParent(fieldElement);
                     return new LongWrapper(1);
                 }
-                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)) {
+                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)
+                        && !(fieldElement.getEntity() instanceof BuilderWall)) {
                     fieldElement.setFieldEntity(wall);
                     wall.setParent(fieldElement);
                     return new LongWrapper(1);
@@ -530,7 +531,8 @@ public final class Game {
                     road.setParent(fieldElement);
                     return new LongWrapper(2);
                 }
-                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)) {
+                if (!(fieldElement.getEntity() instanceof Wall) && !(fieldElement.getEntity() instanceof Water)
+                        && !(fieldElement.getEntity() instanceof BuilderWall)) {
                     fieldElement.setFieldEntity(road);
                     road.setParent(fieldElement);
                     return new LongWrapper(2);
