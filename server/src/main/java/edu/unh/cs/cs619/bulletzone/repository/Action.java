@@ -182,21 +182,27 @@ public class Action {
             if(v.getPowerUpType() == 4) {
                 System.out.println("Restoring terrain. Current entity type: hill");
                 parent.setFieldEntity(new Hill());
+                v.setPowerUpType(0);
             } else if(v.getPowerUpType() == 5) {
                 System.out.println("Restoring terrain. Current entity type: rock");
                 parent.setFieldEntity(new Rocky());
+                v.setPowerUpType(0);
             } else if(v.getPowerUpType() == 6) {
                 System.out.println("Restoring terrain. Current entity type: forest");
                 parent.setFieldEntity(new Forest());
+                v.setPowerUpType(0);
             } else if (v.getPowerUpType() == 8) {
                 System.out.println("Restoring terrain. Current entity type: water");
                 parent.setFieldEntity(new Water());
+                v.setPowerUpType(0);
             } else if (v.getPowerUpType() == 11) {
                 System.out.println("Restoring terrain. Current entity type: bridge");
                 parent.setFieldEntity(new Bridge());
+                v.setPowerUpType(0);
             } else if (v.getPowerUpType() == 12) {
                 System.out.println("Restoring terrain. Current entity type: road");
                 parent.setFieldEntity(new Road());
+                v.setPowerUpType(0);
             }
             nextField.setFieldEntity((FieldEntity) v);
             v.setParent(nextField);
