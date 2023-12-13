@@ -661,6 +661,11 @@ public class ClientActivity extends Activity {
     @Click(R.id.buildMine)
     @Background
     void buildMine() {
+        startMineTimer();
+    }
+
+    @Background
+    void buildMineAsync() {
         if (curBalance >= 20) {
             Log.d("MINE", "set mine");
             if(controller.buildTrap(1, soldierId, controllingTank, tankId,  receivedTankID, getTankIDFromFile()) == -1) {
@@ -674,11 +679,11 @@ public class ClientActivity extends Activity {
             Log.d(TAG, "Mine could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 20 credits.\n");
         }
+
     }
 
-    @Click(R.id.buildHijackTrap)
     @Background
-    void buildHijackTrap() {
+    void buildHijackTrapAsync() {
         if (curBalance >= 40) {
             if(controller.buildTrap(2, soldierId, controllingTank, tankId,  receivedTankID, getTankIDFromFile()) == -1) {
                 showCannotBuildTrapMessage();
@@ -691,6 +696,58 @@ public class ClientActivity extends Activity {
             Log.d(TAG, "HijackTrap could not be built. Bank Account associated to " +
                     "ID: " + tankId + " doesn't have more than 40 credits.\n");
         }
+    }
+
+    @Click(R.id.buildHijackTrap)
+    @Background
+    void buildHijackTrap() {
+        startHijackTimer();
+    }
+
+    public void startHijackTimer() {
+        currentlyBuilding = 1;
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                // Check if calledMove is still 0, otherwise, exit the task
+                try {
+                    buildHijackTrapAsync();
+                    currentlyBuilding = 0;
+                } catch (Exception e) {
+                    // Handle exceptions if necessary
+                    Log.e(TAG, "Error during UI update or mineTimer", e);
+                } finally {
+                    // Optionally, you can cancel the timer task after executing buildImprovement
+                    cancel();
+                }
+            }
+        };
+        timer.schedule(timerTask, 500);
+        Log.d(TAG, "Timer started. Waiting to build hijack for 500 milliseconds or until calledMove is set to 1...\n");
+    }
+
+    public void startMineTimer() {
+        currentlyBuilding = 1;
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                // Check if calledMove is still 0, otherwise, exit the task
+                try {
+                    buildMineAsync();
+                    currentlyBuilding = 0;
+                } catch (Exception e) {
+                    // Handle exceptions if necessary
+                    Log.e(TAG, "Error during UI update or mineTimer", e);
+                } finally {
+                    // Optionally, you can cancel the timer task after executing buildImprovement
+                    cancel();
+                }
+            }
+        };
+        timer.schedule(timerTask, 500);
+        Log.d(TAG, "Timer started. Waiting to build mine for " + 500 + " milliseconds...\n");
     }
 
 
