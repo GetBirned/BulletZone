@@ -170,25 +170,47 @@ public final class Game {
                     int appear = new Random().nextInt(5);
                     appear = appear + 1;
                     System.out.println("Random value: " + appear);
+
+                    //BuilderWall wall = new BuilderWall();
+                    //if (!fieldElement.isPresent()) {
+                     //   fieldElement.setFieldEntity(wall);
+                      //  wall.setParent(fieldElement);
+                       // return new LongWrapper(1);
                     switch (appear) {
                         case 1:
                             gb.setEntity(row, col, new Thingamajig());
                             System.out.println(" value: " + new Thingamajig().getIntValue());
                             break;
                         case 2:
-                            gb.setEntity(row, col, new nukePowerUp());
+                            nukePowerUp n = new nukePowerUp();
+                            FieldHolder f = gb.get(row,col);
+                            f.setFieldEntity(n);
+                            n.setParent(f);
+                            //gb.setEntity(row, col, new nukePowerUp());
                             System.out.println(" value: " + new nukePowerUp().getIntValue());
                             break;
                         case 3:
-                            gb.setEntity(row, col, new applePowerUp());
+                            applePowerUp a = new applePowerUp();
+                            FieldHolder f1 = gb.get(row,col);
+                            f1.setFieldEntity(a);
+                            a.setParent(f1);
+                            //gb.setEntity(row, col, new applePowerUp());
                             System.out.println(" value: " + new applePowerUp().getIntValue());
                             break;
                         case 4:
-                            gb.setEntity(row, col, new Shield());
+                            Shield s = new Shield();
+                            FieldHolder f2 = gb.get(row,col);
+                            f2.setFieldEntity(s);
+                            s.setParent(f2);
+                            //gb.setEntity(row, col, new Shield());
                             System.out.println(" value: " + new Shield().getIntValue());
                             break;
                         case 5:
-                            gb.setEntity(row, col, new HealthKit());
+                            HealthKit h = new HealthKit();
+                            FieldHolder f3 = gb.get(row,col);
+                            f3.setFieldEntity(h);
+                            h.setParent(f3);
+                            //gb.setEntity(row, col, new HealthKit());
                             System.out.println(" value: " + new HealthKit().getIntValue());
                             break;
                     }
@@ -444,6 +466,7 @@ public final class Game {
     }
 
     public LongWrapper dismantleImprovement(long builderId) {
+        System.out.println("IN DISMANTLE IMPROVEMENTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
         Builder builder = getBuilders().get(builderId);
         if (builder != null) {
             FieldHolder fieldElement = gb.getHolderGrid().get(getPosition(builder, builderId)); // find the FieldHolder of element behind builder
@@ -464,32 +487,34 @@ public final class Game {
                 fieldElement.setFieldEntity(new Water());
                 return new LongWrapper(3);
             } else if (fieldElement.getEntity() instanceof applePowerUp || fieldElement.getEntity().getIntValue() == 2002) { // ANTIGRAV - RETURN 300 CREDITS
+                System.out.println("IN APPLW POPWER$#VDSDFAdvfbgsdewrynr toli&yrg fdxqfgb%ioolyhFWDXSDFV5YUIKOL,UYNRWXSA");
                 applePowerUp apple = (applePowerUp) fieldElement.getEntity();
                 apple.getParent().clearField();
                 apple.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
+
                 return new LongWrapper(4);
             } else if (fieldElement.getEntity() instanceof nukePowerUp|| fieldElement.getEntity().getIntValue() == 2003) { // FUSION - RETURN 400 CREDITS
+                System.out.println("NUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUKE");
+
                 nukePowerUp nuke = (nukePowerUp) fieldElement.getEntity();
                 nuke.getParent().clearField();
                 nuke.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
+
+
                 return new LongWrapper(5);
             } else if (fieldElement.getEntity() instanceof Shield|| fieldElement.getEntity().getIntValue() == 3131) { // SHIELD - RETURN 300 CREDITS
+                System.out.println("SHIELLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLD");
+
                 Shield s = (Shield) fieldElement.getEntity();
-                if (!fieldElement.isPresent()) {
-                    fieldElement.setFieldEntity(s);
-                    s.setParent(fieldElement);
-                }
+
                 s.getParent().clearField();
                 s.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
+
                 return new LongWrapper(6);
             } else if (fieldElement.getEntity() instanceof HealthKit|| fieldElement.getEntity().getIntValue() == 3141) { // TOOLKIT - RETURN 200 CREDITS
                 HealthKit h = (HealthKit) fieldElement.getEntity();
                 h.getParent().clearField();
                 h.setParent(null);
-                fieldElement.setFieldEntity(new Grass());
                 return new LongWrapper(7);
             } else {
                 throw new IllegalArgumentException("Improper remove request. Spot behind builder is not an improvement.");
